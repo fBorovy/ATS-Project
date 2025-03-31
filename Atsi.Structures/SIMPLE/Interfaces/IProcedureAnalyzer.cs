@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Atsi.Structures.SIMPLE.Interfaces
 {
-    public interface IProcedure
+    public interface IProcedureAnalyzer
     {
         HashSet<string> GetAllModifiedVariables(Procedure procedure); //Zwraca wszystkie zmienne modyfikowane w procedurze  
         HashSet<string> GetAllUsedVariables(Procedure procedure); // Zwraca wszystkie zmienne używane w procedurze 

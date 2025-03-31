@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Atsi.Structures.SIMPLE.Interfaces
 {
-    public interface IStatement
+    public interface IStatementAnalyzer
     {
         HashSet<string> GetModifiedVariables(Statement statement); // Zwraca zmienne modyfikowane przez instrukcję 
         HashSet<string> GetUsedVariables(Statement statement); // Zwraca zmienne używane przez instrukcję 

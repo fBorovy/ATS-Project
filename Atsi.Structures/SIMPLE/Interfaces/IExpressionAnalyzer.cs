@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Atsi.Structures.SIMPLE.Interfaces
 {
-    public interface IExpression
+    public interface IExpressionAnalyzer
     {
         HashSet<string> GetUsedVariables(Expression expression); // Zwraca zbiór zmiennych używanych w wyrażeniu
         List<int> GetConstants(Expression expression); // Zwraca listę stałych użytych w wyrażeniu

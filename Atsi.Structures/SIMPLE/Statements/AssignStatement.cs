@@ -7,7 +7,7 @@ namespace Atsi.Structures.SIMPLE.Statements
         public string VariableName { get; }
         public Expression Expression { get; }
 
-        public AssignStatement(string variableName, Expression expression)
+        public AssignStatement(int statementNumber, string variableName, Expression expression) : base(statementNumber)
         {
             VariableName = variableName;
             Expression = expression;

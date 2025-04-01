@@ -1,6 +1,11 @@
 ﻿namespace Atsi.Structures.SIMPLE.Statements
 {
-    public interface Statement
+    public abstract class Statement
     {
+        public int StatementNumber { get; }
+        protected Statement(int statementNumber)
+        {
+            StatementNumber = statementNumber;
+        }
     }
 }

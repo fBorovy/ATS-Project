@@ -5,7 +5,7 @@
         public string ConditionalVariableName { get; }
         public List<Statement> StatementsList { get; }
 
-        public WhileStatement(string conditionalVariableName, List<Statement> statementsList)
+        public WhileStatement(int statementNumber, string conditionalVariableName, List<Statement> statementsList) : base(statementNumber)
         {
             ConditionalVariableName = conditionalVariableName;
             StatementsList = statementsList;

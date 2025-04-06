@@ -1,5 +1,6 @@
 ﻿using Atsi.Structures.PKB;
 using Atsi.Structures.SIMPLE;
+using Atsi.Structures.SIMPLE.Expressions;
 using Atsi.Structures.SIMPLE.Statements;
 using System.Diagnostics;
 
@@ -7,7 +8,46 @@ namespace Atsi.Domain.Extensions
 {
     public static class PKBExtensions
     {
-        public static void AddProcedure(Procedure procedure)
+        public static Procedure CreateProdecure(string name)
+        {
+
+        }
+
+        public static Procedure AddStatements(this Procedure procedure, List<Statement> statements)
+        {
+            procedure.StatementsList = statements;
+            return procedure;
+        }
+
+        public static Statement CreateWhileStatement(string conditionVariable, List<Statement> statements)
+        {
+            //jak zwracanie statementa ma być zbuildowany z numerem z PKBStorage GetNextStatementNumber()
+        }
+
+        public static Statement CreateAssignStatement(string leftVar, Expression right)
+        {
+            //jak zwracanie statementa ma być zbuildowany z numerem z PKBStorage GetNextStatementNumber()
+            //rozeznanie czy to liczba czy variable
+        }
+
+        public static Statement CreateBinaryExpression(Expression leftExpr, string operand, Expression rightExpr)
+        {
+            //jak zwracanie statementa ma być zbuildowany z numerem z PKBStorage GetNextStatementNumber()
+            //rozeznanie czy to liczba czy variable
+        }
+
+        public static Statement CreateConstExpression(int value)
+        {
+            //jak zwracanie statementa ma być zbuildowany z numerem z PKBStorage GetNextStatementNumber()
+            //rozeznanie czy to liczba czy variable
+        }
+        public static Statement CreateVariableExpression(string variable)
+        {
+            //jak zwracanie statementa ma być zbuildowany z numerem z PKBStorage GetNextStatementNumber()
+            //rozeznanie czy to liczba czy variable
+        }
+
+        public static void AddToStorage(this Procedure procedure)
         {
             if (!string.IsNullOrEmpty(procedure.Name))
             {
@@ -17,7 +57,7 @@ namespace Atsi.Domain.Extensions
                 {
                     Debug.Assert(statement.StatementNumber != 0);
 
-                    AddStatement(statement);
+                    statement.AddToStorage();
 
                     if (previousStmt != null)
                     {
@@ -31,7 +71,7 @@ namespace Atsi.Domain.Extensions
             }
         }
 
-        public static void AddStatement(Statement statement)
+        public static void AddToStorage(this Statement statement)
         {
             switch (statement)
             {
@@ -51,7 +91,7 @@ namespace Atsi.Domain.Extensions
 
                         foreach (var stmt in whileStmt.StatementsList)
                         {
-                            AddStatement(stmt);
+                            stmt.AddToStorage();
                             AddParent(whileStmt.StatementNumber, stmt.StatementNumber);
                         }
                         break;

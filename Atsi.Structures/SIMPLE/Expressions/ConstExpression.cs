@@ -8,5 +8,9 @@
         {
             Value = value;
         }
+        public override HashSet<string> GetUsedVariables()
+        {
+            return [];
+        }
     }
 }

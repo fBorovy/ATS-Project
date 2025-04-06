@@ -9,11 +9,11 @@ namespace Atsi.Structures.PKB
         private static readonly Lazy<PKBStorage> _instance = new(() => new PKBStorage());
         public static PKBStorage Instance => _instance.Value;
 
-        private Dictionary<string, Procedure> Procedures;
-        private Dictionary<int, int> Follows;
-        private Dictionary<int, int> Parent;
-        private Dictionary<int, HashSet<string>> Modifies;
-        private Dictionary<int, HashSet<string>> Uses;
+        internal Dictionary<string, Procedure> Procedures;
+        internal Dictionary<int, int> Follows;
+        internal Dictionary<int, int> Parent;
+        internal Dictionary<int, HashSet<string>> Modifies;
+        internal Dictionary<int, HashSet<string>> Uses;
 
         private PKBStorage()
         {

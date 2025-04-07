@@ -12,5 +12,12 @@
             Operator = _operator;
             Right = right;
         }
+        public override HashSet<string> GetUsedVariables()
+        {
+            HashSet<string> vars = [];
+            vars.UnionWith(Left.GetUsedVariables());
+            vars.UnionWith(Right.GetUsedVariables());
+            return vars;
+        }
     }
 }

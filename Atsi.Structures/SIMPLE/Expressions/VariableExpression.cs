@@ -7,5 +7,9 @@
         {
             VariableName = variableName;
         }
+        public override HashSet<string> GetUsedVariables()
+        {
+            return new HashSet<string> { VariableName };
+        }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
+using Atsi.Structures.PKB.Explorer;
+using Atsi.Structures.PKB;
 using IDE.Parser;
 using IDE.PQLParser;
 using IDE.QueryParser;

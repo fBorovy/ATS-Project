@@ -36,17 +36,17 @@ public class QueryPreprocessor
             tree.AddNode(ParseWith());
         }
 
-        Console.WriteLine("____________________________");
+        //Console.WriteLine("____________________________");
         while (!eof) 
         {
             if (Match(QueryKeywordType.End))
             {
                 eof = true;
-                Console.WriteLine("Parsed eof");
+                //Console.WriteLine("Parsed eof");
             }
             else
             {
-                Console.WriteLine($"Parsed other: {CurrentQueryKeyword.Value}");
+                //Console.WriteLine($"Parsed other: {CurrentQueryKeyword.Value}");
                 Advance();
             }
         }
@@ -72,7 +72,7 @@ public class QueryPreprocessor
 
         }
         //sprawdzenie
-        Console.WriteLine("Synonyms declarations valid.");
+        //Console.WriteLine("Synonyms declarations valid.");
     }
 
     private void DeclareSynonymsOrThrowException()
@@ -82,7 +82,7 @@ public class QueryPreprocessor
             if (SynonymTypeResolver.TryParse(CurrentQueryKeyword.Value, out var synonymType))
             {
                 Advance();
-                Console.WriteLine($"synonym type: {synonymType}");
+                //Console.WriteLine($"synonym type: {synonymType}");
                 InsertSynonymsOfAType(synonymType);   
             }
             else throw new SynonymException($"Design entity expected, got {CurrentQueryKeyword.Value}");
@@ -97,29 +97,29 @@ public class QueryPreprocessor
             if (SynonymTypeResolver.TryParse(CurrentQueryKeyword.Value, out var synonymType))
             {
                 Advance();
-                Console.WriteLine($"synonym type: {synonymType}");
+                //Console.WriteLine($"synonym type: {synonymType}");
                 InsertSynonymsOfAType(synonymType);
                 
             }
-        Console.WriteLine($"Last identifier: {CurrentQueryKeyword.Value}");
+        //Console.WriteLine($"Last identifier: {CurrentQueryKeyword.Value}");
         }
         //sprawdzenie
         foreach (var synonym in _declaredSynonyms)
         {
-            Console.WriteLine(synonym.Type + " " + synonym.Name);
+            //Console.WriteLine(synonym.Type + " " + synonym.Name);
         }
     }
     private QueryTree ParseWith()
     {
         QueryTree withNode = new QueryTree("with", "with");
-        Console.WriteLine($"parsed: {CurrentQueryKeyword.Value}");
+        //Console.WriteLine($"parsed: {CurrentQueryKeyword.Value}");
         Advance();
         if (Match(QueryKeywordType.Identifier))
         {
             Synonym? synonym = GetDeclaredSynonym(CurrentQueryKeyword.Value);
             if (synonym != null) 
             {
-                Console.WriteLine($"Parsed synonym identifier: {CurrentQueryKeyword.Value}");
+                //Console.WriteLine($"Parsed synonym identifier: {CurrentQueryKeyword.Value}");
                 withNode.AddNode(new QueryTree(synonym.Value.Name, "synonym"));
                 Advance();
                 if (Match(QueryKeywordType.Attribute))
@@ -130,7 +130,7 @@ public class QueryPreprocessor
             }
             if (Match(QueryKeywordType.Equals))
             {
-                Console.WriteLine($"Parsed equation: {CurrentQueryKeyword.Value}");
+                //Console.WriteLine($"Parsed equation: {CurrentQueryKeyword.Value}");
                 Advance();
             }
             if (Match(QueryKeywordType.String) || Match(QueryKeywordType.Number)) {
@@ -140,10 +140,10 @@ public class QueryPreprocessor
 
         }
         //sprawdzenie
-        Console.WriteLine($"node: {withNode.ToString()}");
+        //Console.WriteLine($"node: {withNode.ToString()}");
         foreach (var node in withNode.Children)
         {
-            Console.WriteLine($"node: {node.ToString()}");
+            //Console.WriteLine($"node: {node.ToString()}");
         }
 
         return withNode;
@@ -152,7 +152,7 @@ public class QueryPreprocessor
     private QueryTree ParseSelect()
     {
         QueryTree selectNode = new QueryTree("select", "select");
-        Console.WriteLine($"parsed: {CurrentQueryKeyword.Value}");
+        //Console.WriteLine($"parsed: {CurrentQueryKeyword.Value}");
         Advance();
         while (!Match(QueryKeywordType.SuchThat))
         {
@@ -161,22 +161,22 @@ public class QueryPreprocessor
                 Synonym? synonym = GetDeclaredSynonym(CurrentQueryKeyword.Value);
                 if (synonym != null) 
                 {
-                    Console.WriteLine($"Parsed synonym identifier: {CurrentQueryKeyword.Value}");
+                    //Console.WriteLine($"Parsed synonym identifier: {CurrentQueryKeyword.Value}");
                     selectNode.AddNode(new QueryTree(synonym.Value.Name, synonym.Value.Type.ToString()));
                     Advance();
                 }
             }
             if (Match(QueryKeywordType.Comma))
             {
-                Console.WriteLine($"Parsed comma: {CurrentQueryKeyword.Value}");
+                //Console.WriteLine($"Parsed comma: {CurrentQueryKeyword.Value}");
                 Advance();
             }
         }
         //sprawdzenie
-        Console.WriteLine($"QueryTree node: {selectNode.ToString()}");
+        //Console.WriteLine($"QueryTree node: {selectNode.ToString()}");
         foreach (var node in selectNode.Children)
         {
-            Console.WriteLine($"QueryTree node: {node.ToString()}");
+            //Console.WriteLine($"QueryTree node: {node.ToString()}");
         }
         return selectNode;
     }
@@ -186,16 +186,16 @@ public class QueryPreprocessor
     {
         QueryTree suchThatNode = new QueryTree("suchthat", "suchthat");
         Advance();
-        Console.WriteLine($"parsed suchthat: {CurrentQueryKeyword.Value}");
+        //Console.WriteLine($"parsed suchthat: {CurrentQueryKeyword.Value}");
         suchThatNode.AddNode(ParseRelation());
         //sprawdzenie
-        Console.WriteLine($"QueryTree node: {suchThatNode.ToString()}");
+        //Console.WriteLine($"QueryTree node: {suchThatNode.ToString()}");
         foreach (var symbol in suchThatNode.Children)
         {
-            Console.WriteLine($"QueryTree node: {symbol.ToString()}");
+            //Console.WriteLine($"QueryTree node: {symbol.ToString()}");
             foreach (var arg in symbol.Children)
             {
-                Console.WriteLine($"{symbol.Name} node child: {arg.ToString()}");
+                //Console.WriteLine($"{symbol.Name} node child: {arg.ToString()}");
             }
         }
         return suchThatNode;
@@ -206,12 +206,12 @@ public class QueryPreprocessor
         Advance();
         if (Match(QueryKeywordType.OpenParen)) 
         {
-            Console.WriteLine($"Parsed open paren: {CurrentQueryKeyword.Value}");
+            //Console.WriteLine($"Parsed open paren: {CurrentQueryKeyword.Value}");
             Advance();
         }
         if (Match(QueryKeywordType.Identifier, QueryKeywordType.Joker, QueryKeywordType.Number))
         {
-            Console.WriteLine($"matchidentifier: {CurrentQueryKeyword.Value}");
+            //Console.WriteLine($"matchidentifier: {CurrentQueryKeyword.Value}");
             Synonym? arg1 = GetDeclaredSynonym(CurrentQueryKeyword.Value);
             if (arg1 != null)
             {
@@ -239,7 +239,7 @@ public class QueryPreprocessor
         }
         if (Match(QueryKeywordType.CloseParen))
         {
-            Console.WriteLine($"Parsed close paren: {CurrentQueryKeyword.Value}");
+            //Console.WriteLine($"Parsed close paren: {CurrentQueryKeyword.Value}");
             Advance();
         }
         return relationNode;
@@ -249,7 +249,7 @@ public class QueryPreprocessor
     {
         while (Match(QueryKeywordType.Identifier))
         {
-            Console.WriteLine($"New identifier: {CurrentQueryKeyword.Value} {type}");
+            //Console.WriteLine($"New identifier: {CurrentQueryKeyword.Value} {type}");
             _declaredSynonyms.Add(new Synonym(type, CurrentQueryKeyword.Value));
             Advance();
             if (Match(QueryKeywordType.Comma)) Advance();

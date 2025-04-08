@@ -18,13 +18,14 @@ internal class Program
         // var queryParser = new QueryParser.QueryParser(queryLexer, queryPreprocessor);
         // queryParser.ParseQuery(symbols + query);
 
-        if (args.Length != 1)
-        {
-            Console.WriteLine($"Number of artguments should be 1. Is {args.Length}.");
-            return;
-        }
+        //if (args.Length != 1)
+        //{
+        //  Console.WriteLine($"Number of artguments should be 1. Is {args.Length}.");
+        //  return;
+        //}
 
-        CodeParser parser = new CodeParser(args[0]);
+        //CodeParser parser = new CodeParser(args[0]);
+        CodeParser parser = new CodeParser("C:\\Users\\A\\Source\\Repos\\ATS-Project\\IDE\\simple1.txt");
         if (!parser.ReadFile())
         {
             Console.WriteLine($"File {args[0]} contains nothing.");
@@ -33,7 +34,7 @@ internal class Program
 
         if (!parser.Parse())
         {
-            Console.WriteLine($"File {args[0]} does not contain parsable code.");
+            //Console.WriteLine($"File {args[0]} does not contain parsable code.");
             return;
         }
         else Console.WriteLine("READY");

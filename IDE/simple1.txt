@@ -1,0 +1,9 @@
+procedure proc1 {
+a = 1;
+b = 2;
+c = 4;
+while c {
+b = b + b;
+a = b + 1; }
+d = a + c;
+}

@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Atsi.Domain\Atsi.Domain.csproj" />
     <ProjectReference Include="..\Atsi.Structures\Atsi.Structures.csproj" />
   </ItemGroup>
 

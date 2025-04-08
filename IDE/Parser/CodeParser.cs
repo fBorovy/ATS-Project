@@ -1,5 +1,9 @@
 ﻿using System.Text.RegularExpressions;
 
+using Atsi.Domain.Extensions;
+using Atsi.Structures.SIMPLE.Expressions;
+using Atsi.Structures.SIMPLE.Statements;
+
 namespace IDE.Parser;
 
 public class CodeParser
@@ -17,7 +21,10 @@ public class CodeParser
     {
         string? content =  File.ReadAllText(this.path);
         if (content == null) return false;
-        this.words = Regex.Split(content, @"\s+").ToList();
+        this.words = Regex
+            .Split(content, @"(?<=\S)(?=\s)|(?<=\s)(?=\S)|(?<=;)|(?=;)")
+            .Where(w => !string.IsNullOrWhiteSpace(w))
+            .ToList();
         this.iterator = words.GetEnumerator();
         return this.words.Any();
     }
@@ -30,6 +37,7 @@ public class CodeParser
         }
         catch (Exception e)
         {
+            Console.WriteLine(e.ToString());
             return false;
         }
         return true;
@@ -43,7 +51,7 @@ public class CodeParser
 
     private string GetName()
     {
-        string name = this.iterator.Current;
+        var name = this.iterator.Current;
         this.iterator.MoveNext();
         return name;
     }
@@ -51,59 +59,88 @@ public class CodeParser
     private void Program()
     {
         this.iterator.Reset();
+        this.iterator.MoveNext();
         this.Procedure();
     }
 
     private void Procedure()
     {
         this.Match("procedure");
-        string procedure_name = this.GetName();
+        var procedure_name = this.GetName();
         this.Match("{");
-        this.StmtList();
+        var statements = this.StmtList(new List<Statement>());
         this.Match("}");
+        var procedure = PKBExtensions.CreateProdecure(procedure_name, statements);
+        PKBExtensions.AddProcedureToPKBStorage(procedure);
     }
 
-    private void StmtList()
+    private List<Statement> StmtList(List<Statement> statements)
     {
-        this.Stmt();
-        if (iterator.Current == "}") return;
-        else StmtList();
+        statements.Add(this.Stmt());
+        if (iterator.Current == "}") return statements;
+        else return StmtList(statements);
     }
 
-    private void Stmt()
+    private Statement Stmt()
     {
         switch(this.iterator.Current)
         {
             case "while":
-                this.While();
-                break;
+                return this.While();
             default:
-                this.Assign();
-                break;
+                return this.Assign();
         }
     }
 
-    private void While()
+    private WhileStatement While()
     {
         this.Match("while");
-        string variable_name = this.GetName();
+        var variable_name = this.GetName();
+        var while_statement = PKBExtensions.CreateWhileStatement(variable_name);
         this.Match("{");
-        this.StmtList();
+        var statements = this.StmtList(new List<Statement>());
         this.Match("}");
+        return PKBExtensions.UpdateWhileStatement(while_statement, statements);
     }
 
-    private void Assign()
+    private AssignStatement Assign()
     {
-        string variable_name = this.GetName();
+        var variable_name = this.GetName();
         this.Match("=");
-        this.Expr();
+        var expression = this.Expr();
+        return PKBExtensions.CreateAssignStatement(variable_name, expression);
     }
 
-    private void Expr()
+    private Expression Expr()
     {
-        string variable_name = this.GetName();
-        if (this.iterator.Current == ";") return;
-        else if (this.iterator.Current == "+") Expr();
-        else throw new Exception("Error parsing expression.");
+        var left = this.GetName();
+        Expression leftExpr = ParseExpression(left);
+
+        switch (this.iterator.Current)
+        {
+            case ";":
+                this.Match(";");
+                return leftExpr;
+            case "+":
+                this.Match("+");
+                string right = this.GetName();
+                Expression rightExpr = ParseExpression(right);
+                this.Match(";");
+                return PKBExtensions.CreateBinaryExpression(leftExpr, "+", rightExpr);
+            default:
+                throw new Exception("Error parsing expression.");
+        }
+    }
+
+    private Expression ParseExpression(string expr)
+    {
+        if (int.TryParse(expr, out int result))
+        {
+            return PKBExtensions.CreateConstExpression(result);
+        }
+        else
+        {
+            return PKBExtensions.CreateVariableExpression(expr);
+        }
     }
 }

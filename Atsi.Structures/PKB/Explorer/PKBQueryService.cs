@@ -26,6 +26,48 @@ namespace Atsi.Structures.PKB.Explorer
 
         public int? GetFollowedBy(int stmt2) =>
             _db.Follows.FirstOrDefault(kvp => kvp.Value == stmt2).Key;
+        public IEnumerable<int> GetAllFollowsSources() =>
+            _db.Follows.Keys;
+
+        public IEnumerable<int> GetAllFollowsTargets() =>
+            _db.Follows.Values.Distinct();
+
+        public bool IsFollowsTransitive(int stmt1, int stmt2)
+        {
+            var current = stmt1;
+            while (_db.Follows.TryGetValue(current, out var next))
+            {
+                if (next == stmt2) return true;
+                current = next;
+            }
+            return false;
+        }
+
+        public IEnumerable<int> GetAllFollowingStatements(int stmt1)
+        {
+            var result = new List<int>();
+            var current = stmt1;
+
+            while (_db.Follows.TryGetValue(current, out var next))
+            {
+                result.Add(next);
+                current = next;
+            }
+
+            return result;
+        }
+
+        public IEnumerable<int> GetAllStatementsLeadingTo(int stmt2)
+        {
+            var result = new List<int>();
+            foreach (var (s1, s2) in _db.Follows)
+            {
+                if (IsFollowsTransitive(s1, stmt2))
+                    result.Add(s1);
+            }
+            return result;
+        }
+
 
         // === Parent ===
         public bool IsParent(int parentStmt, int childStmt) =>
@@ -37,6 +79,50 @@ namespace Atsi.Structures.PKB.Explorer
         public IEnumerable<int> GetChildren(int parentStmt) =>
             _db.Parent.Where(kvp => kvp.Value == parentStmt).Select(kvp => kvp.Key);
 
+        public bool IsNestedIn(int parentStmt, int childStmt)
+        {
+            var current = childStmt;
+            while (_db.Parent.TryGetValue(current, out var parent))
+            {
+                if (parent == parentStmt) return true;
+                current = parent;
+            }
+            return false;
+        }
+
+        public IEnumerable<int> GetAllNestedStatements(int parentStmt)
+        {
+            var result = new HashSet<int>();
+            var stack = new Stack<int>(GetChildren(parentStmt));
+
+            while (stack.Any())
+            {
+                var current = stack.Pop();
+                if (result.Add(current))
+                {
+                    foreach (var child in GetChildren(current))
+                        stack.Push(child);
+                }
+            }
+
+            return result;
+        }
+
+        public IEnumerable<int> GetAllParentStatements(int childStmt)
+        {
+            var result = new List<int>();
+            var current = childStmt;
+
+            while (_db.Parent.TryGetValue(current, out var parent))
+            {
+                result.Add(parent);
+                current = parent;
+            }
+
+            return result;
+        }
+
+
         // === Modifies ===
         public bool IsModifies(int stmt, string variable) =>
             _db.IsModifies(stmt, variable);
@@ -46,6 +132,11 @@ namespace Atsi.Structures.PKB.Explorer
 
         public IEnumerable<int> GetStatementsModifying(string variable) =>
             _db.Modifies.Where(kvp => kvp.Value.Contains(variable)).Select(kvp => kvp.Key);
+
+        public IEnumerable<int> GetAllStatementsModifyingAnything() =>
+            _db.Modifies.Keys;
+        public IEnumerable<string> GetAllModifiedVariables() =>
+             _db.Modifies.Values.SelectMany(set => set).Distinct();
 
         // === Uses ===
         public bool IsUses(int stmt, string variable) =>

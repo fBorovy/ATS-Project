@@ -10,44 +10,36 @@ namespace Atsi.Domain.Extensions
     {
         public static Procedure CreateProdecure(string name)
         {
-
+            return new Procedure(name, []);
         }
 
-        public static Procedure AddStatements(this Procedure procedure, List<Statement> statements)
+        public static WhileStatement CreateWhileStatement(string conditionalVariableName, List<Statement> statements)
         {
-            procedure.StatementsList = statements;
-            return procedure;
+            return new WhileStatement(PKBStorage.GetNextStatementNumber(), conditionalVariableName, statements);
         }
 
-        public static Statement CreateWhileStatement(string conditionVariable, List<Statement> statements)
+        //Expression is the right side of assign operation for eg. x = 21 + t the "21 + t" is expression
+        public static AssignStatement CreateAssignStatement(string variableName, Expression expression)
         {
-            //jak zwracanie statementa ma być zbuildowany z numerem z PKBStorage GetNextStatementNumber()
+            return new AssignStatement(PKBStorage.GetNextStatementNumber(), variableName, expression);
         }
 
-        public static Statement CreateAssignStatement(string leftVar, Expression right)
+        public static BinaryExpression CreateBinaryExpression(Expression left, string _operator, Expression right)
         {
-            //jak zwracanie statementa ma być zbuildowany z numerem z PKBStorage GetNextStatementNumber()
-            //rozeznanie czy to liczba czy variable
+            return new BinaryExpression(left, _operator, right);
         }
 
-        public static Statement CreateBinaryExpression(Expression leftExpr, string operand, Expression rightExpr)
+        public static ConstExpression CreateConstExpression(int value)
         {
-            //jak zwracanie statementa ma być zbuildowany z numerem z PKBStorage GetNextStatementNumber()
-            //rozeznanie czy to liczba czy variable
+            return new ConstExpression(value);
         }
 
-        public static Statement CreateConstExpression(int value)
+        public static VariableExpression CreateVariableExpression(string variableName)
         {
-            //jak zwracanie statementa ma być zbuildowany z numerem z PKBStorage GetNextStatementNumber()
-            //rozeznanie czy to liczba czy variable
-        }
-        public static Statement CreateVariableExpression(string variable)
-        {
-            //jak zwracanie statementa ma być zbuildowany z numerem z PKBStorage GetNextStatementNumber()
-            //rozeznanie czy to liczba czy variable
+            return new VariableExpression(variableName);
         }
 
-        public static void AddToStorage(this Procedure procedure)
+        public static void AddProcedureToPKBStorage(Procedure procedure)
         {
             if (!string.IsNullOrEmpty(procedure.Name))
             {
@@ -57,7 +49,7 @@ namespace Atsi.Domain.Extensions
                 {
                     Debug.Assert(statement.StatementNumber != 0);
 
-                    statement.AddToStorage();
+                    CreatePKBRelationsForStatement(statement);
 
                     if (previousStmt != null)
                     {
@@ -71,7 +63,7 @@ namespace Atsi.Domain.Extensions
             }
         }
 
-        public static void AddToStorage(this Statement statement)
+        public static void CreatePKBRelationsForStatement(Statement statement)
         {
             switch (statement)
             {
@@ -91,7 +83,7 @@ namespace Atsi.Domain.Extensions
 
                         foreach (var stmt in whileStmt.StatementsList)
                         {
-                            stmt.AddToStorage();
+                            CreatePKBRelationsForStatement(stmt);
                             AddParent(whileStmt.StatementNumber, stmt.StatementNumber);
                         }
                         break;

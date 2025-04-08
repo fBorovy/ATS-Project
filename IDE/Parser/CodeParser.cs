@@ -96,10 +96,11 @@ public class CodeParser
     {
         this.Match("while");
         var variable_name = this.GetName();
+        var while_statement = PKBExtensions.CreateWhileStatement(variable_name);
         this.Match("{");
         var statements = this.StmtList(new List<Statement>());
         this.Match("}");
-        return PKBExtensions.CreateWhileStatement(variable_name, statements);
+        return PKBExtensions.UpdateWhileStatement(while_statement, statements);
     }
 
     private AssignStatement Assign()

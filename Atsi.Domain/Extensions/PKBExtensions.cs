@@ -13,9 +13,15 @@ namespace Atsi.Domain.Extensions
             return new Procedure(name, statements);
         }
 
-        public static WhileStatement CreateWhileStatement(string conditionalVariableName, List<Statement> statements)
+        public static WhileStatement CreateWhileStatement(string conditionalVariableName)
         {
-            return new WhileStatement(PKBStorage.GetNextStatementNumber(), conditionalVariableName, statements);
+            return new WhileStatement(PKBStorage.GetNextStatementNumber(), conditionalVariableName, []);
+        }
+
+        public static WhileStatement UpdateWhileStatement(WhileStatement statement, List<Statement> statements)
+        {
+            statement.StatementsList = statements;
+            return statement;
         }
 
         //Expression is the right side of assign operation for eg. x = 21 + t the "21 + t" is expression

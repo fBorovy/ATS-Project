@@ -27,9 +27,14 @@ public class QueryPreprocessor
 
         ParseSynonymDeclarations();
         tree.AddNode(ParseSelect());
-        tree.AddNode(ParseSuchThat());
-        tree.AddNode(ParseWith());
-
+        if (Match(QueryKeywordType.SuchThat))
+        {
+            tree.AddNode(ParseSuchThat());
+        }
+        if (Match(QueryKeywordType.With)) 
+        {
+            tree.AddNode(ParseWith());
+        }
 
         Console.WriteLine("____________________________");
         while (!eof) 
@@ -106,7 +111,7 @@ public class QueryPreprocessor
     }
     private QueryTree ParseWith()
     {
-        QueryTree withNode = new QueryTree("with", "conditions");
+        QueryTree withNode = new QueryTree("with", "with");
         Console.WriteLine($"parsed: {CurrentQueryKeyword.Value}");
         Advance();
         if (Match(QueryKeywordType.Identifier))
@@ -135,10 +140,10 @@ public class QueryPreprocessor
 
         }
         //sprawdzenie
-        Console.WriteLine($"node: {withNode.Name} : {withNode.NodeType}");
+        Console.WriteLine($"node: {withNode.ToString()}");
         foreach (var node in withNode.Children)
         {
-            Console.WriteLine($"node: {node.Name} : {node.NodeType}");
+            Console.WriteLine($"node: {node.ToString()}");
         }
 
         return withNode;
@@ -146,7 +151,7 @@ public class QueryPreprocessor
 
     private QueryTree ParseSelect()
     {
-        QueryTree selectNode = new QueryTree("select", "results");
+        QueryTree selectNode = new QueryTree("select", "select");
         Console.WriteLine($"parsed: {CurrentQueryKeyword.Value}");
         Advance();
         while (!Match(QueryKeywordType.SuchThat))
@@ -157,7 +162,7 @@ public class QueryPreprocessor
                 if (synonym != null) 
                 {
                     Console.WriteLine($"Parsed synonym identifier: {CurrentQueryKeyword.Value}");
-                    selectNode.AddNode(new QueryTree(synonym.Value.Name, "result"));
+                    selectNode.AddNode(new QueryTree(synonym.Value.Name, synonym.Value.Type.ToString()));
                     Advance();
                 }
             }
@@ -168,10 +173,10 @@ public class QueryPreprocessor
             }
         }
         //sprawdzenie
-        Console.WriteLine($"QueryTree node: {selectNode.Name} : {selectNode.NodeType}");
+        Console.WriteLine($"QueryTree node: {selectNode.ToString()}");
         foreach (var node in selectNode.Children)
         {
-            Console.WriteLine($"QueryTree node: {node.Name} : {node.NodeType}");
+            Console.WriteLine($"QueryTree node: {node.ToString()}");
         }
         return selectNode;
     }
@@ -179,18 +184,18 @@ public class QueryPreprocessor
 
     private QueryTree ParseSuchThat()
     {
-        QueryTree suchThatNode = new QueryTree("suchthat", "relations");
+        QueryTree suchThatNode = new QueryTree("suchthat", "suchthat");
         Advance();
         Console.WriteLine($"parsed suchthat: {CurrentQueryKeyword.Value}");
         suchThatNode.AddNode(ParseRelation());
         //sprawdzenie
-        Console.WriteLine($"QueryTree node: {suchThatNode.Name} : {suchThatNode.NodeType}");
+        Console.WriteLine($"QueryTree node: {suchThatNode.ToString()}");
         foreach (var symbol in suchThatNode.Children)
         {
-            Console.WriteLine($"QueryTree node: {symbol.Name} : {symbol.NodeType}");
+            Console.WriteLine($"QueryTree node: {symbol.ToString()}");
             foreach (var arg in symbol.Children)
             {
-                Console.WriteLine($"{symbol.Name} node child: {arg.Name} : {arg.NodeType}");
+                Console.WriteLine($"{symbol.Name} node child: {arg.ToString()}");
             }
         }
         return suchThatNode;

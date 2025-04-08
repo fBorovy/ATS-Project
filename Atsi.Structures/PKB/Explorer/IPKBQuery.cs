@@ -31,10 +31,13 @@ namespace Atsi.Structures.PKB.Explorer
         bool IsParent(int parentStmt, int childStmt);  // Sprawdza, czy parentStmt jest rodzicem instrukcji childStmt
         int? GetParent(int childStmt);   // Zwraca numer instrukcji, która jest rodzicem danej
         IEnumerable<int> GetChildren(int parentStmt);   // Zwraca wszystkie instrukcje będące dziećmi parentStmt
+        IEnumerable<(int parent, int child)> GetAllParentPairs(); // Zwraca wszystkie pary instrukcji w relacji Parent(p, c)
+
         // metody przechodnie parent
         bool IsNestedIn(int parent, int child);  // Sprawdza, czy jedna instrukcja (child) znajduje się wewnątrz innej (parent), bezpośrednio lub zagnieżdżona głębiej
         IEnumerable<int> GetAllNestedStatements(int parent); // Zwraca wszystkie instrukcje, które są zagnieżdżone wewnątrz danej na dowolnym poziomie
         IEnumerable<int> GetAllParentStatements(int stmt);   // Zwraca wszystkie nadrzędne instrukcje dla podanej w których się znajduje
+        IEnumerable<(int parent, int descendant)> GetAllNestedPairs(); // Zwraca wszystkie pary instrukcji w relacji Parent*(p, c) (przechodnio)
 
 
         // === Modifies ===
@@ -50,5 +53,10 @@ namespace Atsi.Structures.PKB.Explorer
         bool IsUses(int stmt, string variable);  // Sprawdza, czy instrukcja stmt używa zmiennej variable
         IEnumerable<string> GetUsedVariables(int stmt);  // Zwraca wszystkie zmienne używane w danej instrukcji
         IEnumerable<int> GetStatementsUsing(string variable);   // Zwraca wszystkie instrukcje, które używają danej zmiennej
+        IEnumerable<int> GetAllStatementsUsingAnything(); // Zwraca wszystkie instrukcje, które używają jakiejkolwiek zmiennej
+        IEnumerable<string> GetAllUsedVariables(); // Zwraca wszystkie zmienne używane w programie
+
+
+
     }
 }

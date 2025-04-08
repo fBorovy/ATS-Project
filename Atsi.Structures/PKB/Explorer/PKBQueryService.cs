@@ -122,6 +122,25 @@ namespace Atsi.Structures.PKB.Explorer
             return result;
         }
 
+        public IEnumerable<(int parent, int child)> GetAllParentPairs()
+        {
+            return _db.Parent.Select(kvp => (kvp.Value, kvp.Key));
+        }
+        public IEnumerable<(int parent, int descendant)> GetAllNestedPairs()
+        {
+            var result = new List<(int, int)>();
+
+            foreach (var parent in _db.Parent.Values.Distinct())
+            {
+                foreach (var descendant in GetAllNestedStatements(parent))
+                {
+                    result.Add((parent, descendant));
+                }
+            }
+
+            return result;
+        }
+
 
         // === Modifies ===
         public bool IsModifies(int stmt, string variable) =>
@@ -147,5 +166,16 @@ namespace Atsi.Structures.PKB.Explorer
 
         public IEnumerable<int> GetStatementsUsing(string variable) =>
             _db.Uses.Where(kvp => kvp.Value.Contains(variable)).Select(kvp => kvp.Key);
+
+        public IEnumerable<int> GetAllStatementsUsingAnything()
+        {
+            return _db.Uses.Keys;
+        }
+
+        public IEnumerable<string> GetAllUsedVariables()
+        {
+            return _db.Uses.Values.SelectMany(vars => vars).Distinct();
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Atsi.Structures.PKB;
 using Atsi.Structures.SIMPLE;
+using Atsi.Structures.SIMPLE.Expressions;
 using Atsi.Structures.SIMPLE.Statements;
 using System.Diagnostics;
 
@@ -7,7 +8,38 @@ namespace Atsi.Domain.Extensions
 {
     public static class PKBExtensions
     {
-        public static void AddProcedure(Procedure procedure)
+        public static Procedure CreateProdecure(string name)
+        {
+            return new Procedure(name, []);
+        }
+
+        public static WhileStatement CreateWhileStatement(string conditionalVariableName, List<Statement> statements)
+        {
+            return new WhileStatement(PKBStorage.GetNextStatementNumber(), conditionalVariableName, statements);
+        }
+
+        //Expression is the right side of assign operation for eg. x = 21 + t the "21 + t" is expression
+        public static AssignStatement CreateAssignStatement(string variableName, Expression expression)
+        {
+            return new AssignStatement(PKBStorage.GetNextStatementNumber(), variableName, expression);
+        }
+
+        public static BinaryExpression CreateBinaryExpression(Expression left, string _operator, Expression right)
+        {
+            return new BinaryExpression(left, _operator, right);
+        }
+
+        public static ConstExpression CreateConstExpression(int value)
+        {
+            return new ConstExpression(value);
+        }
+
+        public static VariableExpression CreateVariableExpression(string variableName)
+        {
+            return new VariableExpression(variableName);
+        }
+
+        public static void AddProcedureToPKBStorage(Procedure procedure)
         {
             if (!string.IsNullOrEmpty(procedure.Name))
             {
@@ -17,7 +49,7 @@ namespace Atsi.Domain.Extensions
                 {
                     Debug.Assert(statement.StatementNumber != 0);
 
-                    AddStatement(statement);
+                    CreatePKBRelationsForStatement(statement);
 
                     if (previousStmt != null)
                     {
@@ -31,7 +63,7 @@ namespace Atsi.Domain.Extensions
             }
         }
 
-        public static void AddStatement(Statement statement)
+        public static void CreatePKBRelationsForStatement(Statement statement)
         {
             switch (statement)
             {
@@ -51,7 +83,7 @@ namespace Atsi.Domain.Extensions
 
                         foreach (var stmt in whileStmt.StatementsList)
                         {
-                            AddStatement(stmt);
+                            CreatePKBRelationsForStatement(stmt);
                             AddParent(whileStmt.StatementNumber, stmt.StatementNumber);
                         }
                         break;

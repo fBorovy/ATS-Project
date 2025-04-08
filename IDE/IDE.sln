@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDE", "IDE.csproj", "{1FF4E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atsi.Structures", "..\Atsi.Structures\Atsi.Structures.csproj", "{51796106-6EB5-4987-981C-084A3AFF97BB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atsi.Domain", "..\Atsi.Domain\Atsi.Domain.csproj", "{592BD16F-820B-4ACD-AFE5-42F1FFA19311}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{51796106-6EB5-4987-981C-084A3AFF97BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51796106-6EB5-4987-981C-084A3AFF97BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51796106-6EB5-4987-981C-084A3AFF97BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{592BD16F-820B-4ACD-AFE5-42F1FFA19311}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{592BD16F-820B-4ACD-AFE5-42F1FFA19311}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{592BD16F-820B-4ACD-AFE5-42F1FFA19311}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{592BD16F-820B-4ACD-AFE5-42F1FFA19311}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

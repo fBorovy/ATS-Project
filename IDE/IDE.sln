@@ -9,6 +9,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atsi.Structures", "..\Atsi.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atsi.Domain", "..\Atsi.Domain\Atsi.Domain.csproj", "{592BD16F-820B-4ACD-AFE5-42F1FFA19311}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B3FC6E6A-5E76-4EA2-8253-722788E75C8E}"
+	ProjectSection(SolutionItems) = preProject
+		simple1.txt = simple1.txt
+		simple2.txt = simple2.txt
+		simple3.txt = simple3.txt
+		simple4.txt = simple4.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

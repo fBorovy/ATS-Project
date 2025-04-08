@@ -15,7 +15,7 @@ namespace Atsi.Structures.PKB
         internal Dictionary<int, HashSet<string>> Modifies;
         internal Dictionary<int, HashSet<string>> Uses;
 
-        private static int _statementCounter = 0;
+        private static int _statementCounter = 1;
         public static int GetNextStatementNumber() => _statementCounter++;
 
         private PKBStorage()

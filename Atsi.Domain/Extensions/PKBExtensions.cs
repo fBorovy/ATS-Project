@@ -8,9 +8,9 @@ namespace Atsi.Domain.Extensions
 {
     public static class PKBExtensions
     {
-        public static Procedure CreateProdecure(string name)
+        public static Procedure CreateProdecure(string name, List<Statement> statements)
         {
-            return new Procedure(name, []);
+            return new Procedure(name, statements);
         }
 
         public static WhileStatement CreateWhileStatement(string conditionalVariableName, List<Statement> statements)

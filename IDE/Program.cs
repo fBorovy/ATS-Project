@@ -11,12 +11,13 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        // string symbols = "assign a; variable v;";
-        // string query = "Select a such that Modifies (a, v) with v.varName=\"x\""; 
-        // var queryLexer = new QueryLexer();
-        // var queryPreprocessor = new QueryPreprocessor();
-        // var queryParser = new QueryParser.QueryParser(queryLexer, queryPreprocessor);
-        // queryParser.ParseQuery(symbols + query);
+        var queryLexer = new QueryLexer();
+        var queryPreprocessor = new QueryPreprocessor();
+        var queryEvaluator = new QueryEvaluator();
+        var queryParser = new QueryParser.QueryParser(queryLexer, queryPreprocessor, queryEvaluator);
+        String output = queryParser.ParseQuery(MockQueryData.queries[4].Item1 + MockQueryData.queries[4].Item2);
+        Console.WriteLine("============================");
+        Console.WriteLine(output);
 
         //if (args.Length != 1)
         //{

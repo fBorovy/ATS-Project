@@ -141,6 +141,15 @@ namespace Atsi.Structures.PKB.Explorer
             return result;
         }
 
+        public IEnumerable<int> GetAllParentStatements()
+        {
+            return _db.Parent.Values.Distinct();         }
+
+        public IEnumerable<int> GetAllChildStatements()
+        {
+            return _db.Parent.Keys.Distinct(); 
+        }
+
 
         // === Modifies ===
         public bool IsModifies(int stmt, string variable) =>

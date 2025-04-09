@@ -1,4 +1,4 @@
-namespace IDE.QueryParser;
+namespace IDE.PQLParser;
 
 public enum QueryKeywordType
 {

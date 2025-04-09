@@ -1,6 +1,6 @@
 using System;
 
-namespace IDE.QueryParser;
+namespace IDE.PQLParser;
 
 public class QueryKeyword
 {

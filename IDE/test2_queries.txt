@@ -1,0 +1,207 @@
+stmt s, s1;
+Select s such that Parent (s, s1) with s1.stmt# = 10
+8
+stmt s, s1;
+Select s such that Parent (s, s1) with s1.stmt# = 11
+10
+stmt s, s1;
+Select s such that Parent (s, s1) with s1.stmt# = 20
+18
+stmt s;
+Select s such that Parent (s, 2)
+none
+stmt s;
+Select s such that Parent (s, 10)
+8
+stmt s;
+Select s such that Parent (s, 11)
+10
+stmt s;
+Select s such that Parent (s, 20)
+18
+stmt s;
+Select s such that Parent (2, s)
+none
+stmt s;
+Select s such that Parent (8, s)
+10, 13, 14, 15, 16, 9
+stmt s;
+Select s such that Parent (9, s)
+none
+stmt s;
+Select s such that Parent (25, s)
+none
+stmt s;
+Select s such that Parent* (s, 2)
+none
+stmt s;
+Select s such that Parent* (s, 10)
+8
+stmt s;
+Select s such that Parent* (s, 11)
+10, 8
+stmt s;
+Select s such that Parent* (s, 20)
+18
+stmt s; while w;
+Select w such that Parent* (s, 2)
+none
+stmt s; while w;
+Select w such that Parent* (s, 10)
+10, 18, 23
+stmt s; while w;
+Select w such that Parent* (s, 11)
+10, 18, 23
+stmt s; while w;
+Select w such that Parent* (s, 20)
+10, 18, 23
+while w;
+Select w such that Parent* (w, 9)
+none
+while w;
+Select w such that Parent* (w, 11)
+10
+while w;
+Select w such that Parent* (w, 13)
+none
+while w;
+Select w such that Parent* (w, 21)
+18
+stmt s;
+Select s such that Follows (s, 1)
+none
+stmt s;
+Select s such that Follows (s, 8)
+7
+stmt s;
+Select s such that Follows (s, 9)
+none
+stmt s;
+Select s such that Follows (s, 10)
+9
+stmt s;
+Select s such that Follows (s, 12)
+11
+stmt s;
+Select s such that Follows (s, 13)
+10
+stmt s;
+Select s such that Follows (s, 23)
+none
+assign a;
+Select a such that Follows (a, 1)
+none
+assign a;
+Select a such that Follows (a, 8)
+7
+assign a;
+Select a such that Follows (a, 9)
+none
+assign a;
+Select a such that Follows (a, 10)
+9
+assign a;
+Select a such that Follows (a, 12)
+11
+assign a;
+Select a such that Follows (a, 13)
+none
+while w; stmt s;
+Select w such that Follows* (s, w)
+10
+while w; stmt s;
+Select w such that Follows* (w, s)
+10, 18, 23
+stmt s;
+Select s such that Follows* (s, 1)
+none
+stmt s;
+Select s such that Follows* (s, 8)
+1, 2, 3, 4, 5, 6, 7
+stmt s;
+Select s such that Follows* (s, 9)
+none
+stmt s;
+Select s such that Follows* (s, 13)
+10, 9
+stmt s;
+Select s such that Follows* (s, 19)
+none
+stmt s;
+Select s such that Follows* (s, 22)
+18
+if ifstat;
+Select ifstat such that Follows* (ifstat, 8)
+none
+if ifstat;
+Select ifstat such that Follows* (ifstat, 17)
+8
+if ifstat;
+Select ifstat such that Follows* (ifstat, 25)
+none
+if ifstat;
+Select ifstat such that Follows* (ifstat, 27)
+none
+assign a;
+Select a such that Follows* (a, 6)
+1, 2, 3, 5
+assign a;
+Select a such that Follows* (a, 9)
+none
+assign a;
+Select a such that Follows* (a, 10)
+9
+assign a;
+Select a such that Follows* (a, 12)
+11
+assign a;
+Select a such that Follows* (a, 17)
+1, 2, 3, 5, 7
+assign a;
+Select a such that Follows* (a, 28)
+none
+variable v;
+Select v such that Modifies (3, v)
+d
+variable v;
+Select v such that Modifies (4, v)
+a, c, d
+variable v;
+Select v such that Modifies (6, v)
+t
+variable v;
+Select v such that Modifies (18, v)
+a, c, d, t
+variable v;
+Select v such that Modifies (24, v)
+a, d
+variable v;
+Select v such that Modifies (28, v)
+t
+while w;
+Select w such that Modifies (w, "d")
+10, 18, 23
+while w;
+Select w such that Modifies (w, "c")
+10, 18
+variable v;
+Select v such that Modifies ("Rectangle", v)
+a, c, d, t
+stmt s;
+Select s such that Uses (s, "d")
+10, 11, 12, 13, 14, 17, 18, 19, 20, 23, 24, 26, 27, 4, 8, 9
+stmt s;
+Select s such that Uses (s, "c")
+10, 16, 17, 18, 19, 21, 8
+variable v;
+Select v such that Uses (10, v)
+c, d, t
+variable v;
+Select v such that Uses (18, v)
+a, b, c, d, k, t
+variable v;
+Select v such that Uses (23, v)
+a, b, d, k, t
+assign a; variable v;
+Select v such that Uses (a, v)
+a, b, c, d, k, t

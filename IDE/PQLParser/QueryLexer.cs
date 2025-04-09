@@ -2,7 +2,7 @@ using System;
 using System.Text.RegularExpressions;
 using IDE.PQLParser;
 
-namespace IDE.QueryParser;
+namespace IDE.PQLParser;
 
 public class QueryLexer
 {

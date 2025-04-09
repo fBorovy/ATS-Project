@@ -1,6 +1,5 @@
 using System;
 using System.Xml.XPath;
-using IDE.QueryParser;
 
 namespace IDE.PQLParser;
 
@@ -224,7 +223,7 @@ public class QueryPreprocessor
             Advance();
         }
         if (Match(QueryKeywordType.Comma)) Advance();
-        if (Match(QueryKeywordType.Identifier, QueryKeywordType.Joker, QueryKeywordType.String))
+        if (Match(QueryKeywordType.Identifier, QueryKeywordType.Joker, QueryKeywordType.String, QueryKeywordType.Number))
         {
             Synonym? arg2 = GetDeclaredSynonym(CurrentQueryKeyword.Value);
             if (arg2 != null)

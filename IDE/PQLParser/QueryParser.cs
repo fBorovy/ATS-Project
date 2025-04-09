@@ -1,6 +1,4 @@
-using IDE.PQLParser;
-
-namespace IDE.QueryParser;
+namespace IDE.PQLParser;
 
 public class QueryParser
 {
@@ -8,19 +6,19 @@ public class QueryParser
     private readonly QueryPreprocessor _preprocessor;
     private readonly QueryEvaluator _queryEvaluator;
 
-    public QueryParser(QueryLexer lexer, QueryPreprocessor preprocessor, QueryEvaluator evaluator)
+    public QueryParser()
     {
-        _lexer = lexer;
-        _preprocessor = preprocessor;
-        _queryEvaluator = evaluator;
+        _lexer = new QueryLexer();
+        _preprocessor = new QueryPreprocessor();
+        _queryEvaluator = new QueryEvaluator();
     }
 
 
-    public String ParseQuery(string query) {
+    public string ParseQuery(string query) {
         List<QueryKeyword> currentQuery = _lexer.Tokenize(query);
         //_preprocessor.ValidateQuery(currentQuery);
         QueryTree tree = _preprocessor.BuildQueryTree(currentQuery);
-        String result = _queryEvaluator.EvaluateQuery(tree);
+        string result = _queryEvaluator.EvaluateQuery(tree);
         return result;
     }
 

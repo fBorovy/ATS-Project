@@ -38,6 +38,9 @@ namespace Atsi.Structures.PKB.Explorer
         IEnumerable<int> GetAllNestedStatements(int parent); // Zwraca wszystkie instrukcje, które są zagnieżdżone wewnątrz danej na dowolnym poziomie
         IEnumerable<int> GetAllParentStatements(int stmt);   // Zwraca wszystkie nadrzędne instrukcje dla podanej w których się znajduje
         IEnumerable<(int parent, int descendant)> GetAllNestedPairs(); // Zwraca wszystkie pary instrukcji w relacji Parent*(p, c) (przechodnio)
+        IEnumerable<int> GetAllParentStatements(); // Zwraca wszystkie instrukcje, które są rodzicem jakiejkolwiek innej
+        IEnumerable<int> GetAllChildStatements(); // Zwraca wszystkie instrukcje, które mają rodzica
+
 
 
         // === Modifies ===

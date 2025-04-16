@@ -1,9 +1,14 @@
-/*using Moq;
+using Moq;
 using Xunit;
-using Atsi.Structures.PKB.Explorer;
+//using Atsi.Structures;
+using Atsi.Structures.PKB;
+//using Atsi.Structures.PKB.Explorer;
 using Atsi.Structures.SIMPLE;
+using Atsi.Structures.SIMPLE.Statements;
+
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Atsi.Structures.Tests.PKB.Explorer
 {
@@ -15,7 +20,31 @@ namespace Atsi.Structures.Tests.PKB.Explorer
         public PKBQueryServiceTests()
         {
             _mockStorage = new Mock<PKBStorage>();
-            _service = new PKBQueryService(_mockStorage.Object);
+            
+            // Mockowanie singletonu PKBStorage
+            var instanceField = typeof(PKBStorage).GetField("_instance", 
+                BindingFlags.Static | BindingFlags.NonPublic);
+            instanceField?.SetValue(null, _mockStorage.Object);
+            
+            _service = new PKBQueryService();
+        }
+
+        // Helper method to create test statements
+        private List<Statement> CreateTestStatements(int count)
+        {
+            var statements = new List<Statement>();
+            for (int i = 1; i <= count; i++)
+            {
+                // Using anonymous class since Statement is abstract
+                statements.Add(new MockStatement(i));
+            }
+            return statements;
+        }
+
+        // Mock implementation for abstract Statement class
+        private class MockStatement : Statement
+        {
+            public MockStatement(int number) : base(number) { }
         }
 
         // === Tests for Procedure ===
@@ -23,7 +52,8 @@ namespace Atsi.Structures.Tests.PKB.Explorer
         public void GetProcedure_ShouldReturnProcedure_WhenExists()
         {
             // Arrange
-            var expected = new Procedure("test");
+            var testStatements = CreateTestStatements(3);
+            var expected = new Procedure("test", testStatements);
             _mockStorage.Setup(x => x.GetProcedure("test")).Returns(expected);
 
             // Act
@@ -39,8 +69,8 @@ namespace Atsi.Structures.Tests.PKB.Explorer
             // Arrange
             var procedures = new Dictionary<string, Procedure>
             {
-                {"proc1", new Procedure("proc1")},
-                {"proc2", new Procedure("proc2")}
+                {"proc1", new Procedure("proc1", CreateTestStatements(2))},
+                {"proc2", new Procedure("proc2", CreateTestStatements(3))}
             };
             _mockStorage.Setup(x => x.Procedures).Returns(procedures);
 
@@ -48,7 +78,10 @@ namespace Atsi.Structures.Tests.PKB.Explorer
             var result = _service.GetAllProcedureNames();
 
             // Assert
-            Assert.Equal(new[] {"proc1", "proc2"}, result.OrderBy(x => x));
+           // Assert.Equal(new[] {"proc1", "proc2"}, result.OrderBy(x => x));
+        Assert.Equal<string[]>(    new[] {"proc1", "proc2"}, 
+           _service.GetAllProcedureNames().OrderBy(x => x).ToArray()
+);
         }
 
         // === Tests for Follows ===
@@ -129,6 +162,8 @@ namespace Atsi.Structures.Tests.PKB.Explorer
                 {2, new HashSet<string> {"z"}}
             };
             _mockStorage.Setup(x => x.Modifies).Returns(modifies);
+            _mockStorage.Setup(x => x.IsModifies(It.IsAny<int>(), It.IsAny<string>()))
+                .Returns<int, string>((s, v) => modifies.ContainsKey(s) && modifies[s].Contains(v));
 
             // Act & Assert
             Assert.True(_service.IsModifies(1, "x"));
@@ -137,24 +172,44 @@ namespace Atsi.Structures.Tests.PKB.Explorer
             Assert.False(_service.IsModifies(3, "x"));
         }
 
+        [Fact]
+        public void GetModifiedVariables_ShouldReturnVariablesForStatement()
+        {
+            // Arrange
+            var modifies = new Dictionary<int, HashSet<string>>
+            {
+                {1, new HashSet<string> {"x", "y"}},
+                {2, new HashSet<string> {"z"}}
+            };
+            _mockStorage.Setup(x => x.Modifies).Returns(modifies);
+
+            // Act
+            var result = _service.GetModifiedVariables(1);
+
+            // Assert
+            //Assert.Equal(new[] {"x", "y"}, result.OrderBy(x => x));
+            Assert.Equal<string[]>(new[] {"x", "y"}, result.OrderBy(x => x).ToArray());
+        }
+
         // === Tests for Uses ===
         [Fact]
-        public void GetStatementsUsing_ShouldReturnCorrectStatements()
+        public void IsUses_ShouldCheckVariableCorrectly()
         {
             // Arrange
             var uses = new Dictionary<int, HashSet<string>>
             {
                 {1, new HashSet<string> {"x", "y"}},
-                {2, new HashSet<string> {"x"}},
-                {3, new HashSet<string> {"z"}}
+                {2, new HashSet<string> {"z"}}
             };
             _mockStorage.Setup(x => x.Uses).Returns(uses);
+            _mockStorage.Setup(x => x.IsUses(It.IsAny<int>(), It.IsAny<string>()))
+                .Returns<int, string>((s, v) => uses.ContainsKey(s) && uses[s].Contains(v));
 
-            // Act
-            var result = _service.GetStatementsUsing("x");
-
-            // Assert
-            Assert.Equal(new[] {1, 2}, result.OrderBy(x => x));
+            // Act & Assert
+            Assert.True(_service.IsUses(1, "x"));
+            Assert.True(_service.IsUses(1, "y"));
+            Assert.False(_service.IsUses(1, "z"));
+            Assert.False(_service.IsUses(3, "x"));
         }
 
         [Fact]
@@ -202,4 +257,4 @@ namespace Atsi.Structures.Tests.PKB.Explorer
             Assert.Empty(result);
         }
     }
-}*/
+}

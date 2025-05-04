@@ -1,7 +1,8 @@
-﻿using Atsi.Structures.PKB;
+﻿/*using Atsi.Structures.PKB;
 using Atsi.Structures.SIMPLE;
 using Atsi.Structures.SIMPLE.Expressions;
 using Atsi.Structures.SIMPLE.Statements;
+
 using System.Diagnostics;
 
 namespace Atsi.Domain.Extensions
@@ -118,4 +119,4 @@ namespace Atsi.Domain.Extensions
             PKBStorage.Instance.AddUses(stmt, variable);
         }
     }
-}
+}*/

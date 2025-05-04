@@ -4,16 +4,22 @@ using System.Collections.Generic;
 
 namespace Atsi.Structures.PKB
 {
-    public class PKBStorage
+    public class PKBStorage  
     {
         private static readonly Lazy<PKBStorage> _instance = new(() => new PKBStorage());
         public static PKBStorage Instance => _instance.Value;
 
-        internal Dictionary<string, Procedure> Procedures;
+        /*internal Dictionary<string, Procedure> Procedures;
         internal Dictionary<int, int> Follows;
         internal Dictionary<int, int> Parent;
         internal Dictionary<int, HashSet<string>> Modifies;
-        internal Dictionary<int, HashSet<string>> Uses;
+        internal Dictionary<int, HashSet<string>> Uses;*/
+
+         public virtual Dictionary<string, Procedure> Procedures { get; private set; }
+    public virtual Dictionary<int, int> Follows { get; private set; }
+    public virtual Dictionary<int, int> Parent { get; private set; }
+    public virtual Dictionary<int, HashSet<string>> Modifies { get; private set; }
+    public virtual Dictionary<int, HashSet<string>> Uses { get; private set; }
 
         private static int _statementCounter = 1;
         public static int GetNextStatementNumber() => _statementCounter++;

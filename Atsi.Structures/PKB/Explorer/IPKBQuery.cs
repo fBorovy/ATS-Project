@@ -56,7 +56,5 @@ namespace Atsi.Structures.PKB.Explorer
         IEnumerable<int> GetAllStatementsUsingAnything(); // Zwraca wszystkie instrukcje, które używają jakiejkolwiek zmiennej
         IEnumerable<string> GetAllUsedVariables(); // Zwraca wszystkie zmienne używane w programie
 
-
-
     }
 }

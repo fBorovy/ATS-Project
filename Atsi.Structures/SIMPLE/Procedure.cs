@@ -2,14 +2,9 @@
 
 namespace Atsi.Structures.SIMPLE
 {
-    public class Procedure
+    public class Procedure(string name)
     {
-        public string Name { get; }
-        public List<Statement> StatementsList { get; }
-        public Procedure(string name, List<Statement> statementsList)
-        {
-            Name = name;
-            StatementsList = statementsList;
-        }
+        public string Name { get; } = name;
+        public List<Statement> StatementsList { get; } = [];
     }
 }

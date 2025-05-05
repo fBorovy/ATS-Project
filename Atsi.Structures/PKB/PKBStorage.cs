@@ -8,23 +8,25 @@ namespace Atsi.Structures.PKB
     {
         private static readonly Lazy<PKBStorage> _instance = new(() => new PKBStorage());
         public static PKBStorage Instance => _instance.Value;
-
-        internal Dictionary<string, Procedure> Procedures;
-        internal Dictionary<int, int> Follows;
-        internal Dictionary<int, int> Parent;
-        internal Dictionary<int, HashSet<string>> Modifies;
-        internal Dictionary<int, HashSet<string>> Uses;
-
+        private readonly Dictionary<string, Procedure> Procedures;
+        private readonly Dictionary<string, string> Calls;
+        private readonly Dictionary<string, string> CallsStar;
+        private readonly Dictionary<string, HashSet<string>> ProcedureModifies;
+        private readonly Dictionary<string, HashSet<string>> AssignmentModifies;
+        private readonly Dictionary<int, HashSet<string>> StatementModifies;
+        private readonly Dictionary<int, int> Follows;
+        private readonly Dictionary<int, int> Parent;
+        private readonly Dictionary<int, HashSet<string>> Uses;
         private static int _statementCounter = 1;
         public static int GetNextStatementNumber() => _statementCounter++;
 
         private PKBStorage()
         {
-            Procedures = new Dictionary<string, Procedure>();
-            Follows = new Dictionary<int, int>();
-            Parent = new Dictionary<int, int>();
-            Modifies = new Dictionary<int, HashSet<string>>();
-            Uses = new Dictionary<int, HashSet<string>>();
+            Procedures = [];
+            Follows = [];
+            Parent = [];
+            Modifies = [];
+            Uses = [];
         }
 
         // Procedure Management

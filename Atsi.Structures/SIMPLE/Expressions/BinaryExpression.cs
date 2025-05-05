@@ -1,17 +1,11 @@
 ﻿namespace Atsi.Structures.SIMPLE.Expressions
 {
-    public class BinaryExpression : Expression
+    public class BinaryExpression(Expression left, string _operator, Expression right) : Expression
     {
-        public Expression Left { get; }
-        public string Operator { get; }
-        public Expression Right { get; }
+        public Expression Left { get; } = left;
+        public string Operator { get; } = _operator;
+        public Expression Right { get; } = right;
 
-        public BinaryExpression(Expression left, string _operator, Expression right)
-        {
-            Left = left;
-            Operator = _operator;
-            Right = right;
-        }
         public override HashSet<string> GetUsedVariables()
         {
             HashSet<string> vars = [];

@@ -1,15 +1,12 @@
 ﻿namespace Atsi.Structures.SIMPLE.Expressions
 {
-    public class VariableExpression : Expression
+    public class VariableExpression(string variableName) : Expression
     {
-        public string VariableName { get; }
-        public VariableExpression(string variableName)
-        {
-            VariableName = variableName;
-        }
+        public string VariableName { get; } = variableName;
+
         public override HashSet<string> GetUsedVariables()
         {
-            return new HashSet<string> { VariableName };
+            return [VariableName];
         }
     }
 }

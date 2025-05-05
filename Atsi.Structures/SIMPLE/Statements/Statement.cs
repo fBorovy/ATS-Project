@@ -2,7 +2,8 @@
 {
     public abstract class Statement
     {
-        public int StatementNumber { get; }
+        public int StatementNumber { get; set; }
+        protected Statement() { }
         protected Statement(int statementNumber)
         {
             StatementNumber = statementNumber;

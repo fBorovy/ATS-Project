@@ -2,7 +2,7 @@
 {
     public class ConstExpression(int value) : Expression
     {
-        public int Value { get; } = value;
+        public int Value { get; set; } = value;
 
         public override HashSet<string> GetUsedVariables()
         {

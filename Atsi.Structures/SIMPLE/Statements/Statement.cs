@@ -3,10 +3,6 @@
     public abstract class Statement
     {
         public int StatementNumber { get; set; }
-        protected Statement() { }
-        protected Statement(int statementNumber)
-        {
-            StatementNumber = statementNumber;
-        }
+        public required string ProcedureName { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 {
     public class VariableExpression(string variableName) : Expression
     {
-        public string VariableName { get; } = variableName;
+        public string VariableName { get; set; } = variableName;
 
         public override HashSet<string> GetUsedVariables()
         {

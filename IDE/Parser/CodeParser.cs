@@ -3,6 +3,7 @@
 using Atsi.Domain.Extensions;
 using Atsi.Structures.SIMPLE.Expressions;
 using Atsi.Structures.SIMPLE.Statements;
+using Atsi.Structures.Utils.Enums;
 
 namespace IDE.Parser;
 
@@ -19,7 +20,7 @@ public class CodeParser
 
     public bool ReadFile()
     {
-        string? content =  File.ReadAllText(this.path);
+        string? content = File.ReadAllText(this.path);
         if (content == null) return false;
         this.words = Regex
             .Split(content, @"(?<=\S)(?=\s)|(?<=\s)(?=\S)|(?<=;)|(?=;)")
@@ -83,7 +84,7 @@ public class CodeParser
 
     private Statement Stmt()
     {
-        switch(this.iterator.Current)
+        switch (this.iterator.Current)
         {
             case "while":
                 return this.While();
@@ -126,7 +127,7 @@ public class CodeParser
                 string right = this.GetName();
                 Expression rightExpr = ParseExpression(right);
                 this.Match(";");
-                return PKBExtensions.CreateBinaryExpression(leftExpr, "+", rightExpr);
+                return PKBExtensions.CreateBinaryExpression(leftExpr, DictAvailableArythmeticSymbols.Plus, rightExpr);
             default:
                 throw new Exception("Error parsing expression.");
         }

@@ -2,6 +2,7 @@
 using Atsi.Structures.SIMPLE;
 using Atsi.Structures.SIMPLE.Expressions;
 using Atsi.Structures.SIMPLE.Statements;
+using Atsi.Structures.Utils.Enums;
 using System.Diagnostics;
 
 namespace Atsi.Domain.Extensions
@@ -10,7 +11,11 @@ namespace Atsi.Domain.Extensions
     {
         public static Procedure CreateProdecure(string name, List<Statement> statements)
         {
-            return new Procedure(name, statements);
+            var proc = new Procedure(name)
+            {
+                StatementsList = statements
+            };
+            return proc;
         }
 
         public static WhileStatement CreateWhileStatement(string conditionalVariableName)
@@ -30,7 +35,7 @@ namespace Atsi.Domain.Extensions
             return new AssignStatement(PKBStorage.GetNextStatementNumber(), variableName, expression);
         }
 
-        public static BinaryExpression CreateBinaryExpression(Expression left, string _operator, Expression right)
+        public static BinaryExpression CreateBinaryExpression(Expression left, DictAvailableArythmeticSymbols _operator, Expression right)
         {
             return new BinaryExpression(left, _operator, right);
         }

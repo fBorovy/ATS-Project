@@ -1,9 +1,11 @@
-﻿namespace Atsi.Structures.SIMPLE.Expressions
+﻿using Atsi.Structures.Utils.Enums;
+
+namespace Atsi.Structures.SIMPLE.Expressions
 {
-    public class BinaryExpression(Expression left, string _operator, Expression right) : Expression
+    public class BinaryExpression(Expression left, DictAvailableArythmeticSymbols _operator, Expression right) : Expression
     {
         public Expression Left { get; } = left;
-        public string Operator { get; } = _operator;
+        public DictAvailableArythmeticSymbols Operator { get; } = _operator;
         public Expression Right { get; } = right;
 
         public override HashSet<string> GetUsedVariables()

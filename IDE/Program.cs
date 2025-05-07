@@ -50,7 +50,7 @@ internal class Program
             string actual = queryParser.ParseQuery(declarations + query);
 
             Console.WriteLine(string.IsNullOrWhiteSpace(actual) ? "none" : actual.Trim());
-            Console.WriteLine(new string('-', 40));
+            // Console.WriteLine(new string('-', 40));
         }
     }
 }

@@ -36,19 +36,19 @@ public class QueryPreprocessor
         }
 
         //Console.WriteLine("____________________________");
-        while (!eof) 
-        {
-            if (Match(QueryKeywordType.End))
-            {
-                eof = true;
-                Console.WriteLine("Parsed eof");
-            }
-            else
-            {
-                Console.WriteLine($"Parsed other: {CurrentQueryKeyword.Value}");
-                Advance();
-            }
-        }
+        // while (!eof) 
+        // {
+        //     if (Match(QueryKeywordType.End))
+        //     {
+        //         eof = true;
+        //         Console.WriteLine("Parsed eof");
+        //     }
+        //     else
+        //     {
+        //         Console.WriteLine($"Parsed other: {CurrentQueryKeyword.Value}");
+        //         Advance();
+        //     }
+        // }
         _currentKeyword = 0;
         return tree;
     }
@@ -103,10 +103,10 @@ public class QueryPreprocessor
         //Console.WriteLine($"Last identifier: {CurrentQueryKeyword.Value}");
         }
         //sprawdzenie
-        foreach (var synonym in _declaredSynonyms)
-        {
-            //Console.WriteLine(synonym.Type + " " + synonym.Name);
-        }
+        // foreach (var synonym in _declaredSynonyms)
+        // {
+        //     Console.WriteLine("parsed synonym" + synonym.Type + " " + synonym.Name);
+        // }
     }
     private QueryTree ParseWith()
     {
@@ -176,11 +176,11 @@ public class QueryPreprocessor
             }
         }
         //sprawdzenie
-        //Console.WriteLine($"QueryTree node: {selectNode.ToString()}");
-        foreach (var node in selectNode.Children)
-        {
-            //Console.WriteLine($"QueryTree node: {node.ToString()}");
-        }
+        // Console.WriteLine($"QueryTree node: {selectNode}");
+        // foreach (var node in selectNode.Children)
+        // {
+        //     Console.WriteLine($"QueryTree node: {node}");
+        // }
         return selectNode;
     }
 
@@ -192,7 +192,7 @@ public class QueryPreprocessor
         //Console.WriteLine($"parsed suchthat: {CurrentQueryKeyword.Value}");
         do
         {
-            Console.WriteLine("relations loop");
+            //Console.WriteLine("relations loop");
             if(Match(QueryKeywordType.And))
             {
                 Advance();
@@ -202,15 +202,15 @@ public class QueryPreprocessor
         while (Match(QueryKeywordType.And));
 
         //sprawdzenie
-        Console.WriteLine($"QueryTree node: {suchThatNode.ToString()}");
-        foreach (var symbol in suchThatNode.Children)
-        {
-            Console.WriteLine($"QueryTree node: {symbol.ToString()}");
-            foreach (var arg in symbol.Children)
-            {
-                Console.WriteLine($"{symbol.Name} node child: {arg.ToString()}");
-            }
-        }
+        //Console.WriteLine($"QueryTree node: {suchThatNode.ToString()}");
+        // foreach (var symbol in suchThatNode.Children)
+        // {
+        //     Console.WriteLine($"QueryTree node: {symbol.ToString()}");
+        //     foreach (var arg in symbol.Children)
+        //     {
+        //         Console.WriteLine($"{symbol.Name} node child: {arg.ToString()}");
+        //     }
+        // }
         return suchThatNode;
     }
     private QueryTree ParseRelation()

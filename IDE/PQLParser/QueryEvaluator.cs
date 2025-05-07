@@ -38,7 +38,7 @@ public class QueryEvaluator
             if (child.NodeType == "select") // na razie założenie jednego synonimu w select
             {
                 select = Tuple.Create(child.Children[0].Name, child.Children[0].NodeType);
-                Console.WriteLine("selects: " + select.ToString());
+                // Console.WriteLine("selects: " + select.ToString());
             }
             if (child.NodeType == "with")
             {
@@ -53,10 +53,11 @@ public class QueryEvaluator
                         condition.Clear();
                     }
                 }
-                foreach (var w in with)
-                {
-                    Console.WriteLine("with: " + w.ToString());
-                }
+                // sprawdzenie
+                // foreach (var w in with)
+                // {
+                //     Console.WriteLine("with: " + w.ToString());
+                // }
             }
         }
         foreach (var child in tree.Children)
@@ -101,6 +102,16 @@ public class QueryEvaluator
                             if (partialOutput.Count == 0) return "";
                             if (output.Count == 0) output = partialOutput; else output.Intersect(partialOutput);
                         break;
+                        case "Calls":
+                            partialOutput = EvaluateRelation("Calls", arg1, arg2);
+                            if (partialOutput.Count == 0) return "";
+                            if (output.Count == 0) output = partialOutput; else output.Intersect(partialOutput);
+                        break;
+                        case "Calls*":
+                            partialOutput = EvaluateRelation("Calls*", arg1, arg2);
+                            if (partialOutput.Count == 0) return "";
+                            if (output.Count == 0) output = partialOutput; else output.Intersect(partialOutput);
+                        break;
                     }
                 }
             }
@@ -120,6 +131,7 @@ public class QueryEvaluator
 
     private void EvaluateSelectWithoutSuchThat()
     {
+        Console.WriteLine("EvaluateSelectWithoutSuchThat");
         if (select.Item2 == "Procedure")
         {
             IEnumerable<String> allProcedures = pkb.GetAllProcedureNames();
@@ -150,13 +162,13 @@ public class QueryEvaluator
                             {
                                 result.Add(line.ToString());
                             }
-                            Console.WriteLine($"invoked GetStatementsModyfing({modifiedValName})");
+                            // Console.WriteLine($"invoked GetStatementsModyfing({modifiedValName})");
                         break;
                         case "Follows":
                             int followedStmt = Int16.Parse(condition.Item3);
                             int? followingStatement = pkb.GetFollows(followedStmt);
                             if (followingStatement != null) result.Add(followingStatement.ToString());
-                            Console.WriteLine($"invoked pkb.GetFollows({followedStmt})");
+                            // Console.WriteLine($"invoked pkb.GetFollows({followedStmt})");
                         break;
                         case "Follows*":
                             int followedTStmt = Int16.Parse(condition.Item3);
@@ -165,7 +177,7 @@ public class QueryEvaluator
                             {
                                 result.Add(stmt.ToString());
                             }
-                            Console.WriteLine($"invoked pkb.GetAllFollowingStatements({followedTStmt})");
+                            // Console.WriteLine($"invoked pkb.GetAllFollowingStatements({followedTStmt})");
                         break;
                         case "Uses":
                             string usedValName = condition.Item3;
@@ -174,13 +186,13 @@ public class QueryEvaluator
                             {
                                 result.Add(stmt.ToString());
                             }
-                            Console.WriteLine($"invoked GetStatementsUsing({usedValName})");
+                            // Console.WriteLine($"invoked GetStatementsUsing({usedValName})");
                         break;
                         case "Parent":
                             int childStmt = Int16.Parse(condition.Item3);
                             int? parentStmt = pkb.GetParent(childStmt);
                             if (parentStmt != null) result.Add(parentStmt.ToString());
-                            Console.WriteLine($"invoked pkb.GetParent({childStmt})");           
+                            // Console.WriteLine($"invoked pkb.GetParent({childStmt})");           
                         break;
                         case "Parent*":
                             int childTStmt = Int16.Parse(condition.Item3);
@@ -189,7 +201,7 @@ public class QueryEvaluator
                             {
                                 result.Add(stmt.ToString());
                             }
-                            Console.WriteLine($"invoked pkb.GetAllParentStatements({childTStmt})");  
+                            // Console.WriteLine($"invoked pkb.GetAllParentStatements({childTStmt})");  
                         break;
                         case "Calls":
 
@@ -210,7 +222,7 @@ public class QueryEvaluator
                     {
                         result.Add(stmt.ToString());
                     }
-                    Console.WriteLine("invoked pkb.GetAllStatementsModyfingAnything()");
+                    // Console.WriteLine("invoked pkb.GetAllStatementsModyfingAnything()");
                 break;
                 case "Follows":
                 case "Follows*":
@@ -219,7 +231,7 @@ public class QueryEvaluator
                     {
                         result.Add(stmt.ToString());
                     }
-                    Console.WriteLine("invoked pkb.GetAllFollowsSources()");
+                    // Console.WriteLine("invoked pkb.GetAllFollowsSources()");
                 break;
                 case "Uses":
                     IEnumerable<int> usingAnythingStmts = pkb.GetAllStatementsUsingAnything();
@@ -227,7 +239,7 @@ public class QueryEvaluator
                     {
                         result.Add(stmt.ToString());
                     }
-                    Console.WriteLine("invoked pkb.GetAllStatementsUsingAnything()");
+                    // Console.WriteLine("invoked pkb.GetAllStatementsUsingAnything()");
                 break;
                 case "Parent":
                 case "Parent*":
@@ -236,7 +248,7 @@ public class QueryEvaluator
                     {
                         result.Add(parent.ToString());
                     }
-                    Console.WriteLine("invoked pkb.GetAllParentStatements()");
+                    // Console.WriteLine("invoked pkb.GetAllParentStatements()");
                 break;
                 case "Calls":
 //TODO
@@ -264,7 +276,7 @@ public class QueryEvaluator
                             {
                                 result.Add(variable);
                             }
-                            Console.WriteLine($"invoked GetModifiedVariables({modyfyingStmtNumber})");
+                            // Console.WriteLine($"invoked GetModifiedVariables({modyfyingStmtNumber})");
                         break;
                         case "Follows":
                             int followingStatement = Int16.Parse(condition.Item3);
@@ -273,7 +285,7 @@ public class QueryEvaluator
                             {
                                 result.Add(followedStatement.ToString());
                             }
-                            Console.WriteLine($"invoked pkb.GetFollowedBy({followingStatement})");
+                            // Console.WriteLine($"invoked pkb.GetFollowedBy({followingStatement})");
                         break;
                         case "Follows*":
                             int followingTStatement = Int16.Parse(condition.Item3);
@@ -282,7 +294,7 @@ public class QueryEvaluator
                             {
                                 result.Add(stmt.ToString());
                             }
-                            Console.WriteLine($"invoked pkb.GetAllStatementsLeadingTo({followingTStatement})");
+                            // Console.WriteLine($"invoked pkb.GetAllStatementsLeadingTo({followingTStatement})");
                         break;
                         case "Uses":
                             int usingStmtNumber = Int16.Parse(condition.Item3);
@@ -291,7 +303,7 @@ public class QueryEvaluator
                             {
                                 result.Add(variable);
                             }
-                            Console.WriteLine($"invoked GetUsedVariables({usingStmtNumber})");
+                            // Console.WriteLine($"invoked GetUsedVariables({usingStmtNumber})");
                         break;
                         case "Parent":
                             int parentStmt = Int16.Parse(condition.Item3);
@@ -300,7 +312,7 @@ public class QueryEvaluator
                             {
                                 result.Add(stmt.ToString());
                             }
-                            Console.WriteLine($"invoked pkb.GetChildren({parentStmt})");
+                            // Console.WriteLine($"invoked pkb.GetChildren({parentStmt})");
                         break;
                         case "Parent*":
                             int parentTStmt = Int16.Parse(condition.Item3);
@@ -309,7 +321,7 @@ public class QueryEvaluator
                             {
                                 result.Add(stmt.ToString());
                             }
-                            Console.WriteLine($"invoked pkb.GetAllNestedStatements({parentTStmt})");
+                            // Console.WriteLine($"invoked pkb.GetAllNestedStatements({parentTStmt})");
                         break;
                         case "Calls":
 //TODO
@@ -330,7 +342,7 @@ public class QueryEvaluator
                         {
                             result.Add(variable);
                         }
-                        Console.WriteLine("invoked pkb.GetAllModifiedVariables()");
+                        // Console.WriteLine("invoked pkb.GetAllModifiedVariables()");
                     break;
                     case "Follows":
                     case "Follows*":
@@ -339,7 +351,7 @@ public class QueryEvaluator
                         {
                             result.Add(stmt.ToString());
                         }
-                        Console.WriteLine("invoked pkb.GetAllFollowsTargets()");
+                        // Console.WriteLine("invoked pkb.GetAllFollowsTargets()");
                     break;
                     case "Uses":
                         IEnumerable<string> allUsedVariables = pkb.GetAllUsedVariables();
@@ -347,7 +359,7 @@ public class QueryEvaluator
                         {
                             result.Add(variable);
                         }
-                        Console.WriteLine("invoked GetAllUsedVariables()");
+                        // Console.WriteLine("invoked GetAllUsedVariables()");
                     break;
                     case "Parent":
                     case "Parent*":
@@ -356,7 +368,7 @@ public class QueryEvaluator
                         {
                             result.Add(child.ToString());
                         }
-                        Console.WriteLine("invoked pkb.GetAllChildStatements()");
+                        // Console.WriteLine("invoked pkb.GetAllChildStatements()");
                     break;
                     case "Calls":
                         //TODO

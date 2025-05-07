@@ -41,11 +41,11 @@ public class QueryPreprocessor
             if (Match(QueryKeywordType.End))
             {
                 eof = true;
-                //Console.WriteLine("Parsed eof");
+                Console.WriteLine("Parsed eof");
             }
             else
             {
-                //Console.WriteLine($"Parsed other: {CurrentQueryKeyword.Value}");
+                Console.WriteLine($"Parsed other: {CurrentQueryKeyword.Value}");
                 Advance();
             }
         }
@@ -113,37 +113,41 @@ public class QueryPreprocessor
         QueryTree withNode = new QueryTree("with", "with");
         //Console.WriteLine($"parsed: {CurrentQueryKeyword.Value}");
         Advance();
-        if (Match(QueryKeywordType.Identifier))
-        {
-            Synonym? synonym = GetDeclaredSynonym(CurrentQueryKeyword.Value);
-            if (synonym != null) 
+        do {
+            if (Match(QueryKeywordType.And)) Advance();
+            if (Match(QueryKeywordType.Identifier))
             {
-                //Console.WriteLine($"Parsed synonym identifier: {CurrentQueryKeyword.Value}");
-                withNode.AddNode(new QueryTree(synonym.Value.Name, "synonym"));
-                Advance();
-                if (Match(QueryKeywordType.Attribute))
+                Synonym? synonym = GetDeclaredSynonym(CurrentQueryKeyword.Value);
+                if (synonym != null) 
                 {
-                    withNode.AddNode(new QueryTree(CurrentQueryKeyword.Value, "attr"));
+                    //Console.WriteLine($"Parsed synonym identifier: {CurrentQueryKeyword.Value}");
+                    withNode.AddNode(new QueryTree(synonym.Value.Name, "synonym"));
+                    Advance();
+                    if (Match(QueryKeywordType.Attribute))
+                    {
+                        withNode.AddNode(new QueryTree(CurrentQueryKeyword.Value, "attr"));
+                        Advance();
+                    }
+                }
+                if (Match(QueryKeywordType.Equals))
+                {
+                    //Console.WriteLine($"Parsed equation: {CurrentQueryKeyword.Value}");
+                    Advance();
+                }
+                if (Match(QueryKeywordType.String) || Match(QueryKeywordType.Number) || Match(QueryKeywordType.Identifier)) {
+                    withNode.AddNode(new QueryTree(CurrentQueryKeyword.Value, "comparable"));
+                    if (Match(QueryKeywordType.Identifier)) Advance();
                     Advance();
                 }
             }
-            if (Match(QueryKeywordType.Equals))
-            {
-                //Console.WriteLine($"Parsed equation: {CurrentQueryKeyword.Value}");
-                Advance();
-            }
-            if (Match(QueryKeywordType.String) || Match(QueryKeywordType.Number)) {
-                withNode.AddNode(new QueryTree(CurrentQueryKeyword.Value, "comparable"));
-                Advance();
-            }
-
         }
-        //sprawdzenie
-        //Console.WriteLine($"node: {withNode.ToString()}");
-        foreach (var node in withNode.Children)
-        {
-            //Console.WriteLine($"node: {node.ToString()}");
-        }
+        while (Match(QueryKeywordType.And));
+        // sprawdzenie
+        // Console.WriteLine($"node: {withNode.ToString()}");
+        // foreach (var node in withNode.Children)
+        // {
+        //     Console.WriteLine($"node: {node.ToString()}");
+        // }
 
         return withNode;
     }
@@ -186,15 +190,25 @@ public class QueryPreprocessor
         QueryTree suchThatNode = new QueryTree("suchthat", "suchthat");
         Advance();
         //Console.WriteLine($"parsed suchthat: {CurrentQueryKeyword.Value}");
-        suchThatNode.AddNode(ParseRelation());
+        do
+        {
+            Console.WriteLine("relations loop");
+            if(Match(QueryKeywordType.And))
+            {
+                Advance();
+            }
+            suchThatNode.AddNode(ParseRelation());
+        }
+        while (Match(QueryKeywordType.And));
+
         //sprawdzenie
-        //Console.WriteLine($"QueryTree node: {suchThatNode.ToString()}");
+        Console.WriteLine($"QueryTree node: {suchThatNode.ToString()}");
         foreach (var symbol in suchThatNode.Children)
         {
-            //Console.WriteLine($"QueryTree node: {symbol.ToString()}");
+            Console.WriteLine($"QueryTree node: {symbol.ToString()}");
             foreach (var arg in symbol.Children)
             {
-                //Console.WriteLine($"{symbol.Name} node child: {arg.ToString()}");
+                Console.WriteLine($"{symbol.Name} node child: {arg.ToString()}");
             }
         }
         return suchThatNode;
@@ -255,20 +269,6 @@ public class QueryPreprocessor
         } 
     }
 
-    // private void InsertSynonymsOfAType(SynonymType type)
-    // {
-    //     bool atLeastOneSynonym = false;
-    //     while (Match(QueryKeywordType.Identifier))
-    //     {
-    //         atLeastOneSynonym = true;
-    //         Console.WriteLine($"New identifier: {CurrentQueryKeyword.Value} {type}");
-    //         _declaredSynonyms.Add(new Synonym(type, CurrentQueryKeyword.Value));
-    //         Advance();
-    //         if (Match(QueryKeywordType.Comma)) Advance();
-    //     } 
-    //     if (!atLeastOneSynonym) throw new SynonymException("Expected synonym declaration.");
-    // }
-
     private bool Match(params QueryKeywordType[] types)
     {
         foreach (var type in types)
@@ -296,7 +296,7 @@ public class QueryPreprocessor
         return null;
     }
 
-        private void ExpectDesignEntity()
+    private void ExpectDesignEntity()
     {
         if (!Match(
             QueryKeywordType.Statement,

@@ -1,23 +1,25 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq.Expressions;
 using System.Security.Cryptography;
 using System.Text;
 using Atsi.Structures.PKB.Explorer;
+using Atsi.Structures.SIMPLE;
 using Microsoft.Win32;
 
 namespace IDE.PQLParser;
 
 public class QueryEvaluator
 {
-    private String output;
+    private HashSet<String> output;
     private Tuple<String, String> select; //name, nodeType
     private List<Tuple<String, String, String>> with; //synonym, attr, comparable
     private readonly IPKBQuery pkb;
 
     public QueryEvaluator() 
     {
-        output = "";
+        output = [];
         select = Tuple.Create("","");
         with = [];
         pkb = new PKBQueryService();
@@ -25,21 +27,22 @@ public class QueryEvaluator
 
     public String EvaluateQuery(QueryTree tree)
     {
-        output = "";
+        output = [];
         select = Tuple.Create("","");
         with = [];
         bool isSuchThatPresent = false;
-        //Console.WriteLine("evaluation__________________");
+        bool isWithPresent = false;
 
         foreach (var child in tree.Children)
         {
             if (child.NodeType == "select") // na razie założenie jednego synonimu w select
             {
                 select = Tuple.Create(child.Children[0].Name, child.Children[0].NodeType);
-                //Console.WriteLine("selects: " + select.ToString());
+                Console.WriteLine("selects: " + select.ToString());
             }
             if (child.NodeType == "with")
             {
+                isWithPresent = true;
                 List<String> condition = [];
                 foreach (var arg in child.Children)
                 {
@@ -47,21 +50,21 @@ public class QueryEvaluator
                     if (condition.Count >= 3)
                     {
                         with.Add(Tuple.Create(condition[0], condition[1], condition[2]));
+                        condition.Clear();
                     }
                 }
                 foreach (var w in with)
                 {
-                    //Console.WriteLine("with: " + w.ToString());
+                    Console.WriteLine("with: " + w.ToString());
                 }
             }
-            
         }
         foreach (var child in tree.Children)
         {
-            isSuchThatPresent = true;
             //Console.WriteLine("tree node: " + child.ToString());
             if (child.NodeType == "suchthat")
             {
+                isSuchThatPresent = true;
                 foreach (var relation in child.Children)
                 {
                     var arg1 = relation.Children[0];
@@ -70,23 +73,33 @@ public class QueryEvaluator
                     {
                         case "Modifies":
                             //Console.WriteLine($"Evaluate Modifies ({arg1.ToString()},{arg2.ToString()})");
-                            output += EvaluateRelation("Modifies", arg1, arg2);
+                            HashSet<String> partialOutput = EvaluateRelation("Modifies", arg1, arg2);
+                            if (partialOutput.Count == 0) return "";
+                            if (output.Count == 0) output = partialOutput; else output.Intersect(partialOutput);
                         break;
                         case "Follows":
                             //Console.WriteLine($"Evaluate Follows ({arg1.ToString()},{arg2.ToString()})");
-                            output += EvaluateRelation("Follows", arg1, arg2);
+                            partialOutput = EvaluateRelation("Follows", arg1, arg2);
+                            if (partialOutput.Count == 0) return "";
+                            if (output.Count == 0) output = partialOutput; else output.Intersect(partialOutput);
                         break;
                         case "Follows*":
                             //Console.WriteLine($"Evaluate Follows* ({arg1.ToString()},{arg2.ToString()})");
-                            output += EvaluateRelation("Follows*", arg1, arg2);    
+                            partialOutput = EvaluateRelation("Follows*", arg1, arg2);
+                            if (partialOutput.Count == 0) return "";
+                            if (output.Count == 0) output = partialOutput; else output.Intersect(partialOutput);
                         break;
                         case "Uses":
                             //Console.WriteLine($"Evaluate Uses ({arg1.ToString()},{arg2.ToString()})");
-                            output += EvaluateRelation("Uses", arg1, arg2);
+                            partialOutput = EvaluateRelation("Uses", arg1, arg2);
+                            if (partialOutput.Count == 0) return "";
+                            if (output.Count == 0) output = partialOutput; else output.Intersect(partialOutput);
                         break;
                         case "Parent":
                             //Console.WriteLine($"Evaluate Parent ({arg1.ToString()},{arg2.ToString()})");
-                            output += EvaluateRelation("Parent", arg1, arg2);
+                            partialOutput = EvaluateRelation("Parent", arg1, arg2);
+                            if (partialOutput.Count == 0) return "";
+                            if (output.Count == 0) output = partialOutput; else output.Intersect(partialOutput);
                         break;
                     }
                 }
@@ -95,15 +108,30 @@ public class QueryEvaluator
 
         if (!isSuchThatPresent)
         {
-            //TODO
+            EvaluateSelectWithoutSuchThat();
+        }
+        if (isWithPresent)
+        {
+            EvaluateWithStatementsOnSelect(tree);
         }
 
-        return output;
+        return buildStringResponse(output);
     }
 
-    private string EvaluateRelation(String relation, QueryTree arg1, QueryTree arg2)
+    private void EvaluateSelectWithoutSuchThat()
     {
-        String result = "";
+        if (select.Item2 == "Procedure")
+        {
+            IEnumerable<String> allProcedures = pkb.GetAllProcedureNames();
+            foreach (var procedure in allProcedures)
+            {
+                output.Add(procedure);
+            }
+        }
+    }
+    private HashSet<string> EvaluateRelation(String relation, QueryTree arg1, QueryTree arg2)
+    {
+        HashSet<String> result = [];
         bool isNotConditioned = true;
         if (select.Item1 == arg1.Name)
         {
@@ -120,14 +148,14 @@ public class QueryEvaluator
                             IEnumerable<int> modifyingStatements = pkb.GetStatementsModifying(modifiedValName);
                             foreach (var line in modifyingStatements)
                             {
-                                result += line.ToString() + ",";
+                                result.Add(line.ToString());
                             }
                             Console.WriteLine($"invoked GetStatementsModyfing({modifiedValName})");
                         break;
                         case "Follows":
                             int followedStmt = Int16.Parse(condition.Item3);
                             int? followingStatement = pkb.GetFollows(followedStmt);
-                            if (followingStatement != null) result += followingStatement;
+                            if (followingStatement != null) result.Add(followingStatement.ToString());
                             Console.WriteLine($"invoked pkb.GetFollows({followedStmt})");
                         break;
                         case "Follows*":
@@ -135,7 +163,7 @@ public class QueryEvaluator
                             IEnumerable<int> followingStatements = pkb.GetAllFollowingStatements(followedTStmt);
                             foreach (var stmt in followingStatements)
                             {
-                                result += stmt.ToString() + ",";
+                                result.Add(stmt.ToString());
                             }
                             Console.WriteLine($"invoked pkb.GetAllFollowingStatements({followedTStmt})");
                         break;
@@ -144,14 +172,14 @@ public class QueryEvaluator
                             IEnumerable<int> usingStatements = pkb.GetStatementsUsing(usedValName);
                             foreach (var stmt in usingStatements)
                             {
-                                result += stmt.ToString() + ",";
+                                result.Add(stmt.ToString());
                             }
                             Console.WriteLine($"invoked GetStatementsUsing({usedValName})");
                         break;
                         case "Parent":
                             int childStmt = Int16.Parse(condition.Item3);
                             int? parentStmt = pkb.GetParent(childStmt);
-                            if (parentStmt != null) result += parentStmt;
+                            if (parentStmt != null) result.Add(parentStmt.ToString());
                             Console.WriteLine($"invoked pkb.GetParent({childStmt})");           
                         break;
                         case "Parent*":
@@ -159,9 +187,15 @@ public class QueryEvaluator
                             IEnumerable<int> parentStmts = pkb.GetAllParentStatements(childTStmt);
                             foreach (var stmt in parentStmts)
                             {
-                                result += stmt.ToString() + ",";
+                                result.Add(stmt.ToString());
                             }
                             Console.WriteLine($"invoked pkb.GetAllParentStatements({childTStmt})");  
+                        break;
+                        case "Calls":
+
+                        break;
+                        case "Calls*":
+
                         break;
                     }
                 }
@@ -174,7 +208,7 @@ public class QueryEvaluator
                     IEnumerable<int> allModyfyingStmts = pkb.GetAllStatementsModifyingAnything();
                     foreach (var stmt in allModyfyingStmts)
                     {
-                        result += stmt.ToString() + ",";
+                        result.Add(stmt.ToString());
                     }
                     Console.WriteLine("invoked pkb.GetAllStatementsModyfingAnything()");
                 break;
@@ -183,7 +217,7 @@ public class QueryEvaluator
                     IEnumerable<int> followedStatements = pkb.GetAllFollowsSources();
                     foreach (var stmt in followedStatements)
                     {
-                        result += stmt.ToString() + ",";
+                        result.Add(stmt.ToString());
                     }
                     Console.WriteLine("invoked pkb.GetAllFollowsSources()");
                 break;
@@ -191,7 +225,7 @@ public class QueryEvaluator
                     IEnumerable<int> usingAnythingStmts = pkb.GetAllStatementsUsingAnything();
                     foreach (var stmt in usingAnythingStmts)
                     {
-                        result += stmt.ToString() + ",";
+                        result.Add(stmt.ToString());
                     }
                     Console.WriteLine("invoked pkb.GetAllStatementsUsingAnything()");
                 break;
@@ -200,9 +234,15 @@ public class QueryEvaluator
                     IEnumerable<int> allParents = pkb.GetAllParentStatements();
                     foreach (var parent in allParents)
                     {
-                        result += parent.ToString() + ",";
+                        result.Add(parent.ToString());
                     }
                     Console.WriteLine("invoked pkb.GetAllParentStatements()");
+                break;
+                case "Calls":
+//TODO
+                break;
+                case "Calls*":
+//TODO
                 break;
                 }
             }
@@ -222,7 +262,7 @@ public class QueryEvaluator
                             IEnumerable<String> modifiedVariables = pkb.GetModifiedVariables(modyfyingStmtNumber);
                             foreach (var variable in modifiedVariables)
                             {
-                                result += variable + ",";
+                                result.Add(variable);
                             }
                             Console.WriteLine($"invoked GetModifiedVariables({modyfyingStmtNumber})");
                         break;
@@ -231,7 +271,7 @@ public class QueryEvaluator
                             int? followedStatement = pkb.GetFollowedBy(followingStatement);
                             if (followedStatement != null)
                             {
-                                result += followedStatement;
+                                result.Add(followedStatement.ToString());
                             }
                             Console.WriteLine($"invoked pkb.GetFollowedBy({followingStatement})");
                         break;
@@ -240,7 +280,7 @@ public class QueryEvaluator
                             IEnumerable<int> followedTStaments = pkb.GetAllStatementsLeadingTo(followingTStatement);
                             foreach (var stmt in followedTStaments)
                             {
-                                result += stmt + ",";
+                                result.Add(stmt.ToString());
                             }
                             Console.WriteLine($"invoked pkb.GetAllStatementsLeadingTo({followingTStatement})");
                         break;
@@ -249,7 +289,7 @@ public class QueryEvaluator
                             IEnumerable<String> usedVariables = pkb.GetUsedVariables(usingStmtNumber);
                             foreach (var variable in usedVariables)
                             {
-                                result += variable + ",";
+                                result.Add(variable);
                             }
                             Console.WriteLine($"invoked GetUsedVariables({usingStmtNumber})");
                         break;
@@ -258,7 +298,7 @@ public class QueryEvaluator
                             IEnumerable<int> childrenStmt = pkb.GetChildren(parentStmt);
                             foreach (var stmt in childrenStmt)
                             {
-                                result += stmt + ",";
+                                result.Add(stmt.ToString());
                             }
                             Console.WriteLine($"invoked pkb.GetChildren({parentStmt})");
                         break;
@@ -267,9 +307,15 @@ public class QueryEvaluator
                             IEnumerable<int> childStmts = pkb.GetAllNestedStatements(parentTStmt);
                             foreach (var stmt in childStmts)
                             {
-                                result += stmt + ",";
+                                result.Add(stmt.ToString());
                             }
                             Console.WriteLine($"invoked pkb.GetAllNestedStatements({parentTStmt})");
+                        break;
+                        case "Calls":
+//TODO
+                        break;
+                        case "Calls*":
+//TODO
                         break;
                     }
                 }
@@ -282,7 +328,7 @@ public class QueryEvaluator
                         IEnumerable<string> allModifiedVariables = pkb.GetAllModifiedVariables();
                         foreach (var variable in allModifiedVariables)
                         {
-                            result += variable + ",";
+                            result.Add(variable);
                         }
                         Console.WriteLine("invoked pkb.GetAllModifiedVariables()");
                     break;
@@ -291,7 +337,7 @@ public class QueryEvaluator
                         IEnumerable<int> followingStatements = pkb.GetAllFollowsTargets();
                         foreach (var stmt in followingStatements)
                         {
-                            result += stmt + ",";
+                            result.Add(stmt.ToString());
                         }
                         Console.WriteLine("invoked pkb.GetAllFollowsTargets()");
                     break;
@@ -299,7 +345,7 @@ public class QueryEvaluator
                         IEnumerable<string> allUsedVariables = pkb.GetAllUsedVariables();
                         foreach (var variable in allUsedVariables)
                         {
-                            result += variable + ",";
+                            result.Add(variable);
                         }
                         Console.WriteLine("invoked GetAllUsedVariables()");
                     break;
@@ -308,13 +354,47 @@ public class QueryEvaluator
                         IEnumerable<int> allChildren = pkb.GetAllChildStatements();
                         foreach (var child in allChildren)
                         {
-                            result += child + ",";
+                            result.Add(child.ToString());
                         }
                         Console.WriteLine("invoked pkb.GetAllChildStatements()");
+                    break;
+                    case "Calls":
+                        //TODO
+                    break;
+                    case "Calls*":
+                        //TODO
                     break;
                 }
             }
         }
         return result;
+    }
+    private void EvaluateWithStatementsOnSelect(QueryTree tree)
+    {
+        foreach (var child in tree.Children) 
+        {
+            if (child.NodeType == "with")
+            {
+                var conditionsTable = child.Children;
+                for (var arg = 0; arg < conditionsTable.Count; arg += 3)
+                {
+                    if (select.Item1 == conditionsTable[arg].Name) // z założeniem ze jest tylko jeden select
+                    {
+                        output.RemoveWhere(s => s != conditionsTable[arg + 2].Name);
+                    }
+                }
+            }
+        }
+    }
+
+    private String buildStringResponse(HashSet<String> outputSet)
+    {
+        if (outputSet.Count == 0) return "";
+        String stringOutput = outputSet.First();
+        foreach (var element in output.Skip(1))
+        {
+            stringOutput += ", " + element;
+        }
+        return stringOutput;
     }
 }

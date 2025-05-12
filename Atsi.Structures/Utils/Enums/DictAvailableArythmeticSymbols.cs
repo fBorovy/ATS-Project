@@ -4,7 +4,8 @@
     {
         Plus = 1,
         Minus = 2,
-        Times = 3
+        Times = 3,
+        Divide = 4,
     }
 
     public static class OperatorExtensions
@@ -16,7 +17,8 @@
                 DictAvailableArythmeticSymbols.Plus => "+",
                 DictAvailableArythmeticSymbols.Minus => "-",
                 DictAvailableArythmeticSymbols.Times => "*",
-                _ => throw new ArgumentOutOfRangeException(nameof(op), op, null)
+                DictAvailableArythmeticSymbols.Divide => "/",
+                _ => throw new ArgumentOutOfRangeException(nameof(op), op, null),
             };
         }
     }

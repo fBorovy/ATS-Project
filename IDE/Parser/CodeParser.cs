@@ -11,7 +11,8 @@ public class CodeParser
 {
     private string path;
     private List<string> words;
-    private IEnumerator<string> iterator;
+    private int iterator;
+    private string currentProcedure;
 
     public CodeParser(string path)
     {
@@ -26,7 +27,6 @@ public class CodeParser
             .Split(content, @"(?<=\S)(?=\s)|(?<=\s)(?=\S)|(?<=;)|(?=;)")
             .Where(w => !string.IsNullOrWhiteSpace(w))
             .ToList();
-        this.iterator = words.GetEnumerator();
         return this.words.Any();
     }
 
@@ -34,6 +34,8 @@ public class CodeParser
     {
         try
         {
+            this.iterator = 0;
+            this.currentProcedure = string.Empty;
             this.Program();
         }
         catch (Exception e)
@@ -46,48 +48,48 @@ public class CodeParser
 
     private void Match(string token)
     {
-        if (this.iterator.Current == token) this.iterator.MoveNext();
+        if (this.words[this.iterator] == token) this.iterator++;
         else throw new Exception("Expected token mismatch exception.");
     }
 
     private string GetName()
     {
-        var name = this.iterator.Current;
-        this.iterator.MoveNext();
+        var name = this.words[this.iterator];
+        this.iterator++;
         return name;
     }
 
     private void Program()
     {
-        this.iterator.Reset();
-        this.iterator.MoveNext();
-        this.Procedure();
+        while (this.iterator < this.words.Count)
+            this.Procedure();
     }
 
     private void Procedure()
     {
         this.Match("procedure");
-        var procedure_name = this.GetName();
+        this.currentProcedure = this.GetName();
         this.Match("{");
-        var statements = this.StmtList(new List<Statement>());
+        var statements = new List<Statement>();
+        while (this.words[this.iterator] != "}")
+        {
+            statements.Add(this.Stmt());
+        }
         this.Match("}");
-        var procedure = PKBExtensions.CreateProdecure(procedure_name, statements);
+        var procedure = PKBExtensions.CreateProcedure(this.currentProcedure, statements);
         PKBExtensions.AddProcedureToPKBStorage(procedure);
-    }
-
-    private List<Statement> StmtList(List<Statement> statements)
-    {
-        statements.Add(this.Stmt());
-        if (iterator.Current == "}") return statements;
-        else return StmtList(statements);
     }
 
     private Statement Stmt()
     {
-        switch (this.iterator.Current)
+        switch(this.words[this.iterator])
         {
             case "while":
                 return this.While();
+            case "if":
+                return this.If();
+            case "call":
+                return this.Call();
             default:
                 return this.Assign();
         }
@@ -97,11 +99,47 @@ public class CodeParser
     {
         this.Match("while");
         var variable_name = this.GetName();
-        var while_statement = PKBExtensions.CreateWhileStatement(variable_name);
+        var while_statement = PKBExtensions.CreateWhileStatement(this.currentProcedure, variable_name);
         this.Match("{");
-        var statements = this.StmtList(new List<Statement>());
+        var statements = new List<Statement>();
+        while (this.words[this.iterator] != "}")
+        {
+            statements.Add(this.Stmt());
+        }
         this.Match("}");
         return PKBExtensions.UpdateWhileStatement(while_statement, statements);
+    }
+
+    private IfStatement If()
+    {
+        this.Match("if");
+        var variable_name = this.GetName();
+        var if_statement = PKBExtensions.CreateIfStatement(this.currentProcedure, variable_name);
+        this.Match("then");
+        this.Match("{");
+        var then_statements = new List<Statement>();
+        while (this.words[this.iterator] != "}")
+        {
+            then_statements.Add(this.Stmt());
+        }
+        this.Match("}");
+        this.Match("else");
+        this.Match("{");
+        var else_statements = new List<Statement>();
+        while (this.words[this.iterator] != "}")
+        {
+            else_statements.Add(this.Stmt());
+        }
+        this.Match("}");
+        return PKBExtensions.UpdateIfStatement(if_statement, then_statements, else_statements);
+    }
+
+    private CallStatement Call()
+    {
+        this.Match("call");
+        var called_procedure_name = this.GetName();
+        this.Match(";");
+        return PKBExtensions.CreateCallStatement(this.currentProcedure, called_procedure_name);
     }
 
     private AssignStatement Assign()
@@ -109,39 +147,39 @@ public class CodeParser
         var variable_name = this.GetName();
         this.Match("=");
         var expression = this.Expr();
-        return PKBExtensions.CreateAssignStatement(variable_name, expression);
+        return PKBExtensions.CreateAssignStatement(this.currentProcedure, variable_name, expression);
     }
 
     private Expression Expr()
     {
         var left = this.GetName();
-        Expression leftExpr = ParseExpression(left);
-
-        switch (this.iterator.Current)
+        Expression left_expr = ParseExpression(left);
+        string symbol = this.words[this.iterator];
+        while (symbol != ";")
         {
-            case ";":
-                this.Match(";");
-                return leftExpr;
-            case "+":
-                this.Match("+");
-                string right = this.GetName();
-                Expression rightExpr = ParseExpression(right);
-                this.Match(";");
-                return PKBExtensions.CreateBinaryExpression(leftExpr, DictAvailableArythmeticSymbols.Plus, rightExpr);
-            default:
-                throw new Exception("Error parsing expression.");
+            this.Match(symbol);
+            string right = this.GetName();
+            var right_expr = ParseExpression(right);
+            DictAvailableArythmeticSymbols op = symbol switch
+            {
+                "+" => DictAvailableArythmeticSymbols.Plus,
+                "-" => DictAvailableArythmeticSymbols.Minus,
+                "*" => DictAvailableArythmeticSymbols.Times,
+                "/" => DictAvailableArythmeticSymbols.Divide,
+                _ => throw new Exception($"Unknown operator: {symbol}"),
+            };
+            left_expr = PKBExtensions.CreateBinaryExpression(left_expr, op, right_expr);
+            symbol = this.words[this.iterator];
         }
+        this.Match(";");
+        return left_expr;
     }
 
     private Expression ParseExpression(string expr)
     {
         if (int.TryParse(expr, out int result))
-        {
             return PKBExtensions.CreateConstExpression(result);
-        }
         else
-        {
             return PKBExtensions.CreateVariableExpression(expr);
-        }
     }
 }

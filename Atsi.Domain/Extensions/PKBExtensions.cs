@@ -33,18 +33,22 @@ namespace Atsi.Domain.Extensions
             return statement;
         }
 
-        public static IfStatement CreateIfStatement(string procedureName, string conditionalVariableName, List<Statement> thenStmts, List<Statement> elseStmts)
+        public static IfStatement CreateIfStatement(string procedureName, string conditionalVariableName)
         {
             return new IfStatement
             {
                 ProcedureName = procedureName,
                 ConditionalVariableName = conditionalVariableName,
-                ElseBodyStatements = elseStmts,
-                ThenBodyStatements = thenStmts,
                 StatementNumber = PKBStorage.GetNextStatementNumber()
             };
         }
 
+        public static IfStatement UpdateIfStatement(IfStatement statement, List<Statement> thenStmts, List<Statement> elseStmts)
+        {
+            statement.ThenBodyStatements = thenStmts;
+            statement.ElseBodyStatements = elseStmts;
+            return statement;
+        }
         public static CallStatement CreateCallStatement(string procedureName, string calledProcedureName)
         {
             return new CallStatement

@@ -147,6 +147,39 @@ namespace Atsi.Structures.PKB
         }
         public bool IsAffectsStar(int stmt1, int stmt2) =>
             AffectsStar.TryGetValue(stmt1, out var set) && set.Contains(stmt2);
+
+        // === Gettery ===
+
+        // Procedures
+        public IReadOnlyDictionary<string, Procedure> GetProcedures() => Procedures;
+
+        // Modifies
+        public IReadOnlyDictionary<string, HashSet<string>> GetProcedureModifies() => ProcedureModifies;
+        public IReadOnlyDictionary<int, HashSet<string>> GetStatementModifies() => StatementModifies;
+
+        // Uses
+        public IReadOnlyDictionary<string, HashSet<string>> GetProcedureUses() => ProcedureUses;
+        public IReadOnlyDictionary<int, HashSet<string>> GetStatementUses() => StatementUses;
+
+        // Calls
+        public IReadOnlyDictionary<string, HashSet<string>> GetCalls() => Calls;
+        public IReadOnlyDictionary<string, HashSet<string>> GetCallsStar() => CallsStar;
+
+        // Parent
+        public IReadOnlyDictionary<int, int> GetParent() => Parent;
+        public IReadOnlyDictionary<int, HashSet<int>> GetParentStar() => ParentStar;
+
+        // Follows
+        public IReadOnlyDictionary<int, int> GetFollows() => Follows;
+        public IReadOnlyDictionary<int, HashSet<int>> GetFollowsStar() => FollowsStar;
+
+        // Next
+        public IReadOnlyDictionary<int, HashSet<int>> GetNext() => Next;
+        public IReadOnlyDictionary<int, HashSet<int>> GetNextStar() => NextStar;
+
+        // Affects
+        public IReadOnlyDictionary<int, HashSet<int>> GetAffects() => Affects;
+        public IReadOnlyDictionary<int, HashSet<int>> GetAffectsStar() => AffectsStar;
     }
 
 }

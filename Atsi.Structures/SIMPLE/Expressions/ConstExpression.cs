@@ -1,13 +1,9 @@
 ﻿namespace Atsi.Structures.SIMPLE.Expressions
 {
-    public class ConstExpression : Expression
+    public class ConstExpression(int value) : Expression
     {
-        public int Value { get; }
+        public int Value { get; set; } = value;
 
-        public ConstExpression(int value) 
-        {
-            Value = value;
-        }
         public override HashSet<string> GetUsedVariables()
         {
             return [];

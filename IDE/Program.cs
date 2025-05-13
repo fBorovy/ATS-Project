@@ -19,7 +19,7 @@ internal class Program
         //CodeParser parser = new CodeParser(args[0]);
         //CodeParser parser = new CodeParser("C:\\Users\\A\\Source\\Repos\\ATS-Project\\IDE\\simple1.txt");
         
-        CodeParser parser = new CodeParser("C:\\Users\\Filip\\Documents\\studia\\atsi_project\\ATS-Project\\IDE\\simple1.txt");
+        CodeParser parser = new CodeParser("C:\\Users\\A\\Source\\Repos\\ATS-Project\\IDE\\SIMPLE.txt");
 
         if (!parser.ReadFile())
         {
@@ -33,7 +33,6 @@ internal class Program
             return;
         }
         else Console.WriteLine("READY");
-
 
         QueryParser queryParser = new QueryParser();
         var queryLines = File.ReadAllLines("C:\\Users\\Filip\\Documents\\studia\\atsi_project\\ATS-Project\\IDE\\test3_queries.txt");

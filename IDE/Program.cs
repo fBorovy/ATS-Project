@@ -10,16 +10,18 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        //if (args.Length != 1)
-        //{
-        //  Console.WriteLine($"Number of artguments should be 1. Is {args.Length}.");
-        //  return;
-        //}
+        if (args.Length != 1)
+        {
+            Console.WriteLine($"Number of artguments should be 1. Is {args.Length}.");
+            return;
+        }
 
-        //CodeParser parser = new CodeParser(args[0]);
-        // CodeParser parser = new CodeParser("C:\\Users\\A\\Source\\Repos\\ATS-Project\\IDE\\simple1.txt");
-        
-        CodeParser parser = new CodeParser("C:\\Users\\Filip\\Documents\\studia\\atsi_project\\ATS-Project\\IDE\\simple1.txt");
+        //CodeParser parser = new CodeParser("C:\\Users\\janof\\source\\repos\\fBorovy\\ATS-Project\\IDE\\SIMPLE.txt");
+
+        CodeParser parser = new CodeParser(args[0]);
+        //CodeParser parser = new CodeParser("C:\\Users\\A\\Source\\Repos\\ATS-Project\\IDE\\simple1.txt");
+
+        //CodeParser parser = new CodeParser("C:\\Users\\Filip\\Documents\\studia\\atsi_project\\ATS-Project\\IDE\\simple1.txt");
 
         if (!parser.ReadFile())
         {
@@ -34,8 +36,18 @@ internal class Program
         }
         else Console.WriteLine("READY");
 
-
         QueryParser queryParser = new QueryParser();
+        while(true)
+        {
+            var declarations = Console.ReadLine();
+            var query = Console.ReadLine();
+            var response = queryParser.ParseQuery(declarations + query);
+            var parsed_response = string.Join(",", response.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
+            Console.WriteLine(string.IsNullOrEmpty(parsed_response) ? "none" : parsed_response);
+        }
+
+        return;
+
         var queryLines = File.ReadAllLines("C:\\Users\\Filip\\Documents\\studia\\atsi_project\\ATS-Project\\IDE\\test2_queries.txt");
 
         for (int i = 0; i < queryLines.Length; i += 3)
@@ -50,7 +62,6 @@ internal class Program
   
             string actual = queryParser.ParseQuery(declarations + query);
 
-            Console.WriteLine(string.IsNullOrWhiteSpace(actual) ? "none" : actual.Trim());
             Console.WriteLine(new string('-', 40));
         }
     }

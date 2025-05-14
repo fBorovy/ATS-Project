@@ -256,8 +256,8 @@ procedure Clear {
     s = s - 1; } }
 
 procedure Show {
-  pink = difference;
-  green = pink + 1;
+  pink= difference;
+  green = pink+ 1;
   blue = green + pink; }
 
 procedure Enlarge {

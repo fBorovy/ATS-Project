@@ -25,7 +25,7 @@ public class CodeParser
         string? content = File.ReadAllText(this.path);
         if (content == null) return false;
         this.words = Regex
-            .Split(content, @"(?<=\S)(?=\s)|(?<=\s)(?=\S)|(?<=;)|(?=;)")
+            .Split(content, @"(?<=\S)(?=\s)|(?<=\s)(?=\S)|(?<=[+\-*/={};])|(?=[+\-*/={};])")
             .Where(w => !string.IsNullOrWhiteSpace(w))
             .ToList();
         return this.words.Any();
@@ -50,7 +50,7 @@ public class CodeParser
     private void Match(string token)
     {
         if (this.words[this.iterator] == token) this.iterator++;
-        else throw new Exception("Expected token mismatch exception.");
+        else throw new Exception($"Expected token mismatch exception. Expected {token}, received {this.words[this.iterator]}");
     }
 
     private string GetName()

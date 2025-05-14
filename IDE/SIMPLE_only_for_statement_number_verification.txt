@@ -1,0 +1,395 @@
+procedure Main {
+1.	call Init;
+2.	width = 1;
+3.	height = 0;
+4.	tmp = 0;
+5.	call Random;
+6.	while I {
+7.		x1 = width + incre + left;
+8.		x2 = x1 + incre + right;
+9.		y1 = height + incre * top;
+10.		y2 = y1 + incre * bottom;
+11.		area = width * height;
+12.		while j {
+13.			difference = I + j - 10;
+14.			if j then {
+15.				if k then {
+16.					while difference {
+17.						tmp = decrement * area;
+18.						call Enlarge;
+19.						radius = x1 * 3 + difference;
+20.						difference = difference - 1;
+21.						x2 = j + k - I;
+22.						call Shrink;
+23.						if tmp then {
+24.							y1 = 0;
+25.							y2 = 0; }
+						else {
+26.							while y1 {
+27.								y1 = y1 - 1;
+28.								y2 = tmp - 1; } }
+29.						while area {
+30.							width = x1 * x2 + incre * left;
+31.							height = right - y1 - incre * y2;
+32.							area = width * height;
+33.							call Transform; }
+34.						if area then {
+35.							radius = difference + 3 - (2 * incre);
+36.							x3 = radius + x1;
+37.							difference = x4 + x1 - incre; }
+						else {
+38.							if I then {
+39.								I = I - 1;
+40.								volume = height * 1 - (3 * width);
+41.								call Shear;
+42.								call Move; }
+							else {
+43.								distance = length + x1; 
+44.								call Random; } }
+45.						call Shift;
+46.						length = height * x2 - x1;
+47.						while length {
+48.							tmp = tmp - 1;
+49.							width = x2 + x1 - left;
+50.							length = y2 - y1 + tmp;
+51.							if length then {
+52.								length = length * 0; }
+							else {
+53.								length = 0; } }
+54.						call Random;
+55.						if volume then {
+56.							volume = x4 + x3 - x5;
+57.							x5 = 16 * (tmp + 83); }
+						else {
+58.							x8 = volume * 11 + volume - x9 + volume; }
+59.						while top {
+60.							tmp = 0;
+61.							height = tmp - k + I + y2;
+62.							call Enlarge; } }
+63.					call Move;
+64.					x5 = x1 + y2 - 3;
+65.					incre = I + k - decrement;
+66.					if x6 then {
+67.						x1 = top + bottom - difference;
+68.						x6 = x5 + 32;
+69.						while I {
+70.							I = I - 1;
+71.							x6 = x2 + x1 - x3 * I;
+72.							if j then {
+73.								j = j - 1; }
+							else {
+74.								x2 = x1 + radius - tmp; }
+75.							I = I - 1; } }
+					else {
+76.						if k then {
+77.							top = width - I - j; }
+						else {
+78.							call Transform; } } }
+				else {
+79.					while difference {
+80.						if incre then {
+81.							tmp = 0;
+82.							width = x2 - x1;
+83.							while width {
+84.								call Shrink;
+85.								width = width - 2 + x1;
+86.								if height then {
+87.									call Draw; }
+								else {
+88.									height = 0; } } }
+						else {
+89.							while top {
+90.								tmp = 0;
+91.								height = tmp - k + I + y2;
+92.								call Enlarge; } } } } }
+			else {
+93.				x7 = x8 + y1 - incre;
+94.				y7 = 0; }
+95.			while area {
+96.				tmp = 1;
+97.				if tmp then {
+98.					I = 0; }
+				else {
+99.					j = 0; }
+100.				j = 0; }
+101.			while radius {
+102.				circumference = 1 * radius + tmp;
+103.				while tmp {
+104.					circumference = I - (k + j * decrement); } }
+105.			while x {
+106.				x = x + 1;
+107.				if left then {
+108.					call Transform;
+109.					if right then {
+110.						incre = incre - 1;
+111.						b = 0;
+112.						c = area + length * width + incre; }
+					else {
+113.						while c {
+114.							call Shift;
+115.							c = c - 1; } 
+116.						x = x + 1; } }
+				else {
+117.					call Translate; } } }
+118.	call Draw; }
+119.	call Init; }
+
+procedure Init {
+120.	x1 = 0;
+121.	x2 = 0;
+122.	y1 = 0;
+123.	y2 = 0;
+124.	left = 1;
+125.	right = 1;
+126.	top = 1;
+127.	bottom = 1;
+128.	incre = 10;
+129.	decrement = 5; }
+
+procedure Random {
+130.	left = incre * bottom;
+131.	right = decrement * top; }
+
+procedure Transform {
+132.	weight = 1;
+133.	tmp = 100;
+134.	incre = incre * weight;
+135.	decrement = top - bottom + (right - left) * weight;
+136.	while tmp {
+137.		tmp = incre + height * weight;
+138.		x1 = x2 + tmp;
+139.		x2 = tmp * weight - tmp;
+140.		if x2 then {
+141.			weight = y2 - y1; }
+		else {
+142.			weight = x2 - x1; }
+143.		while tmp {
+144.			if weight then {
+145.				y2 = y2 + incre;
+146.				y1 = y1 - decrement; }
+			else {
+147.				y1 = x2 * tmp;
+148.				y2 = x1 * (height - bottom); } }
+149.		tmp = 0; } }
+
+procedure Shift {
+150.	top = x2 - x1 * incre;
+151.	bottom = y2 * y1 - decrement;
+152.	x3 = x1 + x2 * y1 + y2 * left + right;
+153.	x4 = x1 * x2 + y1 * y2 + left - right;
+154.	x5 = x1 + x2 + y1 + y2 * (left - right);
+155.	x6 = x1 * x2 * y1 - y2 + left * right;
+156.	x7 = x1 * x2 * y1 * y2 * left * right;
+157.	x8 = (x1 + x2 * y1) * (y2 * left - right);
+158.	x9 = x1 + x2 * y1 * y2 * left - right; }
+
+procedure Shear {
+159.	if x1 then {
+160.		if x2 then {
+161.			y1 = y2 + incre;
+162.			incre = x2 - x1;
+163.			if y1 then {
+164.				x1 = 0; }
+			else {
+165.				x1 = decrement + x1; }
+166.			if y2 then {
+167.				x2 = incre * 2; }
+			else {
+168.				x2 = y2 - y1; }
+169.			decrement = (x1 + x2) * (y1 + y2);
+170.			if decrement then {
+171.				factor = 0; }
+			else {
+172.				factor = 1; }
+173.			if factor then {
+174.				x1 = 0; }
+			else {
+175.				x2 = 0; } }
+		else {
+176.			if y1 then {
+177.				y1 = 0; }
+			else {
+178.				y1 = y1 - factor; } } }
+	else {
+179.		y2 = 0; } }
+
+procedure Move {
+180.	while tmp {
+181.		while factor {
+182.			x1 = x2 + incre * factor;
+183.			factor = factor - 1;
+184.			while I {
+185.				I = x1 + decrement; }
+186.			x2 = tmp * factor - (height * width);
+187.			while I {
+188.				tmp = factor;
+189.				factor = 0; } } } }
+
+procedure Draw {
+190.	call Clear;
+191.	while pct {
+192.		if mtoggle then {
+193.			dx = lengx + 1 - cover * pct;
+194.			dy = dx * marking - median; }
+		else {
+195.			call Random; }
+196.		while asterick {
+197.			range = dx - dy + range;
+198.			if range then {
+199.				peak = marking - y2 * mean;
+200.				marking = marking - 1; }
+			else {
+201.				pct = 0;
+202.				trim = 0; }
+203.			range = range + 1; }
+204.			if pct then {
+205.				pct = 0; }
+			else {
+206.				asterick = x1 * x1 + y1 * x2; }
+207.		pct = pct - 1; }
+208.	call Show; }
+
+procedure Clear {
+209.	while s {
+210.		p1 = 0;
+211.		p2 = 0;
+212.		s = s - 1; } }
+
+procedure Show {
+213.	pink = difference;
+214.	green = pink + 1;
+215.	blue = green + pink; }
+
+procedure Enlarge {
+216.	if pixel then {
+217.		while dot {
+218.			while notmove {
+219.				line = edge + depth;
+220.				semi = edge + increase - temporary + depth;
+221.				call Fill;
+222.				call Fill;
+223.				edge = dot + 1 - decrease * temporary;
+224.				if edge then {
+225.					edge = 1 + (8 - temporary); }
+				else {
+226.					temporary = edge; }
+227.				call Show;
+228.				semi = temporary + edge;
+229.				depth = semi * pixel + 1 - 3 * temporary;
+230.				if notmove then {
+231.					call Fill; }
+				else {
+232.					call Fill; }
+233.				notmove = semi * half; }
+234.			while dot {
+235.				call Fill; }
+236.			pixel = temporary * temporary; } }
+	else {
+237.		if pixel then {
+238.			total = pixel * 1000; }
+		else {
+239.			while notdone {
+240.				total = pixel + notdone; } } } }
+
+procedure Fill {
+241.	if temporary then {
+242.		depth = depth + 1; }
+	else {
+243.		semi = depth - 1; } }
+
+procedure Shrink {
+244.	factor = incre - decrement;
+245.	x1 = x1 - 10;
+246.	x2 = x2 - 10;
+247.	y1 = y1 - (10 * factor);
+248.	y2 = y2 - (20 * factor);
+249.	factor = y2 - y1 + x2 - x1;
+250.	if factor then {
+251.		while I {
+252.			x1 = x1 - I;
+253.			I = I - 1; }
+254.		x2 = I * x1 - factor; }
+	else {
+255.		y2 = j * factor + incre;
+256.		while j {
+257.			j = j - 1;
+258.			y1 = j * factor - decrement; } }
+259.	call Draw;
+260.	factor = factor * 0; }
+
+procedure Translate {
+261.	factor = 0;
+262.	call Rotate; }
+
+procedure Rotate {
+263.	triangle = half * base * height;
+264.	while edge {
+265.		while line {
+266.			if edge then {
+267.				if pixel then {
+268.					semi = temporary - depth + triangle; }
+				else {
+269.					dot = dot + degrees; }
+270.				dx = dx + dy - triangle;
+271.				base = dx - dy + dx - dy;
+272.				height = base * dx * dy;
+273.				edge = height + line * 2; }
+			else {
+274.				call Random; }
+275.			dx = edge + triangle;
+276.			triangle = triange + edge + dx; }
+277.		call Show; } }
+
+procedure Scale {
+278.	if wrong then {
+279.		while wcounter {
+280.			location = unknown - wcounter; } }
+	else {
+281.		while wcounter {
+282.			location = correct - wcounter; } } }
+
+procedure PP {
+283.	cs1 = 1;
+284.	cs2 = 2;
+285.	cs3 = 3;
+286.	call QQ;
+287.	call TT; }
+
+procedure QQ {
+288.	cs1 = cs2 * cs3; }
+
+procedure RR {
+289.	while cs4 {
+290.		cs5 = 0;
+291.		if cs1 then {
+292.			call QQ; }
+		else {
+293.			call PP; } } }
+
+procedure SS {
+294.	call XX; }
+
+procedure TT {
+295.	call QQ;
+296.	call UU;
+297.	call SS; }
+
+procedure UU {
+298.	cs5 = 2;
+299.	cs6 = 3;
+300.	cs9 = 5;
+301.	while cs9 {
+302.		cs5 = cs5 - 1;
+303.		if cs5 then {
+304.			cs6 = cs5 + 1; }
+		else {
+305.			cs8 = cs6 + cs5; }
+306.		cs6 = cs6 + (cs5 + cs9);
+307.		call XX;
+308.		cs9 = cs6 - 1; } }
+
+procedure XX {
+309.	if cs5 then {
+310.		cs6 = cs5 + 1; }
+	else {
+311.		cs5 = cs6 + cs5; } }

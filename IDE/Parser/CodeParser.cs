@@ -14,7 +14,6 @@ public class CodeParser
     private List<string> words;
     private int iterator;
     private string currentProcedure;
-    private bool firstProcedure;
 
     public CodeParser(string path)
     {
@@ -37,7 +36,6 @@ public class CodeParser
         try
         {
             this.iterator = 0;
-            this.firstProcedure = true;
             this.currentProcedure = string.Empty;
             this.Program();
         }
@@ -65,19 +63,7 @@ public class CodeParser
     private void Program()
     {
         while (this.iterator < this.words.Count)
-        {
-            if (this.firstProcedure)
-            {
-                PKBStorage.GetNextStatementNumber();
-                this.firstProcedure = false;
-            }
-            else
-            {
-                PKBStorage.GetNextStatementNumber();
-                PKBStorage.GetNextStatementNumber();
-            }
             this.Procedure();
-        }
     }
 
     private void Procedure()
@@ -140,7 +126,6 @@ public class CodeParser
         this.Match("}");
         this.Match("else");
         this.Match("{");
-        PKBStorage.GetNextStatementNumber();
         var else_statements = new List<Statement>();
         while (this.words[this.iterator] != "}")
         {

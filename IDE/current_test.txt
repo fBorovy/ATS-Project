@@ -1,0 +1,12 @@
+call c;
+Select c such that Follows (91, c)
+92
+call c;
+Select c such that Follows (c, 78)
+none
+call c;
+Select c such that Follows* (34, c)
+45,54
+call c;
+Select c such that Follows* (c, 219)
+none

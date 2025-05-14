@@ -18,7 +18,10 @@ public class QueryLexer
         {"Uses*", QueryKeywordType.UsesT},
         {"Modifies", QueryKeywordType.Modifies},
         {"Modifies*", QueryKeywordType.ModifiesT},
+        {"Calls", QueryKeywordType.Calls},
+        {"Calls*", QueryKeywordType.CallsT},
         {"procedure", QueryKeywordType.Procedure},
+        {"call", QueryKeywordType.Call},
         {"stmt", QueryKeywordType.Statement},
         {"assign", QueryKeywordType.Assign},
         {"while", QueryKeywordType.While},
@@ -26,7 +29,8 @@ public class QueryLexer
         {"constant", QueryKeywordType.Constant},
         {"prog_line", QueryKeywordType.Prog_line},
         {"_", QueryKeywordType.Joker},
-        {"with", QueryKeywordType.With}
+        {"with", QueryKeywordType.With},
+        {"and", QueryKeywordType.And},
     };
     private static readonly Regex QueryKeywordRegex = new(@"""[^""]*""|\w+\.(procName|varName|value|stmt#)|such that|\w+\*?|_|,|\(|\)|=");
 
@@ -46,9 +50,8 @@ public class QueryLexer
             {
                 var parts = value.Split('.');
                 queryTokens.Add(new QueryKeyword(QueryKeywordType.Identifier, parts[0]));
-                //Console.WriteLine("Lexer: new identifier: " + queryTokens.Last().Value);
                 queryTokens.Add(new QueryKeyword(QueryKeywordType.Attribute, parts[1]));
-                //Console.WriteLine("Lexer: new attribute: " + queryTokens.Last().Value);
+                //Console.WriteLine("Lexer: new attribute with identifier: " + queryTokens.Last().Value);
             }
             else if (Keywords.TryGetValue(value, out QueryKeywordType type))
             {

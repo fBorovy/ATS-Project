@@ -17,9 +17,9 @@ internal class Program
         //}
 
         //CodeParser parser = new CodeParser(args[0]);
-        // CodeParser parser = new CodeParser("C:\\Users\\A\\Source\\Repos\\ATS-Project\\IDE\\simple1.txt");
+        //CodeParser parser = new CodeParser("C:\\Users\\A\\Source\\Repos\\ATS-Project\\IDE\\simple1.txt");
         
-        CodeParser parser = new CodeParser("C:\\Users\\A\\Source\\Repos\\ATS-Project\\IDE\\SIMPLE.txt");
+        CodeParser parser = new CodeParser("C:\\Users\\Filip\\Documents\\studia\\atsi_project\\ATS-Project\\IDE\\SIMPLE.txt");
 
         if (!parser.ReadFile())
         {
@@ -35,13 +35,12 @@ internal class Program
         else Console.WriteLine("READY");
 
         QueryParser queryParser = new QueryParser();
-        var queryLines = File.ReadAllLines("C:\\Users\\Filip\\Documents\\studia\\atsi_project\\ATS-Project\\IDE\\test2_queries.txt");
+        var queryLines = File.ReadAllLines("C:\\Users\\Filip\\Documents\\studia\\atsi_project\\ATS-Project\\IDE\\current_test.txt");
 
         for (int i = 0; i < queryLines.Length; i += 3)
         {
             if (i + 2 >= queryLines.Length)
-                break; // zapobiega wyjściu poza zakres przy niepełnej grupie
-
+                break;
             string declarations = queryLines[i];
             string query = queryLines[i + 1];
             //string expected = queryLines[i + 2];                  Expected ale tylko dla pliku test2_simple.txt
@@ -50,7 +49,7 @@ internal class Program
             string actual = queryParser.ParseQuery(declarations + query);
 
             Console.WriteLine(string.IsNullOrWhiteSpace(actual) ? "none" : actual.Trim());
-            Console.WriteLine(new string('-', 40));
+            // Console.WriteLine(new string('-', 40));
         }
     }
 }

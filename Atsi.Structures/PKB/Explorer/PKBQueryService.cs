@@ -192,6 +192,18 @@ namespace Atsi.Structures.PKB.Explorer
             return _db.GetCalls().Where(kvp => kvp.Value.Contains(callee)).Select(kvp => kvp.Key);
         }
 
+        public IEnumerable<(string caller, string callee)> GetAllCalls()
+        {
+            return _db.GetCalls()
+                      .SelectMany(kvp => kvp.Value.Select(callee => (kvp.Key, callee)));
+        }
+       
+        public IEnumerable<(string caller, string callee)> GetAllCallsStar()
+        {
+            return _db.GetCallsStar()
+                      .SelectMany(kvp => kvp.Value.Select(callee => (kvp.Key, callee)));
+        }
+
         // === Next ===
         public bool IsNext(int stmt1, int stmt2) =>
             _db.IsNext(stmt1, stmt2);

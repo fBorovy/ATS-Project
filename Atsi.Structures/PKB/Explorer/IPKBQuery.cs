@@ -148,6 +148,12 @@ namespace Atsi.Structures.PKB.Explorer
         /// <summary>Zwraca procedury, które wywołują wskazaną procedurę.</summary>
         IEnumerable<string> GetCallingProcedures(string callee);
 
+        /// <summary>Zwraca wszystkie pary relacji Calls (bezpośrednio)</summary>
+        IEnumerable<(string caller, string callee)> GetAllCalls();
+
+        /// <summary>Zwraca wszystkie pary relacji Calls* (przechodnio)</summary>
+        public IEnumerable<(string caller, string callee)> GetAllCallsStar();
+
 
         // === Next ===
 

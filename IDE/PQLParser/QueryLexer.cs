@@ -21,6 +21,7 @@ public class QueryLexer
         {"Calls", QueryKeywordType.Calls},
         {"Calls*", QueryKeywordType.CallsT},
         {"procedure", QueryKeywordType.Procedure},
+        {"call", QueryKeywordType.Call},
         {"stmt", QueryKeywordType.Statement},
         {"assign", QueryKeywordType.Assign},
         {"while", QueryKeywordType.While},

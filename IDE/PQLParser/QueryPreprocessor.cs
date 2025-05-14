@@ -222,7 +222,7 @@ public class QueryPreprocessor
             //Console.WriteLine($"Parsed open paren: {CurrentQueryKeyword.Value}");
             Advance();
         }
-        if (Match(QueryKeywordType.Identifier, QueryKeywordType.Joker, QueryKeywordType.Number))
+        if (Match(QueryKeywordType.Identifier, QueryKeywordType.Joker, QueryKeywordType.Number, QueryKeywordType.String))
         {
             //Console.WriteLine($"matchidentifier: {CurrentQueryKeyword.Value}");
             Synonym? arg1 = GetDeclaredSynonym(CurrentQueryKeyword.Value);
@@ -230,7 +230,7 @@ public class QueryPreprocessor
             {
                 relationNode.AddNode(new QueryTree(arg1.Value.Name, arg1.Value.Type.ToString()));
             }
-            else if (CurrentQueryKeyword.Type == QueryKeywordType.Joker || CurrentQueryKeyword.Type == QueryKeywordType.Number) 
+            else if (Match(QueryKeywordType.Joker, QueryKeywordType.String, QueryKeywordType.Number))
             {
                 relationNode.AddNode(new QueryTree(CurrentQueryKeyword.Value, CurrentQueryKeyword.Type.ToString()));
             }

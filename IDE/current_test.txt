@@ -1,3 +1,6 @@
+stmt s;
+Select s such that Uses(s, _)
+none
 call c;
 Select c such that Follows (91, c)
 92

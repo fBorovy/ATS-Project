@@ -9,6 +9,8 @@ public enum SynonymType
     Procedure,
     Statement,
     While,
+    If,
+    Call,
     Pattern,
     Constant,
     Prog_line,

@@ -10,6 +10,8 @@ public static class SynonymTypeResolver
         { "while", SynonymType.While },
         { "procedure", SynonymType.Procedure },
         { "stmt", SynonymType.Statement },
+        { "if", SynonymType.If },
+        { "call", SynonymType.Call },
         { "variable", SynonymType.Variable },
         { "constant", SynonymType.Constant },
         { "prog_line", SynonymType.Prog_line },

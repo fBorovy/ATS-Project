@@ -1,9 +1,24 @@
+call c, stmt s;
+Select c such that Follows* (c, s) with s1.stmt# = 6
+none
+if ifs; 
+Select ifs such that Follows (66, ifs)
+none
+assign a;
+Select a with a.stmt# = 2
+none
+stmt s; 
+Select s such that Follows*(2, s)
+none
+stmt s, s1;
+Select s such that Parent (s, s1) with s1.stmt# = 77
+8
+assign a; while w;
+Select a such that Follows (a, w)
+none
 call c;
 Select c such that Follows (91, c)
 92
-call c;
-Select c such that Follows (c, 78)
-none
 call c;
 Select c such that Follows* (34, c)
 45,54

@@ -56,7 +56,7 @@ public class Program
         */
 
         // zakomentowac do testowania tym śmiesznym narzędziem z ceza
-        var queryLines = File.ReadAllLines($"{basePath}test2_queries.txt");
+        var queryLines = File.ReadAllLines($"{basePath}current_test.txt");
 
         for (int i = 0; i < queryLines.Length; i += 3)
         {
@@ -75,7 +75,7 @@ public class Program
             // odpowiedź złożona powinna wyglądać na przykład "2,5,7,8"
             string response = queryParser.ParseQuery(declarations + query);
             // najlepiej żeby parser zwracał już odpowiednio przygotowany string do wypisania, żeby tutaj już go nie parsować
-            Console.WriteLine(string.IsNullOrEmpty(response) ? "none" : response);
+            Console.WriteLine(response);
             Console.WriteLine(new string('-', 40));
         }
         // do tąd

@@ -121,7 +121,7 @@ public class QueryPreprocessor
                 if (synonym != null) 
                 {
                     //Console.WriteLine($"Parsed synonym identifier: {CurrentQueryKeyword.Value}");
-                    withNode.AddNode(new QueryTree(synonym.Value.Name, "synonym"));
+                    withNode.AddNode(new QueryTree(synonym.Value.Name, synonym.Value.Type.ToString()));
                     Advance();
                     if (Match(QueryKeywordType.Attribute))
                     {
@@ -162,18 +162,35 @@ public class QueryPreprocessor
             if (Match(QueryKeywordType.Identifier))
             {
                 Synonym? synonym = GetDeclaredSynonym(CurrentQueryKeyword.Value);
-                if (synonym != null) 
+                if (synonym != null)
                 {
                     //Console.WriteLine($"Parsed synonym identifier: {CurrentQueryKeyword.Value}");
-                    selectNode.AddNode(new QueryTree(synonym.Value.Name, synonym.Value.Type.ToString()));
                     Advance();
+                    if (Match(QueryKeywordType.Attribute))
+                    {
+                        selectNode.AddNode(new QueryTree(synonym.Value.Name, synonym.Value.Type.ToString(), CurrentQueryKeyword.Value));
+                        Advance();
+                    }
+                    else
+                    {
+                        selectNode.AddNode(new QueryTree(synonym.Value.Name, synonym.Value.Type.ToString()));
+                    }
+                }
+                else
+                {
+                    if (CurrentQueryKeyword.Value == "BOOLEAN")
+                    {
+                        selectNode.AddNode(new QueryTree("Boolean", "Boolean"));
+                        Advance();
+                    }
                 }
             }
-            if (Match(QueryKeywordType.Comma))
+            else if (Match(QueryKeywordType.Comma))
             {
                 //Console.WriteLine($"Parsed comma: {CurrentQueryKeyword.Value}");
                 Advance();
             }
+            else break;
         }
         //sprawdzenie
         // Console.WriteLine($"QueryTree node: {selectNode}");

@@ -1,6 +1,8 @@
-﻿using Atsi.Structures.SIMPLE;
+using Atsi.Structures.SIMPLE;
+using Atsi.Structures.SIMPLE.Statements;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Atsi.Structures.PKB.Explorer
 {
@@ -13,6 +15,58 @@ namespace Atsi.Structures.PKB.Explorer
 
         public IEnumerable<string> GetAllProcedureNames() =>
             _db.GetProcedures().Keys;
+
+        public IEnumerable<string> GetAllProceduresModifyingAnything()
+        {
+            return _db.GetProcedureModifies()
+                      .Where(kvp => kvp.Value.Any()) // procedura modyfikuje co najmniej jedną zmienną
+                      .Select(kvp => kvp.Key);
+        }
+
+        public IEnumerable<string> GetAllProceduresUsingAnything()
+        {
+            return _db.GetProcedureUses()
+                      .Where(kvp => kvp.Value.Any())
+                      .Select(kvp => kvp.Key);
+        }
+
+        public IEnumerable<string> GetAllCallingProcedures()
+        {
+            return _db.GetCalls()
+                      .Where(kvp => kvp.Value.Any()) 
+                      .Select(kvp => kvp.Key);
+        }
+
+        public IEnumerable<string> GetAllCalledProcedures()
+        {
+            return _db.GetCalls()
+                      .SelectMany(kvp => kvp.Value)
+                      .Distinct();
+        }
+
+        public IEnumerable<string> GetCallingProceduresT(string callee)
+        {
+            var result = new HashSet<string>();
+            var callsStar = _db.GetCallsStar();
+
+            foreach (var caller in callsStar.Keys)
+            {
+                if (callsStar[caller].Contains(callee))
+                {
+                    result.Add(caller);
+                }
+            }
+
+            return result;
+        }
+
+        public IEnumerable<string> GetCalledProceduresT(string caller)
+        {
+            return _db.GetCallsStar()
+                      .TryGetValue(caller, out var callees)
+                      ? callees
+                      : Enumerable.Empty<string>();
+        }
 
         // === Follows ===
         public bool IsFollows(int stmt1, int stmt2) =>
@@ -265,5 +319,326 @@ namespace Atsi.Structures.PKB.Explorer
             return _db.GetProcedureUses().Where(kvp => kvp.Value.Contains(variable)).Select(kvp => kvp.Key);
         }
 
+        private IEnumerable<int> GetAllStatementsOfType<T>() where T : Statement
+        {
+            var result = new List<int>();
+
+            foreach (var procedure in _db.GetProcedures().Values)
+            {
+                foreach (var stmt in GetAllDescendantStatements(procedure.StatementsList))
+                {
+                    if (stmt is T typedStmt)
+                        result.Add(typedStmt.StatementNumber);
+                }
+            }
+
+            return result;
+        }
+
+        private IEnumerable<Statement> GetAllDescendantStatements(IEnumerable<Statement> statements)
+        {
+            foreach (var stmt in statements)
+            {
+                yield return stmt;
+
+                if (stmt is IfStatement ifStmt)
+                {
+                    foreach (var inner in GetAllDescendantStatements(ifStmt.ThenBodyStatements))
+                        yield return inner;
+
+                    foreach (var inner in GetAllDescendantStatements(ifStmt.ElseBodyStatements))
+                        yield return inner;
+                }
+                else if (stmt is WhileStatement whileStmt)
+                {
+                    foreach (var inner in GetAllDescendantStatements(whileStmt.StatementsList))
+                        yield return inner;
+                }
+            }
+        }
+
+
+        ////////////////////////////////////////////////////////////////////////////// Get all Ifs, Assigns, Whiles ////////////////////////////////////////////////////////////////////
+
+        public IEnumerable<int> GetAllWhiles()
+        {
+            return GetAllStatementsOfType<WhileStatement>();
+        }
+
+        public IEnumerable<int> GetAllIfs()
+        {
+            return GetAllStatementsOfType<IfStatement>();
+        }
+
+        public IEnumerable<int> GetAllAssigns()
+        {
+            return GetAllStatementsOfType<AssignStatement>();
+        }
+
+        public IEnumerable<int> GetAllCallsNumbers()
+        {
+            return GetAllStatementsOfType<CallStatement>();
+        }
+
+        public IEnumerable<int> GetAllStatements()
+        {
+            return GetAllStatementsOfType<Statement>();
+        }
+
+        public IEnumerable<int> GetAssignmentsUsing(string variable)
+        {
+            foreach (var procedure in _db.GetProcedures().Values)
+            {
+                foreach (var stmt in GetAllDescendantStatements(procedure.StatementsList))
+                {
+                    if (stmt is AssignStatement assignStmt &&
+                        assignStmt.Expression.GetUsedVariables().Contains(variable))
+                    {
+                        yield return assignStmt.StatementNumber;
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<int> GetIfsUsing(string variable)
+        {
+            foreach (var procedure in _db.GetProcedures().Values)
+            {
+                foreach (var stmt in GetAllDescendantStatements(procedure.StatementsList))
+                {
+                    if (stmt is IfStatement ifStmt && ifStmt.ConditionalVariableName == variable)
+                    {
+                        yield return ifStmt.StatementNumber;
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<int> GetWhilesUsing(string variable)
+        {
+            foreach (var procedure in _db.GetProcedures().Values)
+            {
+                foreach (var stmt in GetAllDescendantStatements(procedure.StatementsList))
+                {
+                    if (stmt is WhileStatement whileStmt && whileStmt.ConditionalVariableName == variable)
+                    {
+                        yield return whileStmt.StatementNumber;
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<int> GetAllFollowedWhiles()
+        {
+            var follows = _db.GetFollows(); 
+            var allWhiles = GetAllWhiles(); 
+            return allWhiles.Where(stmt => follows.ContainsKey(stmt));
+        }
+
+        public IEnumerable<int> GetAllAssignmentsUsingAnything()
+        {
+            var uses = _db.GetStatementUses();
+            var assigns = GetAllAssigns(); 
+            return assigns.Where(stmt => uses.ContainsKey(stmt) && uses[stmt].Any());
+        }
+
+        public IEnumerable<int> GetAllWhilesUsingAnything()
+        {
+            var uses = _db.GetStatementUses();
+            var whiles = GetAllWhiles();
+            return whiles.Where(stmt => uses.ContainsKey(stmt) && uses[stmt].Any());
+        }
+
+        public IEnumerable<int> GetAllIfsUsingAnything()
+        {
+            var uses = _db.GetStatementUses();
+            var ifs = GetAllIfs();
+            return ifs.Where(stmt => uses.ContainsKey(stmt) && uses[stmt].Any());
+        }
+
+        public IEnumerable<int> GetAllParentIfs()
+        {
+            var allIfs = GetAllIfs();
+            var parentKeys = _db.GetParent().Values.Distinct();
+            return allIfs.Intersect(parentKeys);
+        }
+
+        public IEnumerable<int> GetAllParentWhiles()
+        {
+            var allWhiles = GetAllWhiles();
+            var parentKeys = _db.GetParent().Values.Distinct();
+            return allWhiles.Intersect(parentKeys);
+        }
+
+        public IEnumerable<string> GetUsedVariablesByAssign(int stmtNumber)
+        {
+            foreach (var procedure in _db.GetProcedures().Values)
+            {
+                foreach (var stmt in GetAllDescendantStatements(procedure.StatementsList))
+                {
+                    if (stmt is AssignStatement assignStmt && assignStmt.StatementNumber == stmtNumber)
+                    {
+                        return assignStmt.Expression.GetUsedVariables();
+                    }
+                }
+            }
+
+            return Enumerable.Empty<string>();
+        }
+
+        public IEnumerable<string> GetUsedVariablesByWhile(int stmtNumber)
+        {
+            foreach (var procedure in _db.GetProcedures().Values)
+            {
+                foreach (var stmt in GetAllDescendantStatements(procedure.StatementsList))
+                {
+                    if (stmt is WhileStatement whileStmt && whileStmt.StatementNumber == stmtNumber)
+                    {
+                        return new[] { whileStmt.ConditionalVariableName };
+                    }
+                }
+            }
+
+            return Enumerable.Empty<string>();
+        }
+
+        public IEnumerable<string> GetUsedVariablesByIf(int stmtNumber)
+        {
+            foreach (var procedure in _db.GetProcedures().Values)
+            {
+                foreach (var stmt in GetAllDescendantStatements(procedure.StatementsList))
+                {
+                    if (stmt is IfStatement ifStmt && ifStmt.StatementNumber == stmtNumber)
+                    {
+                        return new[] { ifStmt.ConditionalVariableName };
+                    }
+                }
+            }
+
+            return Enumerable.Empty<string>();
+        }
+
+        public IEnumerable<int> GetChildrenOfIf(int ifStmt)
+        {
+            foreach (var procedure in _db.GetProcedures().Values)
+            {
+                foreach (var stmt in GetAllDescendantStatements(procedure.StatementsList))
+                {
+                    if (stmt is IfStatement ifNode && ifNode.StatementNumber == ifStmt)
+                    {
+                        return ifNode.ThenBodyStatements.Concat(ifNode.ElseBodyStatements)
+                                                        .Select(s => s.StatementNumber);
+                    }
+                }
+            }
+
+            return Enumerable.Empty<int>();
+        }
+
+        public IEnumerable<int> GetChildrenOfWhile(int whileStmt)
+        {
+            foreach (var procedure in _db.GetProcedures().Values)
+            {
+                foreach (var stmt in GetAllDescendantStatements(procedure.StatementsList))
+                {
+                    if (stmt is WhileStatement whileNode && whileNode.StatementNumber == whileStmt)
+                    {
+                        return whileNode.StatementsList.Select(s => s.StatementNumber);
+                    }
+                }
+            }
+
+            return Enumerable.Empty<int>();
+        }
+
+        public IEnumerable<int> GetAllNestedStatementsInIfT(int ifStmt)
+        {
+            foreach (var procedure in _db.GetProcedures().Values)
+            {
+                foreach (var stmt in GetAllDescendantStatements(procedure.StatementsList))
+                {
+                    if (stmt is IfStatement ifNode && ifNode.StatementNumber == ifStmt)
+                    {
+                        return GetAllDescendantStatements(ifNode.ThenBodyStatements.Concat(ifNode.ElseBodyStatements))
+                               .Select(s => s.StatementNumber);
+                    }
+                }
+            }
+
+            return Enumerable.Empty<int>();
+        }
+
+        public IEnumerable<int> GetAllNestedStatementsInWhileT(int whileStmt)
+        {
+            foreach (var procedure in _db.GetProcedures().Values)
+            {
+                foreach (var stmt in GetAllDescendantStatements(procedure.StatementsList))
+                {
+                    if (stmt is WhileStatement whileNode && whileNode.StatementNumber == whileStmt)
+                    {
+                        return GetAllDescendantStatements(whileNode.StatementsList)
+                               .Select(s => s.StatementNumber);
+                    }
+                }
+            }
+
+            return Enumerable.Empty<int>();
+        }
+
+        public IEnumerable<int> GetAllChildStatementsOfIfs()
+        {
+            return GetAllIfs()
+                   .SelectMany(GetChildrenOfIf)
+                   .Distinct();
+        }
+
+        public IEnumerable<int> GetAllChildStatementsOfWhiles()
+        {
+            return GetAllWhiles()
+                   .SelectMany(GetChildrenOfWhile)
+                   .Distinct();
+        }
+
+        public IEnumerable<int> GetAllChildStatementsOfIfsT()
+        {
+            return GetAllIfs()
+                   .SelectMany(GetAllNestedStatementsInIfT)
+                   .Distinct();
+        }
+
+        public IEnumerable<int> GetAllChildStatementsOfWhilesT()
+        {
+            return GetAllWhiles()
+                   .SelectMany(GetAllNestedStatementsInWhileT)
+                   .Distinct();
+        }
+
+        public int? GetFollowedByIf(int followingStmtNumber)
+        {
+            var follows = _db.GetFollows();
+            var ifs = GetAllIfs();
+            return follows.FirstOrDefault(kvp => kvp.Value == followingStmtNumber && ifs.Contains(kvp.Key)).Key;
+        }
+
+        public int? GetFollowedByWhile(int followingStmtNumber)
+        {
+            var follows = _db.GetFollows();
+            var whiles = GetAllWhiles();
+            return follows.FirstOrDefault(kvp => kvp.Value == followingStmtNumber && whiles.Contains(kvp.Key)).Key;
+        }
+
+        public int? GetFollowedByCall(int followingStmtNumber)
+        {
+            var follows = _db.GetFollows();
+            var calls = GetAllCallsNumbers();
+            return follows.FirstOrDefault(kvp => kvp.Value == followingStmtNumber && calls.Contains(kvp.Key)).Key;
+        }
+
+        public int? GetFollowedByAssign(int followingStmtNumber)
+        {
+            var follows = _db.GetFollows();
+            var assigns = GetAllAssigns();
+            return follows.FirstOrDefault(kvp => kvp.Value == followingStmtNumber && assigns.Contains(kvp.Key)).Key;
+        }
     }
 }

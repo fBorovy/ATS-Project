@@ -1,4 +1,5 @@
-﻿using Atsi.Structures.SIMPLE;
+using Atsi.Structures.SIMPLE;
+using Atsi.Structures.SIMPLE.Statements;
 using System.Collections.Generic;
 
 namespace Atsi.Structures.PKB.Explorer
@@ -12,6 +13,25 @@ namespace Atsi.Structures.PKB.Explorer
 
         /// <summary>Zwraca wszystkie nazwy procedur zapisanych w PKB.</summary>
         IEnumerable<string> GetAllProcedureNames();
+
+        /// <summary>Zwraca nazwy wszystkich procedur, które modyfikują przynajmniej jedną zmienną</summary>
+        IEnumerable<string> GetAllProceduresModifyingAnything();
+
+        /// <summary>Zwraca wszystkie procedury, które używają przynajmniej jednej zmiennej</summary>
+        IEnumerable<string> GetAllProceduresUsingAnything();
+
+        /// <summary>Zwraca wszystkie procedury, które wywołują inne procedury (czyli występują jako klucze w relacji Calls)</summary>
+
+        IEnumerable<string> GetAllCallingProcedures();
+
+        /// <summary>Zwraca unikalne procedury, które są wywoływane w relacji Calls</summary>
+        IEnumerable<string> GetAllCalledProcedures();
+
+        /// <summary>Zwraca wszystkie procedury, które pośrednio lub bezpośrednio wywołują daną procedurę (Calls*)</summary>
+        IEnumerable<string> GetCallingProceduresT(string callee);
+
+        /// <summary>// Zwraca wszystkie procedury, które są pośrednio lub bezpośrednio wywoływane przez daną procedurę (Calls*)</summary>
+        IEnumerable<string> GetCalledProceduresT(string caller);
 
 
         // === Follows ===
@@ -183,5 +203,100 @@ namespace Atsi.Structures.PKB.Explorer
 
         /// <summary>Zwraca instrukcje, które wpływają na stmt2.</summary>
         IEnumerable<int> GetAffectingStatements(int stmt2);
+
+        // === Metody zwracające numery wszystkich typów statementów w programie ===
+
+        /// <summary>Zwraca numery wszystkich instrukcji typu while w programie</summary>
+        IEnumerable<int> GetAllWhiles();
+
+        /// <summary>Zwraca numery wszystkich instrukcji typu if w programie</summary>
+        IEnumerable<int> GetAllIfs();
+
+        /// <summary>Zwraca numery wszystkich instrukcji przypisania (assign) w programie</summary>
+        IEnumerable<int> GetAllAssigns();
+
+        /// <summary>Zwraca numery wszystkich calls w programie</summary>
+        IEnumerable<int> GetAllCallsNumbers();
+
+        /// <summary>Zwraca numery wszystkich instrukcji w programie, niezależnie od typu</summary>
+        IEnumerable<int> GetAllStatements();
+
+        /// <summary>Zwraca numery instrukcji przypisania, które używają podanej zmiennej w wyrażeniu po prawej stronie</summary>
+        IEnumerable<int> GetAssignmentsUsing(string variable);
+
+        /// <summary>Zwraca numery instrukcji if, które używają podanej zmiennej jako warunku</summary>
+
+        IEnumerable<int> GetIfsUsing(string variable);
+
+        /// <summary>Zwraca numery instrukcji while, które używają podanej zmiennej jako warunku</summary>
+
+        IEnumerable<int> GetWhilesUsing(string variable);
+
+        /// <summary>Zwraca wszystkie instrukcje while, które występują jako pierwsze w relacji Follows (czyli mają następnika)</summary>
+        IEnumerable<int> GetAllFollowedWhiles();
+
+        /// <summary>Zwraca wszystkie instrukcje przypisania, które używają przynajmniej jednej zmiennej</summary>
+        IEnumerable<int> GetAllAssignmentsUsingAnything();
+
+        /// <summary>Zwraca wszystkie instrukcje while, które używają jakiejkolwiek zmiennej w warunku</summary>
+
+        IEnumerable<int> GetAllWhilesUsingAnything();
+
+        /// <summary>Zwraca wszystkie instrukcje if, które używają jakiejkolwiek zmiennej w warunku</summary>
+        IEnumerable<int> GetAllIfsUsingAnything();
+
+        /// <summary>Zwraca wszystkie instrukcje typu if, które są rodzicami innych instrukcji</summary>
+
+        IEnumerable<int> GetAllParentIfs();
+
+        /// <summary> Zwraca wszystkie instrukcje typu while, które są rodzicami innych instrukcji</summary>
+        IEnumerable<int> GetAllParentWhiles();
+
+        /// <summary> Zwraca zbiór zmiennych używanych w instrukcji przypisania o podanym numerze</summary>
+        IEnumerable<string> GetUsedVariablesByAssign(int stmtNumber);
+
+        /// <summary> Zwraca zmienną warunkową używaną w instrukcji while o podanym numerze</summary>
+        IEnumerable<string> GetUsedVariablesByWhile(int stmtNumber);
+
+        /// <summary> Zwraca zmienną warunkową używaną w instrukcji if o podanym numerze</summary>
+        IEnumerable<string> GetUsedVariablesByIf(int stmtNumber);
+
+        /// <summary>Zwraca bezpośrednie dzieci instrukcji if – z gałęzi then i else</summary>
+        IEnumerable<int> GetChildrenOfIf(int ifStmt);
+
+        /// <summary> Zwraca bezpośrednie dzieci instrukcji while – ciało pętli</summary>
+        IEnumerable<int> GetChildrenOfWhile(int whileStmt);
+
+        /// <summary> Zwraca wszystkie zagnieżdżone (rekurencyjnie) instrukcje wewnątrz if'a</summary>
+        IEnumerable<int> GetAllNestedStatementsInIfT(int ifStmt);
+
+        /// <summary> Zwraca wszystkie zagnieżdżone (rekurencyjnie) instrukcje wewnątrz if'a</summary>
+        IEnumerable<int> GetAllNestedStatementsInWhileT(int whileStmt);
+
+        /// <summary> Zwraca bezpośrednich potomków wszystkich instrukcji typu if (z Then i Else)</summary>
+        IEnumerable<int> GetAllChildStatementsOfIfs();
+
+        /// <summary>
+        /// Zwraca bezpośrednich potomków wszystkich instrukcji typu while (ciała pętli)
+        /// </summary>
+        IEnumerable<int> GetAllChildStatementsOfWhiles();
+
+        /// <summary> Zwraca wszystkie zagnieżdżone (rekurencyjnie) potomki wszystkich ifów</summary>
+        IEnumerable<int> GetAllChildStatementsOfIfsT();
+
+        /// <summary> Zwraca wszystkie zagnieżdżone (rekurencyjnie) potomki wszystkich while'ów</summary>
+        IEnumerable<int> GetAllChildStatementsOfWhilesT();
+
+        /// <summary>Zwraca numer instrukcji if, która bezpośrednio poprzedza podaną instrukcję</summary>
+        int? GetFollowedByIf(int followingStmtNumber);
+
+        /// <summary> Zwraca numer instrukcji while, która bezpośrednio poprzedza podaną instrukcję</summary>
+        int? GetFollowedByWhile(int followingStmtNumber);
+
+        /// <summary>Zwraca numer instrukcji call, która bezpośrednio poprzedza podaną instrukcję</summary>
+        int? GetFollowedByCall(int followingStmtNumber);
+
+        /// <summary>Zwraca numer instrukcji assign, która bezpośrednio poprzedza podaną instrukcję</summary>
+        int? GetFollowedByAssign(int followingStmtNumber);
     }
 }

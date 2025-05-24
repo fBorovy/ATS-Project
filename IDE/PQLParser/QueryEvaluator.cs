@@ -160,12 +160,12 @@ public class QueryEvaluator
         }
         else if (select.Item2 == "Assign")
         {
-            // TODO ext IEnumerable<int> allStmts = pkb.GetAssigns();
+            allStmts = pkb.GetAllAssigns();
             Console.WriteLine($"invoked GetAllAssigns()");
         }
         else if (select.Item2 == "Call")
         {
-            // TODO ext IEnumerable<int> allStmts = pkb.GetAllCalls();
+            allStmts = pkb.GetAllCallsNumbers();
             Console.WriteLine($"invoked GetAllCalls()");
         }
         else
@@ -314,8 +314,11 @@ public class QueryEvaluator
                                 Console.WriteLine($"invoked pkb.GetCallingProcedures({callee})");
                                 break;
                             case "Calls*":
-                                //TODO ext IEnumerable<String> procedures = pkb.GetCallingProceduresT(callee);
-                                // foreach ()
+                                IEnumerable<String> procs = pkb.GetCallingProceduresT(condition.Item5);
+                                foreach (var procedure in procs)
+                                {
+                                    result.Add(procedure);
+                                }
                                 Console.WriteLine($"invoked pkb.GetCallingProceduresT({condition.Item5})");
                                 break;
                         }
@@ -348,37 +351,35 @@ public class QueryEvaluator
                         break;
                     case "Follows":
                     case "Follows*":
-                        IEnumerable<int> followingStatements = null;
+                        IEnumerable<int> followedStatements = null;
                         if (arg1.NodeType == "While")
                         {
-                            followingStatements = pkb.GetAllFollowedWhiles();
-                            foreach (var stmt in followingStatements)
-                            {
-                                result.Add(stmt.ToString());
-                            }
+                            followedStatements = pkb.GetAllFollowedWhiles();
+                            Console.WriteLine("invoked pkb.GetAllFollowedWhiles()");
                         }
                         else if (arg1.NodeType == "If")
                         {
-                            //TODO
+                            //TODO ext followedStatements = pkb.GetAllFollowedIfs();
+                            Console.WriteLine("invoked pkb.GetAllFollowedIfs()");
                         }
                         else if (arg1.NodeType == "Assign")
                         {
-                            //TODO
+                            //TODO ext followedStatements = pkb.GetAllFollowedAssigns();
+                            Console.WriteLine("invoked pkb.GetAllFollowedAssigns()");
                         }
                         else if (arg1.NodeType == "Call")
                         {
-                            //TODO
-                            //EvaluateFollows()
-                            
+                            //TODO ext followedStatements = pkb.GetAllFollowedCalls();
+                            Console.WriteLine("invoked pkb.GetAllFollowedCalls()");
                         }
                         else
                         {
-                            followingStatements = pkb.GetAllFollowsTargets();
-                            foreach (var stmt in followingStatements)
-                            {
-                                result.Add(stmt.ToString());
-                            }
+                            followedStatements = pkb.GetAllFollowsSources();
                             Console.WriteLine("invoked pkb.GetAllFollowsSources()");
+                        }
+                        foreach (var stmt in followedStatements)
+                        {
+                            result.Add(stmt.ToString());
                         }
                         break;
                     case "Uses":
@@ -659,8 +660,8 @@ public class QueryEvaluator
                         break;
                     case "Follows":
                     case "Follows*":
-                        IEnumerable<int> followedStatements = pkb.GetAllFollowsSources();
-                        foreach (var stmt in followedStatements)
+                        IEnumerable<int> followingStatements = pkb.GetAllFollowsTargets();
+                        foreach (var stmt in followingStatements)
                         {
                             result.Add(stmt.ToString());
                         }

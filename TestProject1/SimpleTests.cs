@@ -11,7 +11,8 @@ public sealed class SimpleTests
     [ClassInitialize]
     public static void ClassSetup(TestContext ctx)
     {
-        CodeParser parser = new CodeParser($"{AppDomain.CurrentDomain.BaseDirectory}\\..\\..\\..\\SIMPLE.txt");
+        // CodeParser parser = new CodeParser($"{AppDomain.CurrentDomain.BaseDirectory}\\..\\..\\..\\SIMPLE.txt");
+        CodeParser parser = new CodeParser($"C:\\Users\\Filip\\Documents\\studia\\atsi_project\\ATS-Project\\IDE\\SIMPLE.txt");
         parser.ReadFile();
         parser.Parse();
         queryParser = new QueryParser();
@@ -107,7 +108,7 @@ public sealed class SimpleTests
     [DataRow("stmt s;Select s such that Parent*(34, s)", "35,36,37,38,39,40,41,42,43,44")]
     [DataRow("variable v; procedure p;Select v such that Uses (p, v) with p.procName = \"Init\"", "120,121,122,123,124,125,126,127,128,129")]
     [DataRow("while w;Select w with w.stmt# = 143", "143")]
-    [DataRow("assign a, if ifs;Select a such that Parent (ifs, a) with ifs.stmt# = 176", "177,178")]
+    [DataRow("assign a; if ifs;Select a such that Parent (ifs, a) with ifs.stmt# = 176", "177,178")]
     [DataRow("procedure p;Select p such that Uses (p, \"asterick\")", "Draw")]
     [DataRow("stmt s;Select s such that Uses (s, asterick)", "196,206")]
     [DataRow("assign a;Select a such that Modifies (a, \"blue\")", "215")]

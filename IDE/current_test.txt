@@ -1,12 +1,3 @@
-call c, stmt s;
-Select c such that Follows* (c, s) with s1.stmt# = 6
-none
-if ifs; 
-Select ifs such that Follows (66, ifs)
-none
-assign a;
-Select a with a.stmt# = 2
-none
 stmt s; 
 Select s such that Follows*(2, s)
 none

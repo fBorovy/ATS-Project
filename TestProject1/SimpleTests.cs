@@ -1,6 +1,8 @@
 ﻿using IDE.Parser;
 using IDE.PQLParser;
 
+using Testing;
+
 namespace TestProject1;
 
 [TestClass]
@@ -11,48 +13,49 @@ public sealed class SimpleTests
     [ClassInitialize]
     public static void ClassSetup(TestContext ctx)
     {
-        // CodeParser parser = new CodeParser($"{AppDomain.CurrentDomain.BaseDirectory}\\..\\..\\..\\SIMPLE.txt");
-        CodeParser parser = new CodeParser($"C:\\Users\\Filip\\Documents\\studia\\atsi_project\\ATS-Project\\IDE\\SIMPLE.txt");
+        CodeParser parser = new CodeParser($"{AppDomain.CurrentDomain.BaseDirectory}\\..\\..\\..\\..\\IDE\\SIMPLE.txt"); 
         parser.ReadFile();
         parser.Parse();
         queryParser = new QueryParser();
     }
 
     [DataTestMethod]
-    [DataRow("stmt s;Select s such that Uses (s, \"left\")", "7,30,49,107,124,130,135,152,153,154,155,156,157,158")]
-    [DataRow("stmt s;Select s such that Uses (s, \"right\")", "8,31,109,125,131,135,152,153,154,155,156,157,158")]
-    [DataRow("stmt s;Select s such that Uses (s, \"mtoggle\")", "192")]
-    [DataRow("assign a;Select a such that Uses (a, \"top\")", "9,67,131,135")]
-    [DataRow("procedure p;Select p such that Uses (p, \"left\")", "Main,Init,Random,Transform,Shift")]
-    [DataRow("variable v;Select v such that Uses (\"309\",v)", "cs5,cs6")]
-    [DataRow("variable v;Select v such that Uses (\"301\",v)", "cs9,cs5,cs6,cs8,")]
-    [DataRow("stmt s;Select s such that Parent (s, 139)", "138")]
-    [DataRow("stmt s;Select s such that Parent (s, 137)", "none")]
-    [DataRow("stmt s;Select s such that Parent (143, s)", "144,145,146,147,148")]
-    [DataRow("stmt s;Select s such that Parent* (s, 141)", "140,136")]
-    [DataRow("while w;Select w such that Parent* (w, 27)", "26,16,12,6")]
-    [DataRow("stmt s;Select s such that Follows (s, 20)", "19")]
-    [DataRow("stmt s;Select s such that Follows (s, 294)", "none")]
     [DataRow("assign a;Select a such that Follows (a, 17)", "none")]
-    [DataRow("stmt s;Select s such that Follows* (s, 248)", "244,245,246,247")]
-    [DataRow("stmt s;Select s such that Follows* (s, 39)", "none")]
-    [DataRow("if ifstat;Select ifstat such that Follows* (ifstat, 17)", "14,15")] // raczej none
-    [DataRow("stmt s;Select s such that Modifies (s, \"left\")", "124,130")]
-    [DataRow("stmt s;Select a such that Modifies (s, \"right\")", "125,131")]
-    [DataRow("while w;Select w such that Modifies (w, \"tmp\")", "6,12,16,29,47,59,79,90,95,105,136,180,181,187")]
-    [DataRow("stmt s;Select s such that Modifies (s, \"x1\")", "7,67,120,138,164,165,174,182,245,252")]
-    [DataRow("variable v;Select v such that Modifies (v, \"XX\")", "cs6,cs5")]
-    [DataRow("variable v;Select v such that Modifies (v, \"UU\")", "cs6,cs5,cs9,cs8")]
+    [DataRow("assign a;Select a such that Uses (a, \"top\")", "9,67,131,135")]
+    [DataRow("if ifstat;Select ifstat such that Follows* (ifstat, 17)", "14,15")]
     [DataRow("procedure p;Select p such that Calls (p, \"Shift\")", "Main")]
     [DataRow("procedure p;Select p such that Calls (p, \"XX\")", "SS,UU")]
-    [DataRow("procedure p;Select p such that Calls* (p, \"XX\")", "SS,UU,TT,PP,RR")]
     [DataRow("procedure p;Select p such that Calls* (p, \"Scale\")", "none")]
+    [DataRow("procedure p;Select p such that Calls* (p, \"XX\")", "SS,UU,TT,PP,RR")]
+    [DataRow("procedure p;Select p such that Uses (p, \"left\")", "Main,Init,Random,Transform,Shift")]
     [DataRow("Select a Pattern a (_,\"incre * weight\")", "134")]
     [DataRow("Select a Pattern a (_,\"y2 - y1\")", "141,168")]
+    [DataRow("stmt s;Select a such that Modifies (s, \"right\")", "125,131")]
+    [DataRow("stmt s;Select s such that Follows (s, 20)", "19")]
+    [DataRow("stmt s;Select s such that Follows (s, 294)", "none")]
+    [DataRow("stmt s;Select s such that Follows* (s, 248)", "244,245,246,247")]
+    [DataRow("stmt s;Select s such that Follows* (s, 39)", "none")]
+    [DataRow("if ifstat;Select ifstat such that Follows* (ifstat, 17)", "none")]
+    [DataRow("stmt s;Select s such that Modifies (s, \"left\")", "124,130")]
+    [DataRow("stmt s;Select s such that Modifies (s, \"x1\")", "7,67,120,138,164,165,174,182,245,252")]
+    [DataRow("stmt s;Select s such that Parent (143, s)", "144,145,146,147,148")]
+    [DataRow("stmt s;Select s such that Parent (s, 137)", "none")]
+    [DataRow("stmt s;Select s such that Parent (s, 139)", "138")]
+    [DataRow("stmt s;Select s such that Parent* (s, 141)", "140,136")]
+    [DataRow("stmt s;Select s such that Uses (s, \"left\")", "7,30,49,107,124,130,135,152,153,154,155,156,157,158")]
+    [DataRow("stmt s;Select s such that Uses (s, \"mtoggle\")", "192")]
+    [DataRow("stmt s;Select s such that Uses (s, \"right\")", "8,31,109,125,131,135,152,153,154,155,156,157,158")]
+    [DataRow("variable v;Select v such that Modifies (v, \"UU\")", "cs6,cs5,cs9,cs8")]
+    [DataRow("variable v;Select v such that Modifies (v, \"XX\")", "cs6,cs5")]
+    [DataRow("variable v;Select v such that Uses (301,v)", "cs9,cs5,cs6,cs8,")]
+    [DataRow("variable v;Select v such that Uses (309,v)", "cs5,cs6")]
+    [DataRow("while w;Select w such that Modifies (w, \"tmp\")", "6,12,16,29,47,59,79,90,95,105,136,180,181,187")]
+    [DataRow("while w;Select w such that Parent* (w, 27)", "26,16,12,6")]
     public void KamilTests(string query, string expectedResult)
     {
+        //var result = queryParser.ParseWithExceptions(query);
         var result = queryParser.ParseQuery(query);
-        Assert.AreEqual(expectedResult, result.Trim());
+        Assert.AreEqual(expectedResult.Normalize(), result.Normalize());
     }
 
 
@@ -90,8 +93,9 @@ public sealed class SimpleTests
 
     public void EwaTests(string query, string expectedResult)
     {
+        //var result = queryParser.ParseWithExceptions(query);
         var result = queryParser.ParseQuery(query);
-        Assert.AreEqual(expectedResult, result.Trim());
+        Assert.AreEqual(expectedResult.Normalize(), result.Normalize());
     }
 
 
@@ -99,8 +103,8 @@ public sealed class SimpleTests
     [DataRow("assign a; while w;Select a such that Follows (w, a)","11, 46, 68, 82, 102, 135, 183, 186, 255, 263, 380")]
     [DataRow("stmt s, s1;Select s such that Parent (s, s1) with s1.stmt# = 77", "76")]
     [DataRow("call c;Select c such that Follows (c, 85)", "84")]
-    [DataRow("call c, stmt s;Select c such that Follows* (c, s) with s1.stmt# = 6", "5")]
-    [DataRow("if ifs, variable v;Select ifs such that Uses (ifs, \"volume\")", "55")]
+    [DataRow("call c; stmt s;Select c such that Follows* (c, s) with s1.stmt# = 6", "5")]
+    [DataRow("if ifs; variable v;Select ifs such that Uses (ifs, \"volume\")", "55")]
     [DataRow("if ifs; while w;Select w such that Parent (if, w)", "16, 26, 79, 83, 89, 113, 217, 239, 251, 256, 279, 281")]
     [DataRow("if ifs; while w;Select ifs such that Parent (if, w) with ifs.stmt# = 15", "15")]
     [DataRow("procedure p, q;Select q such that Calls (p, q) with p.procName = \"Draw\"", "Clear, Random, Show")]
@@ -116,7 +120,7 @@ public sealed class SimpleTests
     [DataRow("stmt s;Select s such that Uses (s, \"wrong\")", "278")]
     [DataRow("stmt s;Select s such that Follows* (s, 287)", "283,284,285,268")]
     [DataRow("stmt s;Sekect s such that Modifies (s, \"cs5\")", "290,298,302,311")]
-    [DataRow("procedure p:Select p", "Main,Init,Random,Transform,Shift,Shear,Move,Draw,Clear,Show,Enlarge,Fill,Shrink,Translate,Rotate,Scale,PP,QQ,SS,TT,UU,XX")]
+    [DataRow("procedure p;Select p", "Main,Init,Random,Transform,Shift,Shear,Move,Draw,Clear,Show,Enlarge,Fill,Shrink,Translate,Rotate,Scale,PP,QQ,SS,TT,UU,XX")]
     [DataRow("while w; variable v;Select w such that Uses (w, \"top\")", "59,89")]
     [DataRow("assign a;Select a such that Modifies (a, \"top\")", "77,126,150")]
     [DataRow("assign a;Select a such that Uses (a, \"top\")", "9,67,131,135")]
@@ -128,8 +132,9 @@ public sealed class SimpleTests
     [DataRow("Select BOOLEAN such that Modifies(999, \"x\")", "FALSE")]
     public void FilipTests(string query, string expectedResult)
     {
+        //var result = queryParser.ParseWithExceptions(query);
         var result = queryParser.ParseQuery(query);
-        Assert.AreEqual(expectedResult, result.Trim());
+        Assert.AreEqual(expectedResult.Normalize(), result.Normalize());
     }
 
 
@@ -166,46 +171,49 @@ public sealed class SimpleTests
     [DataRow("", "")]
     public void JanTests(string query, string expectedResult)
     {
+        //var result = queryParser.ParseWithExceptions(query);
         var result = queryParser.ParseQuery(query);
-        Assert.AreEqual(expectedResult, result.Trim());
+        Assert.AreEqual(expectedResult.Normalize(), result.Normalize());
     }
 
 
     [DataTestMethod]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
+    [DataRow("stmt s; Select s such that Modifies(s, \"radius\")", "28,30,33")]
+    [DataRow("procedure p; Select p such that Uses(p, \"tmp\")", "Main,Transform,Shrink")]
+    [DataRow("assign a; Select a such that Affects(33, a)", "34")]
+    [DataRow("assign a; Select a such that Affects*(28, a)", "33,34")]
+    [DataRow("stmt s; Select s such that Parent(27, s)", "28,29,30,31")]
+    [DataRow("stmt s; Select s such that Parent*(15, s)", "16,17,18,19,20,21,22")]
+    [DataRow("stmt s; Select s such that Uses(s, \"x1\")", "13,28,33")]
+    [DataRow("stmt s; Select s such that Modifies(s, \"x4\")", "33")]
+    [DataRow("procedure p; Select p such that Calls*(p, \"Draw\")", "Main,Shrink")]
+    [DataRow("procedure p; Select BOOLEAN such that Calls*(p, \"Enlarge\")", "TRUE")]
+    [DataRow("stmt s; Select s such that Follows(27, s)", "28")]
+    [DataRow("stmt s; Select s such that Follows*(27, s)", "28,29,30,31")]
+    [DataRow("stmt s; Select s such that Parent(s, 33)", "32")]
+    [DataRow("if ifs; Select ifs such that Parent(ifs, 35)", "34")]
+    [DataRow("assign a; Select a such that Modifies(a, \"length\")", "36,40")]
+    [DataRow("stmt s; Select s such that Modifies(s, \"area\")", "18,25")]
+    [DataRow("stmt s; Select s such that Uses(s, \"area\")", "19,30,34")]
+    [DataRow("assign a; Select a such that Uses(a, \"bottom\")", "16")]
+    [DataRow("while w; Select w such that Parent(w, 36)", "35")]
+    [DataRow("stmt s; Select s such that Uses(s, \"incre\")", "13,14,15,16,18,28,33")]
+    [DataRow("stmt s; Select s such that Uses(s, \"right\")", "14")]
+    [DataRow("stmt s; Select s such that Follows(s, 25)", "26")]
+    [DataRow("stmt s; Select s such that Parent(34, s)", "35,36,37,38")]
+    [DataRow("stmt s; Select s such that Affects(30, s)", "33")]
+    [DataRow("stmt s; Select s such that Affects(s, 34)", "33")]
+    [DataRow("stmt s; Select s such that Affects*(30, 34)", "TRUE")]
+    [DataRow("assign a;Select a such that Uses(a, \"x\")", "12, 22, 45, 78")]
+    [DataRow("stmt s;Select s such that Modifies(s, \"result\")", "33, 44")]
+    [DataRow("while w;Select w such that Follows*(5, w)", "6, 7")]
+    [DataRow("call c;Select c such that Calls(\"Init\", c)", "none")]
+    [DataRow("stmt s;Select s such that Parent*(s, 100)", "95, 96, 97, 98")]
     public void KasiaTests(string query, string expectedResult)
     {
+        //var result = queryParser.ParseWithExceptions(query);
         var result = queryParser.ParseQuery(query);
-        Assert.AreEqual(expectedResult, result.Trim());
+        Assert.AreEqual(expectedResult.Normalize(), result.Normalize());
     }
 
 
@@ -238,11 +246,12 @@ public sealed class SimpleTests
     [DataRow("stmt s; Select s such that Affects(30, s)", "32")]
     [DataRow("stmt s; Select s such that Affects(s, 50)", "46")]
     [DataRow("stmt s; Select s such that Affects(46, 50)", "50")]
-    [DataRow("stmt s; Select s such that Affects(1, s)", "")]
-    [DataRow("stmt s; Select s such that Affects(32, s)", "")]
+    [DataRow("stmt s; Select s such that Affects(1, s)", "none")]
+    [DataRow("stmt s; Select s such that Affects(32, s)", "none")]
     public void MaciekTests(string query, string expectedResult)
     {
+        //var result = queryParser.ParseWithExceptions(query);
         var result = queryParser.ParseQuery(query);
-        Assert.AreEqual(expectedResult, result.Trim());
+        Assert.AreEqual(expectedResult.Normalize(), result.Normalize());
     }
 }

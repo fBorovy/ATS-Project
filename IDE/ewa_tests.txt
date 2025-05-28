@@ -1,0 +1,3 @@
+procedure p;
+Select p such that Calls (p, "Shift")
+Main

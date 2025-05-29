@@ -298,5 +298,12 @@ namespace Atsi.Structures.PKB.Explorer
 
         /// <summary>Zwraca numer instrukcji assign, która bezpośrednio poprzedza podaną instrukcję</summary>
         int? GetFollowedByAssign(int followingStmtNumber);
+
+        /// <summary>
+        /// Zwraca wszystkie instrukcje danego typu, które występują jako źródła relacji Follows (czyli mają następnika).
+        /// </summary>
+        /// <param name="nodeType">Typ instrukcji: "While", "If", "Assign", "Call".</param>
+        /// <returns>Lista numerów instrukcji będących źródłami Follows dla podanego typu lub wszystkich, jeśli typ nieznany.</returns>
+        IEnumerable<int> GetFollowedStatementsByType(string nodeType);
     }
 }

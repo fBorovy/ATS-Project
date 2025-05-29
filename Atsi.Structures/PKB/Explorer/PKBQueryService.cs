@@ -640,5 +640,41 @@ namespace Atsi.Structures.PKB.Explorer
             var assigns = GetAllAssigns();
             return follows.FirstOrDefault(kvp => kvp.Value == followingStmtNumber && assigns.Contains(kvp.Key)).Key;
         }
+
+        /// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       
+        public IEnumerable<int> GetFollowedStatementsByType(string nodeType)
+        {
+            return nodeType switch
+            {
+                "While" => GetAllFollowedWhiles(),
+                "If" => GetAllFollowedIfs(),
+                "Assign" => GetAllFollowedAssigns(),
+                "Call" => GetAllFollowedCalls(),
+                _ => GetAllFollowsSources(), 
+            };
+        }
+
+        private IEnumerable<int> GetAllFollowedIfs()
+        {
+            var follows = _db.GetFollows();
+            var ifs = GetAllIfs();
+            return ifs.Where(stmt => follows.ContainsKey(stmt));
+        }
+
+        private IEnumerable<int> GetAllFollowedAssigns()
+        {
+            var follows = _db.GetFollows();
+            var assigns = GetAllAssigns();
+            return assigns.Where(stmt => follows.ContainsKey(stmt));
+        }
+
+        private IEnumerable<int> GetAllFollowedCalls()
+        {
+            var follows = _db.GetFollows();
+            var calls = GetAllCallsNumbers();
+            return calls.Where(stmt => follows.ContainsKey(stmt));
+        }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }

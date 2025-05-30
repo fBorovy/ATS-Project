@@ -33,6 +33,9 @@ namespace Atsi.Structures.PKB.Explorer
         /// <summary>// Zwraca wszystkie procedury, które są pośrednio lub bezpośrednio wywoływane przez daną procedurę (Calls*)</summary>
         IEnumerable<string> GetCalledProceduresT(string caller);
 
+        /// <summary>dla danej procedury (procName) zwraca zbiór wszystkich używanych zmiennych</summary>
+        IEnumerable<string> GetUsedVariablesByProcedure(string procedureName);
+
 
         // === Follows ===
 
@@ -305,5 +308,90 @@ namespace Atsi.Structures.PKB.Explorer
         /// <param name="nodeType">Typ instrukcji: "While", "If", "Assign", "Call".</param>
         /// <returns>Lista numerów instrukcji będących źródłami Follows dla podanego typu lub wszystkich, jeśli typ nieznany.</returns>
         IEnumerable<int> GetFollowedStatementsByType(string nodeType);
+
+        /// <summary>
+        /// Zwraca numer instrukcji typu If, która bezpośrednio następuje po podanej instrukcji w relacji Follows.
+        /// </summary>
+        int? GetIfFollowing(int stmt);
+
+        /// <summary>
+        /// Zwraca numer instrukcji typu While, która bezpośrednio następuje po podanej instrukcji w relacji Follows.
+        /// </summary>
+        int? GetWhileFollowing(int stmt);
+
+        /// <summary>
+        /// Zwraca numer instrukcji typu Call, która bezpośrednio następuje po podanej instrukcji w relacji Follows.
+        /// </summary>
+        int? GetCallFollowing(int stmt);
+
+        /// <summary>
+        /// Zwraca numer instrukcji typu Assign, która bezpośrednio następuje po podanej instrukcji w relacji Follows.
+        /// </summary>
+        int? GetAssignFollowing(int stmt);
+
+        /// <summary>
+        /// Zwraca wszystkie instrukcje typu If, które występują po podanej instrukcji w relacji Follows*.
+        /// </summary>
+
+        IEnumerable<int> GetIfsFollowingT(int stmt);
+
+        /// <summary>
+        /// Zwraca wszystkie instrukcje typu While, które występują po podanej instrukcji w relacji Follows*.
+        /// </summary>
+
+        IEnumerable<int> GetWhilesFollowingT(int stmt);
+
+        /// <summary>
+        /// Zwraca wszystkie instrukcje typu Calls, które występują po podanej instrukcji w relacji Follows*.
+        /// </summary>
+
+        IEnumerable<int> GetCallsFollowingT(int stmt);
+
+        /// <summary>
+        /// Zwraca wszystkie instrukcje typu Assign, które występują po podanej instrukcji w relacji Follows*.
+        /// </summary>
+
+        IEnumerable<int> GetAssignsFollowingT(int stmt);
+
+        /// <summary>
+        /// Zwraca wszystkie Stmt, które występują po podanej instrukcji w relacji Follows*.
+        /// </summary>
+
+        IEnumerable<int> GetStmtsFollowingT(int stmt);
+
+        /// <summary>
+        /// Zwraca wszystkie instrukcje typu If, które poprzedzają daną instrukcję w relacji Follows*.
+        /// </summary>
+        /// <param name="stmt">Numer instrukcji docelowej.</param>
+        /// <returns>Zbiór instrukcji typu If będących poprzednikami w Follows*.</returns>
+        IEnumerable<int> GetFollowedByIfsT(int stmt);
+
+        /// <summary>
+        /// Zwraca wszystkie instrukcje typu While, które poprzedzają daną instrukcję w relacji Follows*.
+        /// </summary>
+        /// <param name="stmt">Numer instrukcji docelowej.</param>
+        /// <returns>Zbiór instrukcji typu While będących poprzednikami w Follows*.</returns>
+        IEnumerable<int> GetFollowedByWhilesT(int stmt);
+
+        /// <summary>
+        /// Zwraca wszystkie instrukcje typu Calls, które poprzedzają daną instrukcję w relacji Follows*.
+        /// </summary>
+        /// <param name="stmt">Numer instrukcji docelowej.</param>
+        /// <returns>Zbiór instrukcji typu Call będących poprzednikami w Follows*.</returns>
+        IEnumerable<int> GetFollowedByCallsT(int stmt);
+
+        /// <summary>
+        /// Zwraca wszystkie instrukcje typu Assign, które poprzedzają daną instrukcję w relacji Follows*.
+        /// </summary>
+        /// <param name="stmt">Numer instrukcji docelowej.</param>
+        /// <returns>Zbiór instrukcji typu Assign będących poprzednikami w Follows*.</returns>
+        IEnumerable<int> GetFollowedByAssignsT(int stmt);
+
+        /// <summary>
+        /// Zwraca wszystkie Stmts, które poprzedzają daną instrukcję w relacji Follows*.
+        /// </summary>
+        /// <param name="stmt">Numer instrukcji docelowej.</param>
+        /// <returns>Zbiór Stmts będących poprzednikami w Follows*.</returns>
+        IEnumerable<int> GetFollowedByStmtsT(int stmt);
     }
 }

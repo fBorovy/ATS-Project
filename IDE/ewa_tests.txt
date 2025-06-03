@@ -1,3 +1,18 @@
 procedure p;
 Select p such that Calls (p, "Shift")
 Main
+assign a; while w;
+Select a such that Follows (a, w)
+none
+call c;
+Select c such that Follows (91, c)
+92
+call c;
+Select c such that Follows* (34, c)
+45,54
+call c;
+Select c such that Follows* (c, 219)
+none
+assign a; variable v;
+Select v such that Uses (a, v)
+a, b, c, d, k, t

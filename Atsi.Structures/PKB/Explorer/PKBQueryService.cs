@@ -116,10 +116,54 @@ namespace Atsi.Structures.PKB.Explorer
             return result;
         }
 
+        public IEnumerable<int> GetAllFollowingStatements(int stmt1, string statementType)
+        {
+            IEnumerable<int> relevantStmts = statementType.ToLower() switch
+            {
+                "assign" => GetAllAssigns(),
+                "if" => GetAllIfs(),
+                "while" => GetAllWhiles(),
+                "call" => GetAllCallsNumbers(),
+                _ => Enumerable.Empty<int>()
+            };
+
+            var result = new List<int>();
+            var follows = _db.GetFollows();
+            var current = stmt1;
+
+            while (follows.TryGetValue(current, out var next))
+            {
+                if (relevantStmts.Contains(next))
+                    result.Add(next);
+
+                current = next;
+            }
+
+            return result;
+        }
+
         public IEnumerable<int> GetAllStatementsLeadingTo(int stmt2)
         {
             var follows = _db.GetFollows();
             return follows.Where(kvp => IsFollowsTransitive(kvp.Key, stmt2)).Select(kvp => kvp.Key);
+        }
+
+        public IEnumerable<int> GetAllStatementsLeadingTo(int stmt2, string statementType)
+        {
+            var follows = _db.GetFollows();
+
+            IEnumerable<int> relevantStmts = statementType.ToLower() switch
+            {
+                "assign" => GetAllAssigns(),
+                "if" => GetAllIfs(),
+                "while" => GetAllWhiles(),
+                "call" => GetAllCallsNumbers(),
+                _ => Enumerable.Empty<int>()
+            };
+
+            return follows
+                .Where(kvp => IsFollowsTransitive(kvp.Key, stmt2) && relevantStmts.Contains(kvp.Key))
+                .Select(kvp => kvp.Key);
         }
 
         // === Parent ===
@@ -233,8 +277,28 @@ namespace Atsi.Structures.PKB.Explorer
         public IEnumerable<int> GetAllStatementsUsingAnything() =>
             _db.GetStatementUses().Keys;
 
-        public IEnumerable<string> GetAllUsedVariables() =>
-            _db.GetStatementUses().Values.SelectMany(vars => vars).Distinct();
+        public IEnumerable<string> GetAllUsedVariables()
+        {
+            return _db.GetStatementUses().Values.SelectMany(vars => vars).Distinct();
+        }
+        public IEnumerable<string> GetAllUsedVariables(string statementType)
+        {
+            var stmtUses = _db.GetStatementUses();
+
+            IEnumerable<int> relevantStatements = statementType.ToLower() switch
+            {
+                "assign" => GetAllAssigns(),
+                "if" => GetAllIfs(),
+                "while" => GetAllWhiles(),
+                "call" => GetAllCallsNumbers(),
+                _ => Enumerable.Empty<int>() 
+            };
+
+            return relevantStatements
+                .Where(stmtUses.ContainsKey)
+                .SelectMany(stmt => stmtUses[stmt])
+                .Distinct();
+        }
 
         // === Calls ===
         public bool IsCalls(string caller, string callee) =>
@@ -661,6 +725,34 @@ namespace Atsi.Structures.PKB.Explorer
                 _ => GetAllFollowsSources(), 
             };
         }
+
+        public IEnumerable<int> GetFollowedStatementsByType(string nodeType, string followedType)
+        {
+            var follows = _db.GetFollows();
+
+            var sourceStmts = nodeType.ToLower() switch
+            {
+                "while" => GetAllWhiles(),
+                "if" => GetAllIfs(),
+                "assign" => GetAllAssigns(),
+                "call" => GetAllCallsNumbers(),
+                _ => Enumerable.Empty<int>()
+            };
+
+            var targetStmts = followedType.ToLower() switch
+            {
+                "while" => GetAllWhiles(),
+                "if" => GetAllIfs(),
+                "assign" => GetAllAssigns(),
+                "call" => GetAllCallsNumbers(),
+                _ => Enumerable.Empty<int>()
+            };
+
+            return follows
+                .Where(kvp => sourceStmts.Contains(kvp.Key) && targetStmts.Contains(kvp.Value))
+                .Select(kvp => kvp.Key);
+        }
+
 
         private IEnumerable<int> GetAllFollowedIfs()
         {

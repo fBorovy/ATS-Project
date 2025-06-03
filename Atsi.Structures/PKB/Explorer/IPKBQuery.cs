@@ -60,8 +60,14 @@ namespace Atsi.Structures.PKB.Explorer
         /// <summary>Zwraca wszystkie instrukcje, które występują po stmt1 w kolejności wykonywania programu (Follows*).</summary>
         IEnumerable<int> GetAllFollowingStatements(int s1);
 
+        /// <summary>//Zwraca instrukcje danego typu, które następują po podanej instrukcji w relacji Follows*</summary>
+        IEnumerable<int> GetAllFollowingStatements(int stmt1, string statementType);
+
         /// <summary>Zwraca wszystkie instrukcje, które prowadzą do stmt2 (Follows*).</summary>
         IEnumerable<int> GetAllStatementsLeadingTo(int s2);
+
+        /// <summary>Zwraca instrukcje danego typu, które poprzedzają podaną instrukcję w relacji Follows*</summary>
+        IEnumerable<int> GetAllStatementsLeadingTo(int stmt2, string statementType);
 
 
         // === Parent ===
@@ -132,6 +138,8 @@ namespace Atsi.Structures.PKB.Explorer
         /// <summary>Zwraca wszystkie zmienne używane w programie.</summary>
         IEnumerable<string> GetAllUsedVariables();
 
+        /// <summary>Zwraca wszystkie zmienne używane przez instrukcje danego typu</summary>
+        IEnumerable<string> GetAllUsedVariables(string statementType);
 
         // === Modifies (Procedure) ===
 
@@ -393,5 +401,10 @@ namespace Atsi.Structures.PKB.Explorer
         /// <param name="stmt">Numer instrukcji docelowej.</param>
         /// <returns>Zbiór Stmts będących poprzednikami w Follows*.</returns>
         IEnumerable<int> GetFollowedByStmtsT(int stmt);
+
+        /// <summary>
+        /// Zwraca instrukcje danego typu, które są śledzone przez instrukcje innego typu w relacji Follows
+        /// </summary>
+        IEnumerable<int> GetFollowedStatementsByType(string nodeType, string followedType);
     }
 }

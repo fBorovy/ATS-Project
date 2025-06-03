@@ -56,7 +56,7 @@ public class Program
         */
 
         // zakomentowac do testowania tym śmiesznym narzędziem z ceza
-        var queryLines = File.ReadAllLines($"{basePath}ewa_tests.txt");
+        var queryLines = File.ReadAllLines($"{basePath}current_test.txt");
 
         for (int i = 0; i < queryLines.Length; i += 3)
         {

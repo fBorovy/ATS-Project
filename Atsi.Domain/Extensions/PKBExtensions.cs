@@ -179,7 +179,7 @@ namespace Atsi.Domain.Extensions
                     break;
 
                 case CallStatement callStmt:
-                    AddCalls(statement.ProcedureName, callStmt.ProcedureName);
+                    AddCalls(statement.ProcedureName, callStmt.CalledProcedureName);
                     break;
             }
         }

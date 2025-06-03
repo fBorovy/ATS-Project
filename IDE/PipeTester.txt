@@ -236,7 +236,7 @@ stmt s;
 Select s such that Follows* (s, 287)
 283,284,285,268
 stmt s;
-Sekect s such that Modifies (s, "cs5")
+Select s such that Modifies (s, "cs5")
 290,298,302,311
 procedure p;
 Select p

@@ -814,8 +814,12 @@ public class QueryEvaluator
                         }
                         else
                         {
-                            pkb.GetStatementsModifying(stringParameter);
+                            IEnumerable<int> stmts = pkb.GetStatementsModifying(stringParameter);
                             // Console.WriteLine($"invoked pkb.GetStatementsModifying({stringParameter})");
+                            foreach (var s in stmts)
+                            {
+                                result.Add(s.ToString());
+                            }
                         }
                     }
                     break;

@@ -11,19 +11,19 @@ public class Program
     static void Main(string[] args)
     {
         // odkomentowac do testowania tym śmiesznym narzędziem z ceza
-        if (args.Length != 1)
-        {
-            Console.WriteLine($"Number of artguments should be 1. Is {args.Length}.");
-            return;
-        }
-        var filePath = args[0];
+        // if (args.Length != 1)
+        // {
+        //     Console.WriteLine($"Number of artguments should be 1. Is {args.Length}.");
+        //     return;
+        // }
+        // var filePath = args[0];
         // do tąd
 
         // zakomentowac do testowania tym śmiesznym narzędziem z ceza
-        /*
+        
         var basePath = $"{AppDomain.CurrentDomain.BaseDirectory}\\..\\..\\..\\";
         var filePath = $"{basePath}SIMPLE.txt";
-        */
+        
         // do tąd
 
         CodeParser parser = new CodeParser(filePath);
@@ -44,20 +44,20 @@ public class Program
 
         QueryParser queryParser = new QueryParser();
         // odkomentowac do testowania tym śmiesznym narzędziem z ceza
-        while(true)
-        {
-            var declarations = Console.ReadLine();
-            var query = Console.ReadLine();
-            var response = queryParser.ParseQuery(declarations + query);
-            // jak się poprawi poniższe TODO to tą linię będzie można usunąć
-            var parsed_response = string.Join(",", response.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
-            Console.WriteLine(string.IsNullOrEmpty(parsed_response) ? "none" : parsed_response);
-        }
+        // while(true)
+        // {
+        //     var declarations = Console.ReadLine();
+        //     var query = Console.ReadLine();
+        //     var response = queryParser.ParseQuery(declarations + query);
+        //     // jak się poprawi poniższe TODO to tą linię będzie można usunąć
+        //     var parsed_response = string.Join(",", response.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
+        //     Console.WriteLine(string.IsNullOrEmpty(parsed_response) ? "none" : parsed_response);
+        // }
         // do tąd
 
         // zakomentowac do testowania tym śmiesznym narzędziem z ceza
-        /*
-        var queryLines = File.ReadAllLines($"{basePath}current_test.txt");
+        
+        var queryLines = File.ReadAllLines($"{basePath}test2_queries.txt");
 
         for (int i = 0; i < queryLines.Length; i += 3)
         {
@@ -79,7 +79,7 @@ public class Program
             Console.WriteLine(response);
             Console.WriteLine(new string('-', 40));
         }
-        */
+        
         // do tąd
     }
 }

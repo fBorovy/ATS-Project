@@ -807,8 +807,16 @@ public class QueryEvaluator
                     }
                     else
                     {
-                        procedures = pkb.GetProceduresModifying(stringParameter);
-                        //Console.WriteLine($"invoked pkb.GetProceduresModifying({stringParameter})");
+                        if (arg2Type == "procedure")
+                        {
+                            procedures = pkb.GetProceduresModifying(stringParameter);
+                            // Console.WriteLine($"invoked pkb.GetProceduresModifying({stringParameter})");
+                        }
+                        else
+                        {
+                            pkb.GetStatementsModifying(stringParameter);
+                            // Console.WriteLine($"invoked pkb.GetStatementsModifying({stringParameter})");
+                        }
                     }
                     break;
                 case "Uses":

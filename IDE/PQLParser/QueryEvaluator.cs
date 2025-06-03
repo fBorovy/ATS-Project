@@ -56,10 +56,10 @@ public class QueryEvaluator
                     }
                 }
                 // sprawdzenie
-                // foreach (var w in with)
-                // {
-                //     Console.WriteLine("with: " + w.ToString());
-                // }
+                foreach (var w in with)
+                {
+                    Console.WriteLine("with: " + w.ToString());
+                }
             }
         }
         foreach (var child in tree.Children)
@@ -526,7 +526,7 @@ public class QueryEvaluator
                             {
                                 result.Add(stmt.ToString());
                             }
-                            //Console.WriteLine($"invoked pkb.GetAllFollowingStatements({followedTStmt})");
+                            Console.WriteLine($"invoked pkb.GetAllFollowingStatements({followedTStmt} {condition.Item1})");
                             break;
                         case "Uses":
                             if (arg1.NodeType == "Procedure")

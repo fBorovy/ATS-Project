@@ -60,7 +60,7 @@ namespace Atsi.Structures.PKB.Explorer
         /// <summary>Zwraca wszystkie instrukcje, które występują po stmt1 w kolejności wykonywania programu (Follows*).</summary>
         IEnumerable<int> GetAllFollowingStatements(int s1);
 
-        /// <summary>//Zwraca instrukcje danego typu, które następująpo podanej instrukcji w relacji Follows*</summary>
+        /// <summary>//Zwraca instrukcje danego typu, które następują po podanej instrukcji w relacji Follows*</summary>
         IEnumerable<int> GetAllFollowingStatements(int stmt1, string statementType);
 
         /// <summary>Zwraca wszystkie instrukcje, które prowadzą do stmt2 (Follows*).</summary>

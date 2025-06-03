@@ -187,7 +187,7 @@ public sealed class SimpleTests
     [DataRow("stmt s; Select s such that Uses(s, \"x1\")", "13,28,33")]
     [DataRow("stmt s; Select s such that Modifies(s, \"x4\")", "33")]
     [DataRow("procedure p; Select p such that Calls*(p, \"Draw\")", "Main,Shrink")]
-    [DataRow("procedure p; Select BOOLEAN such that Calls*(p, \"Enlarge\")", "TRUE")]
+    [DataRow("procedure p; Select BOOLEAN such that Calls*(p, \"Enlarge\")", "true")]
     [DataRow("stmt s; Select s such that Follows(27, s)", "28")]
     [DataRow("stmt s; Select s such that Follows*(27, s)", "28,29,30,31")]
     [DataRow("stmt s; Select s such that Parent(s, 33)", "32")]
@@ -203,12 +203,12 @@ public sealed class SimpleTests
     [DataRow("stmt s; Select s such that Parent(34, s)", "35,36,37,38")]
     [DataRow("stmt s; Select s such that Affects(30, s)", "33")]
     [DataRow("stmt s; Select s such that Affects(s, 34)", "33")]
-    [DataRow("stmt s; Select s such that Affects*(30, 34)", "TRUE")]
-    [DataRow("assign a;Select a such that Uses(a, \"x\")", "12, 22, 45, 78")]
-    [DataRow("stmt s;Select s such that Modifies(s, \"result\")", "33, 44")]
-    [DataRow("while w;Select w such that Follows*(5, w)", "6, 7")]
+    [DataRow("stmt s; Select s such that Affects*(30, 34)", "true")]
+    [DataRow("assign a;Select a such that Uses(a, \"x\")", "12,22,45,78")]
+    [DataRow("stmt s;Select s such that Modifies(s, \"result\")", "33,44")]
+    [DataRow("while w;Select w such that Follows*(5, w)", "6,7")]
     [DataRow("call c;Select c such that Calls(\"Init\", c)", "none")]
-    [DataRow("stmt s;Select s such that Parent*(s, 100)", "95, 96, 97, 98")]
+    [DataRow("stmt s;Select s such that Parent*(s, 100)", "95,96,97,98")]
     public void KasiaTests(string query, string expectedResult)
     {
         //var result = queryParser.ParseWithExceptions(query);

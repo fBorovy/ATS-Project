@@ -68,6 +68,13 @@ namespace Atsi.Structures.PKB.Explorer
                       : Enumerable.Empty<string>();
         }
 
+        public IEnumerable<string> GetUsedVariablesByProcedure(string procedureName)
+        {
+            return _db.GetProcedureUses().TryGetValue(procedureName, out var vars)
+                ? vars
+                : Enumerable.Empty<string>();
+        }
+
         // === Follows ===
         public bool IsFollows(int stmt1, int stmt2) =>
             _db.IsFollows(stmt1, stmt2);
@@ -640,5 +647,157 @@ namespace Atsi.Structures.PKB.Explorer
             var assigns = GetAllAssigns();
             return follows.FirstOrDefault(kvp => kvp.Value == followingStmtNumber && assigns.Contains(kvp.Key)).Key;
         }
+
+        /// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       
+        public IEnumerable<int> GetFollowedStatementsByType(string nodeType)
+        {
+            return nodeType switch
+            {
+                "While" => GetAllFollowedWhiles(),
+                "If" => GetAllFollowedIfs(),
+                "Assign" => GetAllFollowedAssigns(),
+                "Call" => GetAllFollowedCalls(),
+                _ => GetAllFollowsSources(), 
+            };
+        }
+
+        private IEnumerable<int> GetAllFollowedIfs()
+        {
+            var follows = _db.GetFollows();
+            var ifs = GetAllIfs();
+            return ifs.Where(stmt => follows.ContainsKey(stmt));
+        }
+
+        private IEnumerable<int> GetAllFollowedAssigns()
+        {
+            var follows = _db.GetFollows();
+            var assigns = GetAllAssigns();
+            return assigns.Where(stmt => follows.ContainsKey(stmt));
+        }
+
+        private IEnumerable<int> GetAllFollowedCalls()
+        {
+            var follows = _db.GetFollows();
+            var calls = GetAllCallsNumbers();
+            return calls.Where(stmt => follows.ContainsKey(stmt));
+        }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///
+        private int? GetFollowedByType(int stmt, Func<Statement, bool> predicate)
+        {
+            var followed = GetFollowedBy(stmt);
+            if (followed is null) return null;
+
+            foreach (var procedure in _db.GetProcedures().Values)
+            {
+                foreach (var s in GetAllDescendantStatements(procedure.StatementsList))
+                {
+                    if (s.StatementNumber == followed && predicate(s))
+                        return followed;
+                }
+            }
+
+            return null;
+        }
+
+        public int? GetIfFollowing(int stmt)
+    => GetFollowedByType(stmt, s => s is IfStatement);
+
+        public int? GetWhileFollowing(int stmt)
+            => GetFollowedByType(stmt, s => s is WhileStatement);
+
+        public int? GetCallFollowing(int stmt)
+            => GetFollowedByType(stmt, s => s is CallStatement);
+
+        public int? GetAssignFollowing(int stmt)
+            => GetFollowedByType(stmt, s => s is AssignStatement);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        private IEnumerable<int> GetFollowingTOfType(int stmt, Func<Statement, bool> predicate)
+        {
+            var result = new List<int>();
+
+            var followsStar = _db.GetFollowsStar();
+            if (!followsStar.TryGetValue(stmt, out var allFollowing))
+                return result;
+
+            foreach (var procedure in _db.GetProcedures().Values)
+            {
+                foreach (var s in GetAllDescendantStatements(procedure.StatementsList))
+                {
+                    if (allFollowing.Contains(s.StatementNumber) && predicate(s))
+                    {
+                        result.Add(s.StatementNumber);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public IEnumerable<int> GetIfsFollowingT(int stmt)
+    => GetFollowingTOfType(stmt, s => s is IfStatement);
+
+        public IEnumerable<int> GetWhilesFollowingT(int stmt)
+            => GetFollowingTOfType(stmt, s => s is WhileStatement);
+
+        public IEnumerable<int> GetCallsFollowingT(int stmt)
+            => GetFollowingTOfType(stmt, s => s is CallStatement);
+
+        public IEnumerable<int> GetAssignsFollowingT(int stmt)
+            => GetFollowingTOfType(stmt, s => s is AssignStatement);
+
+        public IEnumerable<int> GetStmtsFollowingT(int stmt)
+        {
+            var followsStar = _db.GetFollowsStar();
+            return followsStar.TryGetValue(stmt, out var stmts) ? stmts : Enumerable.Empty<int>();
+        }
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        private IEnumerable<int> GetFollowedByTOfType(int stmt, Func<Statement, bool> predicate)
+        {
+            var result = new List<int>();
+
+            var followsStar = _db.GetFollowsStar();
+            foreach (var kvp in followsStar)
+            {
+                if (kvp.Value.Contains(stmt))
+                {
+                    foreach (var procedure in _db.GetProcedures().Values)
+                    {
+                        foreach (var s in GetAllDescendantStatements(procedure.StatementsList))
+                        {
+                            if (s.StatementNumber == kvp.Key && predicate(s))
+                            {
+                                result.Add(s.StatementNumber);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public IEnumerable<int> GetFollowedByIfsT(int stmt)
+    => GetFollowedByTOfType(stmt, s => s is IfStatement);
+
+        public IEnumerable<int> GetFollowedByWhilesT(int stmt)
+            => GetFollowedByTOfType(stmt, s => s is WhileStatement);
+
+        public IEnumerable<int> GetFollowedByCallsT(int stmt)
+            => GetFollowedByTOfType(stmt, s => s is CallStatement);
+
+        public IEnumerable<int> GetFollowedByAssignsT(int stmt)
+            => GetFollowedByTOfType(stmt, s => s is AssignStatement);
+
+        public IEnumerable<int> GetFollowedByStmtsT(int stmt)
+        {
+            var followsStar = _db.GetFollowsStar();
+            return followsStar.Where(kvp => kvp.Value.Contains(stmt)).Select(kvp => kvp.Key);
+        }
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     }
 }

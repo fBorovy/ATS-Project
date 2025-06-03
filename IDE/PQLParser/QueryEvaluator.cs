@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Atsi.Structures.PKB.Explorer;
 using Atsi.Structures.SIMPLE;
+using Atsi.Structures.SIMPLE.Statements;
 using Microsoft.Win32;
 
 namespace IDE.PQLParser;
@@ -145,32 +146,32 @@ public class QueryEvaluator
             {
                 output.Add(procedure);
             }
-            Console.WriteLine($"invoked GetAllProceduresNames()");
+            //Console.WriteLine($"invoked GetAllProceduresNames()");
         }
         else if (select.Item2 == "While")
         {
-            // TODO ext IEnumerable<int> allStmts = pkb.GetAllWhiles();
-            Console.WriteLine($"invoked GetAllWhiles()");
+            allStmts = pkb.GetAllWhiles();
+            //Console.WriteLine($"invoked GetAllWhiles()");
         }
         else if (select.Item2 == "If")
         {
-            // TODO ext IEnumerable<int> allStmts = pkb.GetAllIfs();
-            Console.WriteLine($"invoked GetAllIfs()");
+            allStmts = pkb.GetAllIfs();
+            //Console.WriteLine($"invoked GetAllIfs()");
         }
         else if (select.Item2 == "Assign")
         {
-            // TODO ext IEnumerable<int> allStmts = pkb.GetAssigns();
-            Console.WriteLine($"invoked GetAllAssigns()");
+            allStmts = pkb.GetAllAssigns();
+            //Console.WriteLine($"invoked GetAllAssigns()");
         }
         else if (select.Item2 == "Call")
         {
-            // TODO ext IEnumerable<int> allStmts = pkb.GetAllCalls();
-            Console.WriteLine($"invoked GetAllCalls()");
+            allStmts = pkb.GetAllCallsNumbers();
+            //Console.WriteLine($"invoked GetAllCalls()");
         }
         else
         {
-            // TODO ext IEnumerable<int> allStmts = pkb.GetAllStatements();
-            Console.WriteLine($"invoked GetAllStatements()");
+            allStmts = pkb.GetAllStatements();
+            //Console.WriteLine($"invoked GetAllStatements()");
         }
         foreach (var stmt in allStmts)
         {
@@ -186,12 +187,12 @@ public class QueryEvaluator
             if (arg2.NodeType == "Number")
             {
                 isNotConditioned = false;
-                result = EvaluateRelationWithParameter<int>(relation, false, Int32.Parse(arg2.Name));
+                result = EvaluateRelationWithParameter<int>(relation, false, Int32.Parse(arg2.Name), arg1.NodeType, arg2.NodeType);
             }
             if (arg2.NodeType == "String")
             {
                 isNotConditioned = false;
-                result = EvaluateRelationWithParameter<String>(relation, false, arg2.Name);
+                result = EvaluateRelationWithParameter<String>(relation, false, arg2.Name, arg1.NodeType, arg2.NodeType);
             }
             //Console.WriteLine("select arg1");
             if (isNotConditioned)
@@ -207,9 +208,12 @@ public class QueryEvaluator
                                 string modifiedValName = condition.Item5;
                                 if (arg1.NodeType == "Procedure")
                                 {
-                                    // TODO ext IEnumerable<string> modifyingProcedures = pkb.GetProceduresModifying(modifiedValName);
-                                    // foreach ()
-                                    Console.WriteLine($"invoked GetProceduresModifying({modifiedValName})");
+                                    IEnumerable<string> modifyingProcedures = pkb.GetProceduresModifying(modifiedValName);
+                                    foreach (var procedure in modifyingProcedures)
+                                    {
+                                        result.Add(procedure);
+                                    }
+                                    //Console.WriteLine($"invoked GetProceduresModifying({modifiedValName})");
                                 }
                                 else
                                 {
@@ -218,12 +222,12 @@ public class QueryEvaluator
                                     {
                                         result.Add(line.ToString());
                                     }
-                                    Console.WriteLine($"invoked GetStatementsModyfing({modifiedValName})");
+                                    //Console.WriteLine($"invoked GetStatementsModyfing({modifiedValName})");
                                 }
                                 break;
                             case "Follows":
                                 int followingStatement = Int16.Parse(condition.Item5);
-                                int? followedStatement = GetFollowedBy(arg1.NodeType, arg2.NodeType, followingStatement);
+                                int? followedStatement = EvaluateFollows(followingStatement, false, arg1.NodeType, arg2.NodeType);
                                 if (followedStatement != null)
                                 {
                                     result.Add(followedStatement.ToString());
@@ -231,37 +235,48 @@ public class QueryEvaluator
                                 break;
                             case "Follows*":
                                 int followingTStatement = Int16.Parse(condition.Item5);
-                                IEnumerable<int> followedTStaments = pkb.GetAllStatementsLeadingTo(followingTStatement);
+                                IEnumerable<int> followedTStaments = EvaluateFollowsT(followingTStatement, false, arg1.NodeType, arg2.NodeType);
                                 foreach (var stmt in followedTStaments)
                                 {
                                     result.Add(stmt.ToString());
                                 }
-                                Console.WriteLine($"invoked pkb.GetAllStatementsLeadingTo({followingTStatement})");
                                 break;
                             case "Uses":
                                 if (arg1.NodeType == "Procedure")
                                 {
-                                    // TODO ext IEnumerable<string> usingProcedures = pkb.GetProceduresUsing(usedValName);
-                                    // foreach ()
-                                    Console.WriteLine($"invoked GetProceduresUsing({condition.Item5})");
+                                    IEnumerable<string> usingProcedures = pkb.GetProceduresUsing(condition.Item5);
+                                    foreach (var procedure in usingProcedures)
+                                    {
+                                        result.Add(procedure);
+                                    }
+                                    //Console.WriteLine($"invoked GetProceduresUsing({condition.Item5})");
                                 }
                                 else if (arg1.NodeType == "Assign")
                                 {
-                                    // TODO ext IEnumerable<int> usingAssignments = pkb.GetAssignmentsUsing(usedValName);
-                                    // foreach ()
-                                    Console.WriteLine($"invoked GetAssignmentsUsing({condition.Item5})");
+                                    IEnumerable<int> usingAssignments = pkb.GetAssignmentsUsing(condition.Item5);
+                                    foreach (var assignment in usingAssignments)
+                                    {
+                                        result.Add(assignment.ToString());
+                                    }
+                                    //Console.WriteLine($"invoked GetAssignmentsUsing({condition.Item5})");
                                 }
                                 else if (arg1.NodeType == "If")
                                 {
-                                    // TODO ext IEnumerable<int> usingIfs = pkb.GetIfsUsing(usedValName)
-                                    // foreach ()
-                                    Console.WriteLine($"invoked pkb.GetIfsUsing({condition.Item5})");
+                                    IEnumerable<int> usingIfs = pkb.GetIfsUsing(condition.Item5);
+                                    foreach (var i in usingIfs)
+                                    {
+                                        result.Add(i.ToString());
+                                    }
+                                    //Console.WriteLine($"invoked pkb.GetIfsUsing({condition.Item5})");
                                 }
                                 else if (arg1.NodeType == "While")
                                 {
-                                    // TODO ext IEnumerable<int> usingWhiles = pkb.GetWhilesUsing(usedValName);
-                                    // foreach ()
-                                    Console.WriteLine($"invoked GetAssignmentsUsing({condition.Item5})");
+                                    IEnumerable<int> usingWhiles = pkb.GetWhilesUsing(condition.Item5);
+                                    foreach (var whilee in usingWhiles)
+                                    {
+                                        result.Add(whilee.ToString());
+                                    }
+                                    //Console.WriteLine($"invoked GetAssignmentsUsing({condition.Item5})");
                                 }
                                 else
                                 {
@@ -271,14 +286,14 @@ public class QueryEvaluator
                                     {
                                         result.Add(stmt.ToString());
                                     }
-                                    Console.WriteLine($"invoked GetStatementsUsing({usedValName})");
+                                    //Console.WriteLine($"invoked GetStatementsUsing({usedValName})");
                                 }
                                 break;
                             case "Parent":
                                 int childStmt = Int16.Parse(condition.Item5);
                                 int? parentStmt = pkb.GetParent(childStmt);
                                 if (parentStmt != null) result.Add(parentStmt.ToString());
-                                Console.WriteLine($"invoked pkb.GetParent({childStmt})");
+                                //Console.WriteLine($"invoked pkb.GetParent({childStmt})");
                                 break;
                             case "Parent*":
                                 int childTStmt = Int16.Parse(condition.Item5);
@@ -287,7 +302,7 @@ public class QueryEvaluator
                                 {
                                     result.Add(stmt.ToString());
                                 }
-                                Console.WriteLine($"invoked pkb.GetAllParentStatements({childTStmt})");
+                                //Console.WriteLine($"invoked pkb.GetAllParentStatements({childTStmt})");
                                 break;
                             case "Calls":
                                 String callee = condition.Item5;
@@ -296,12 +311,15 @@ public class QueryEvaluator
                                 {
                                     result.Add(procedure);
                                 }
-                                Console.WriteLine($"invoked pkb.GetCallingProcedures({callee})");
+                                //Console.WriteLine($"invoked pkb.GetCallingProcedures({callee})");
                                 break;
                             case "Calls*":
-                                //TODO ext IEnumerable<String> procedures = pkb.GetCallingProceduresT(callee);
-                                // foreach ()
-                                Console.WriteLine($"invoked pkb.GetCallingProceduresT({condition.Item5})");
+                                IEnumerable<String> procs = pkb.GetCallingProceduresT(condition.Item5);
+                                foreach (var procedure in procs)
+                                {
+                                    result.Add(procedure);
+                                }
+                                //Console.WriteLine($"invoked pkb.GetCallingProceduresT({condition.Item5})");
                                 break;
                         }
                     }
@@ -314,9 +332,12 @@ public class QueryEvaluator
                     case "Modifies":
                         if (arg1.NodeType == "Procedure")
                         {
-                            // TODO ext IEnumerable<string> allModyfyingProcedures = pkb.GetAllProceduresModifyingAnything();
-                            // foreach ()
-                            Console.WriteLine("invoked pkb.GetAllProceduresModifyingAnything()");
+                            IEnumerable<string> allModyfyingProcedures = pkb.GetAllProceduresModifyingAnything();
+                            foreach (var procedure in allModyfyingProcedures)
+                            {
+                                result.Add(procedure);
+                            }
+                            //Console.WriteLine("invoked pkb.GetAllProceduresModifyingAnything()");
                         }
                         else
                         {
@@ -325,62 +346,78 @@ public class QueryEvaluator
                             {
                                 result.Add(stmt.ToString());
                             }
-                            Console.WriteLine("invoked pkb.GetAllStatementsModyfingAnything()");
+                            //Console.WriteLine("invoked pkb.GetAllStatementsModyfingAnything()");
                         }
                         break;
                     case "Follows":
                     case "Follows*":
-                        IEnumerable<int> followingStatements = null;
+                        IEnumerable<int> followedStatements = null;
                         if (arg1.NodeType == "While")
                         {
-                            // TODO ext followingStatements = pkb.GetAllFollowedWhiles();
+                            followedStatements = pkb.GetAllFollowedWhiles();
+                            //Console.WriteLine("invoked pkb.GetAllFollowedWhiles()");
                         }
                         else if (arg1.NodeType == "If")
                         {
-
+                            //TODO ext followedStatements = pkb.GetAllFollowedIfs();
+                            //Console.WriteLine("invoked pkb.GetAllFollowedIfs()");
                         }
                         else if (arg1.NodeType == "Assign")
                         {
-
+                            //TODO ext followedStatements = pkb.GetAllFollowedAssigns();
+                            //Console.WriteLine("invoked pkb.GetAllFollowedAssigns()");
                         }
                         else if (arg1.NodeType == "Call")
                         {
-
+                            //TODO ext followedStatements = pkb.GetAllFollowedCalls();
+                            //Console.WriteLine("invoked pkb.GetAllFollowedCalls()");
                         }
                         else
                         {
-                            followingStatements = pkb.GetAllFollowsTargets();
-                            foreach (var stmt in followingStatements)
-                            {
-                                result.Add(stmt.ToString());
-                            }
-                            Console.WriteLine("invoked pkb.GetAllFollowsSources()");
+                            followedStatements = pkb.GetAllFollowsSources();
+                            //Console.WriteLine("invoked pkb.GetAllFollowsSources()");
+                        }
+                        foreach (var stmt in followedStatements)
+                        {
+                            result.Add(stmt.ToString());
                         }
                         break;
                     case "Uses":
                         if (arg1.NodeType == "Procedure")
                         {
-                            // TODO ext IEnumerable<String> proceduresUsingAnything = pkb.GetAllProceduresUsingAnything();
-                            // foreach ()
-                            Console.WriteLine("invoked pkb.GetAllProceduresUsingAnything()");
+                            IEnumerable<String> proceduresUsingAnything = pkb.GetAllProceduresUsingAnything();
+                            foreach (var procedure in proceduresUsingAnything)
+                            {
+                                result.Add(procedure.ToString());
+                            }
+                            //Console.WriteLine("invoked pkb.GetAllProceduresUsingAnything()");
                         }
                         else if (arg1.NodeType == "Assign")
                         {
-                            // TODO ext IEnumerable<int> assignmentsUsingAnything = pkb.GetAllAssignmentsUsingAnything();
-                            // foreach ()
-                            Console.WriteLine("invoked pkb.GetAllAssignmentsUsingAnything()");
+                            IEnumerable<int> assignmentsUsingAnything = pkb.GetAllAssignmentsUsingAnything();
+                            foreach (var assignment in assignmentsUsingAnything)
+                            {
+                                result.Add(assignment.ToString());
+                            }
+                            //Console.WriteLine("invoked pkb.GetAllAssignmentsUsingAnything()");
                         }
                         else if (arg1.NodeType == "While")
                         {
-                            // TODO ext IEnumerable<int> whilesUsingAnything = pkb.GetAllWhilesUsingAnything();
-                            // foreach ()
-                            Console.WriteLine("invoked pkb.GetAllWhilesUsingAnything()");
+                            IEnumerable<int> whilesUsingAnything = pkb.GetAllWhilesUsingAnything();
+                            foreach (var whilee in whilesUsingAnything)
+                            {
+                                result.Add(whilee.ToString());
+                            }
+                            //Console.WriteLine("invoked pkb.GetAllWhilesUsingAnything()");
                         }
                         else if (arg1.NodeType == "If")
                         {
-                            // TODO ext IEnumerable<int> ifsUsingAnything = pkb.GetAllIfsUsingAnything();
-                            // foreach ()
-                            Console.WriteLine("invoked pkb.GetAllIfsUsingAnything()");
+                            IEnumerable<int> ifsUsingAnything = pkb.GetAllIfsUsingAnything();
+                            foreach (var i in ifsUsingAnything)
+                            {
+                                result.Add(i.ToString());
+                            }
+                            //Console.WriteLine("invoked pkb.GetAllIfsUsingAnything()");
                         }
                         else
                         {
@@ -389,22 +426,28 @@ public class QueryEvaluator
                             {
                                 result.Add(stmt.ToString());
                             }
-                            Console.WriteLine("invoked pkb.GetAllStatementsUsingAnything()");
+                            //Console.WriteLine("invoked pkb.GetAllStatementsUsingAnything()");
                         }
                         break;
                     case "Parent":
                     case "Parent*":
                         if (arg1.NodeType == "If")
                         {
-                            // TODO ext IEnumerable<int> allParentIfs = pkb.GetAllParentIfs();
-                            // foreach ()
-                            Console.WriteLine("invoked pkb.GetAllParentIfs()");
+                            IEnumerable<int> allParentIfs = pkb.GetAllParentIfs();
+                            foreach (var i in allParentIfs)
+                            {
+                                result.Add(i.ToString());
+                            }
+                            //Console.WriteLine("invoked pkb.GetAllParentIfs()");
                         }
                         else if (arg1.NodeType == "While")
                         {
-                            // TODO ext IEnumerable<int> allParentWhiles = pkb.GetAllParentWhiles();
-                            // foreach ()
-                            Console.WriteLine("invoked pkb.GetAllParentWhiles()");
+                            IEnumerable<int> allParentWhiles = pkb.GetAllParentWhiles();
+                            foreach (var whilee in allParentWhiles)
+                            {
+                                result.Add(whilee.ToString());
+                            }
+                            //Console.WriteLine("invoked pkb.GetAllParentWhiles()");
                         }
                         else
                         {
@@ -413,14 +456,17 @@ public class QueryEvaluator
                             {
                                 result.Add(parent.ToString());
                             }
-                            Console.WriteLine("invoked pkb.GetAllParentStatements()");
+                            //Console.WriteLine("invoked pkb.GetAllParentStatements()");
                         }
                         break;
                     case "Calls":
                     case "Calls*":
-                        //TODO ext IEnumerable<string> allCallers = pkb.GetAllCallingProcedures();
-                        // foreach ()
-                        Console.WriteLine("invoked pkb.GetAllCallingProcedures()");
+                        IEnumerable<string> allCallers = pkb.GetAllCallingProcedures();
+                        foreach (var caller in allCallers)
+                        {
+                            result.Add(caller.ToString());
+                        }
+                        // Console.WriteLine("invoked pkb.GetAllCallingProcedures()");
                         break;
                 }
             }
@@ -430,12 +476,12 @@ public class QueryEvaluator
             if (arg1.NodeType == "Number")
             {
                 isNotConditioned = false;
-                result = EvaluateRelationWithParameter<int>(relation, true, Int32.Parse(arg1.Name));
+                result = EvaluateRelationWithParameter<int>(relation, true, Int32.Parse(arg1.Name), arg1.NodeType, arg2.NodeType);
             }
             if (arg1.NodeType == "String")
             {
                 isNotConditioned = false;
-                result = EvaluateRelationWithParameter<String>(relation, true, arg1.Name);
+                result = EvaluateRelationWithParameter<String>(relation, true, arg1.Name, arg1.NodeType, arg2.NodeType);
             }
             //Console.WriteLine("select arg2");
             foreach (var condition in with)
@@ -448,9 +494,12 @@ public class QueryEvaluator
                         case "Modifies":
                             if (arg1.NodeType == "Procedure")
                             {
-                                // TODO ext IEnumerable<String> modifiedVariables = pkb.GetModifiedVariables(modyfyingProcName);
-                                // foreach ()
-                                Console.WriteLine($"invoked GetModifiedVariables({condition.Item5})");
+                                IEnumerable<String> modifiedVariables = pkb.GetModifiedVariables(condition.Item5);
+                                foreach (var variable in modifiedVariables)
+                                {
+                                    result.Add(variable.ToString());
+                                }
+                                //Console.WriteLine($"invoked GetModifiedVariables({condition.Item5})");
                             }
                             else
                             {
@@ -460,7 +509,7 @@ public class QueryEvaluator
                                 {
                                     result.Add(variable);
                                 }
-                                Console.WriteLine($"invoked GetModifiedVariables({modyfyingStmtNumber})");
+                                //Console.WriteLine($"invoked GetModifiedVariables({modyfyingStmtNumber})");
                             }
 
                             break;
@@ -468,7 +517,7 @@ public class QueryEvaluator
                             int followedStmt = Int16.Parse(condition.Item5);
                             int? followingStatement = pkb.GetFollows(followedStmt);
                             if (followingStatement != null) result.Add(followingStatement.ToString());
-                            Console.WriteLine($"invoked pkb.GetFollows({followedStmt})");
+                            //Console.WriteLine($"invoked pkb.GetFollows({followedStmt})");
                             break;
                         case "Follows*":
                             int followedTStmt = Int16.Parse(condition.Item5);
@@ -477,35 +526,47 @@ public class QueryEvaluator
                             {
                                 result.Add(stmt.ToString());
                             }
-                            Console.WriteLine($"invoked pkb.GetAllFollowingStatements({followedTStmt})");
+                            //Console.WriteLine($"invoked pkb.GetAllFollowingStatements({followedTStmt})");
                             break;
                         case "Uses":
                             if (arg1.NodeType == "Procedure")
                             {
-                                // TODO ext IEnumerable<String> usedVariables = pkb.GetUsedVariables(procName);
-                                // foreach ()
-                                Console.WriteLine($"invoked GetUsedVariables({condition.Item5})");
+                                IEnumerable<String> usedVariables = pkb.GetUsedVariables(condition.Item5);
+                                foreach (var variable in usedVariables)
+                                {
+                                    result.Add(variable);
+                                }
+                                //Console.WriteLine($"invoked GetUsedVariables({condition.Item5})");
                             }
                             else if (arg1.NodeType == "Assign")
                             {
                                 int usingAssignmentsStmtNumber = Int16.Parse(condition.Item5);
-                                // TODO ext IEnumerable<String> usedVariables = pkb.GetUsedVariablesByAssign(int usingAssignStmtNumber)
-                                // foreach ()
-                                Console.WriteLine($"invoked pkb.GetUsedVariablesByAssign({usingAssignmentsStmtNumber})");
+                                IEnumerable<String> usedVariables = pkb.GetUsedVariablesByAssign(usingAssignmentsStmtNumber);
+                                foreach (var variable in usedVariables)
+                                {
+                                    result.Add(variable);
+                                }
+                                //Console.WriteLine($"invoked pkb.GetUsedVariablesByAssign({usingAssignmentsStmtNumber})");
                             }
                             else if (arg1.NodeType == "While")
                             {
                                 int usingWhileStmtNumber = Int16.Parse(condition.Item5);
-                                // TODO ext IEnumerable<String> usedVariables = pkb.GetUsedVariablesByWhile(usingWhileStmtNumber)
-                                // foreach ()
-                                Console.WriteLine($"invoked pkb.GetUsedVariablesByWhile({usingWhileStmtNumber})");
+                                IEnumerable<String> usedVariables = pkb.GetUsedVariablesByWhile(usingWhileStmtNumber);
+                                foreach (var variable in usedVariables)
+                                {
+                                    result.Add(variable);
+                                }
+                                //Console.WriteLine($"invoked pkb.GetUsedVariablesByWhile({usingWhileStmtNumber})");
                             }
                             else if (arg1.NodeType == "If")
                             {
                                 int usingIfStmtNumber = Int16.Parse(condition.Item5);
-                                // TODO ext IEnumerable<String> usedVariables = pkb.GetUsedVariablesByIf(usingIfStmtNumber)
-                                // foreach ()
-                                Console.WriteLine($"invoked pkb.GetUsedVariablesByIf({usingIfStmtNumber})");
+                                IEnumerable<String> usedVariables = pkb.GetUsedVariablesByIf(usingIfStmtNumber);
+                                foreach (var variable in usedVariables)
+                                {
+                                    result.Add(variable);
+                                }
+                                //Console.WriteLine($"invoked pkb.GetUsedVariablesByIf({usingIfStmtNumber})");
                             }
                             else
                             {
@@ -515,7 +576,7 @@ public class QueryEvaluator
                                 {
                                     result.Add(variable);
                                 }
-                                Console.WriteLine($"invoked GetUsedVariables({usingStmtNumber})");
+                                //Console.WriteLine($"invoked GetUsedVariables({usingStmtNumber})");
                             }
 
                             break;
@@ -524,18 +585,18 @@ public class QueryEvaluator
                             IEnumerable<int> childrenStmts = [];
                             if (arg1.NodeType == "If")
                             {
-                                // TODO ext IEnumerable<int> childrenStmts = pkb.GetChildrenOfIf(int ifStmt);
-                                Console.WriteLine($"invoked pkb.GetChildrenOfIf({parentStmt})");
+                                childrenStmts = pkb.GetChildrenOfIf(parentStmt);
+                                //Console.WriteLine($"invoked pkb.GetChildrenOfIf({parentStmt})");
                             }
                             else if (arg1.NodeType == "While")
                             {
-                                // TODO ext IEnumerable<int> childrenStmts = pkb.GetChildrenOfWhile(int whileStmt);
-                                Console.WriteLine($"invoked pkb.GetChildrenOfWhile({parentStmt})");
+                                childrenStmts = pkb.GetChildrenOfWhile(parentStmt);
+                                //Console.WriteLine($"invoked pkb.GetChildrenOfWhile({parentStmt})");
                             }
                             else
                             {
                                 childrenStmts = pkb.GetChildren(parentStmt);
-                                Console.WriteLine($"invoked pkb.GetChildren({parentStmt})");
+                                //Console.WriteLine($"invoked pkb.GetChildren({parentStmt})");
                             }
                             foreach (var stmt in childrenStmts)
                             {
@@ -547,18 +608,18 @@ public class QueryEvaluator
                             IEnumerable<int> childStmts = [];
                             if (arg1.NodeType == "If")
                             {
-                                // TODO ext IEnumerable<int> childStmts = pkb.GetAllNestedStatementsInIfT(int whileTStmt);
-                                Console.WriteLine($"invoked pkb.GetAllNestedStatementsInIfT({parentTStmt})");
+                                childStmts = pkb.GetAllNestedStatementsInIfT(parentTStmt);
+                                //Console.WriteLine($"invoked pkb.GetAllNestedStatementsInIfT({parentTStmt})");
                             }
                             else if (arg1.NodeType == "While")
                             {
-                                // TODO ext IEnumerable<int> childStmts = pkb.GetAllNestedStatementsInWhileT(int whileTStmt);
-                                Console.WriteLine($"invoked pkb.GetAllNestedStatementsInWhileT({parentTStmt})");
+                                childStmts = pkb.GetAllNestedStatementsInWhileT(parentTStmt);
+                                //Console.WriteLine($"invoked pkb.GetAllNestedStatementsInWhileT({parentTStmt})");
                             }
                             else
                             {
                                 childStmts = pkb.GetAllNestedStatements(parentTStmt);
-                                Console.WriteLine($"invoked pkb.GetAllNestedStatements({parentTStmt})");
+                                //Console.WriteLine($"invoked pkb.GetAllNestedStatements({parentTStmt})");
                             }
                             foreach (var stmt in childStmts)
                             {
@@ -572,12 +633,15 @@ public class QueryEvaluator
                             {
                                 result.Add(procedure);
                             }
-                            Console.WriteLine($"invoked pkb.GetCalledProcedures({caller})");
+                            //Console.WriteLine($"invoked pkb.GetCalledProcedures({caller})");
                             break;
                         case "Calls*":
-                            // TODO ext IEnumerable<String> procedures = pkb.GetCalledProceduresT(caller);
-                            // foreach ()
-                            Console.WriteLine($"invoked pkb.GetCalledProceduresT({condition.Item5})");
+                            procedures = pkb.GetCalledProceduresT(condition.Item5);
+                            foreach (var procedure in procedures)
+                            {
+                                result.Add(procedure);
+                            }
+                            //Console.WriteLine($"invoked pkb.GetCalledProceduresT({condition.Item5})");
                             break;
                     }
                 }
@@ -592,16 +656,16 @@ public class QueryEvaluator
                         {
                             result.Add(variable);
                         }
-                        Console.WriteLine("invoked pkb.GetAllModifiedVariables()");
+                        //Console.WriteLine("invoked pkb.GetAllModifiedVariables()");
                         break;
                     case "Follows":
                     case "Follows*":
-                        IEnumerable<int> followedStatements = pkb.GetAllFollowsSources();
-                        foreach (var stmt in followedStatements)
+                        IEnumerable<int> followingStatements = pkb.GetAllFollowsTargets();
+                        foreach (var stmt in followingStatements)
                         {
                             result.Add(stmt.ToString());
                         }
-                        Console.WriteLine("invoked pkb.GetAllFollowsTargets()");
+                        //Console.WriteLine("invoked pkb.GetAllFollowsTargets()");
                         break;
                     case "Uses":
                         IEnumerable<string> allUsedVariables = pkb.GetAllUsedVariables();
@@ -609,24 +673,24 @@ public class QueryEvaluator
                         {
                             result.Add(variable);
                         }
-                        Console.WriteLine("invoked GetAllUsedVariables()");
+                        //Console.WriteLine("invoked GetAllUsedVariables()");
                         break;
                     case "Parent":
                         IEnumerable<int> allChildren = [];
                         if (arg1.NodeType == "If")
                         {
-                            // TODO ext IEnumerable<int> allChildren = pkb.GetAllChildStatementsOfIfs();
-                            Console.WriteLine("invoked pkb.GetAllChildStatementsOfIfs()");
+                            allChildren = pkb.GetAllChildStatementsOfIfs();
+                            //Console.WriteLine("invoked pkb.GetAllChildStatementsOfIfs()");
                         }
                         else if (arg1.NodeType == "While")
                         {
-                            // TODO ext IEnumerable<int> allChildren = pkb.GetAllChildStatementsOfWhiles();
-                            Console.WriteLine("invoked pkb.GetAllChildStatementsOfWhiles()");
+                            allChildren = pkb.GetAllChildStatementsOfWhiles();
+                            //Console.WriteLine("invoked pkb.GetAllChildStatementsOfWhiles()");
                         }
                         else
                         {
                             allChildren = pkb.GetAllChildStatements();
-                            Console.WriteLine("invoked pkb.GetAllChildStatements()");
+                            //Console.WriteLine("invoked pkb.GetAllChildStatements()");
                         }
                         foreach (var child in allChildren)
                         {
@@ -637,18 +701,18 @@ public class QueryEvaluator
                         IEnumerable<int> allChildrenT = [];
                         if (arg1.NodeType == "If")
                         {
-                            // TODO ext IEnumerable<int> allChildren = pkb.GetAllChildStatementsOfIfsT();
-                            Console.WriteLine("invoked pkb.GetAllChildStatementsOfIfsT()");
+                            allChildren = pkb.GetAllChildStatementsOfIfsT();
+                            //Console.WriteLine("invoked pkb.GetAllChildStatementsOfIfsT()");
                         }
                         else if (arg1.NodeType == "While")
                         {
-                            // TODO ext IEnumerable<int> allChildren = pkb.GetAllChildStatementsOfWhilesT();
-                            Console.WriteLine("invoked pkb.GetAllChildStatementsOfWhilesT()");
+                            allChildren = pkb.GetAllChildStatementsOfWhilesT();
+                            //Console.WriteLine("invoked pkb.GetAllChildStatementsOfWhilesT()");
                         }
                         else
                         {
                             allChildrenT = pkb.GetAllChildStatements();
-                            Console.WriteLine("invoked pkb.GetAllChildStatements()");
+                            //Console.WriteLine("invoked pkb.GetAllChildStatements()");
                         }
                         foreach (var child in allChildrenT)
                         {
@@ -657,7 +721,7 @@ public class QueryEvaluator
                         break;
                     case "Calls":
                     case "Calls*":
-                        //TODO ext IEnumerable<String> procedures = pkb.GetAllCalledProcedures();
+                        IEnumerable<String> procedures = pkb.GetAllCalledProcedures();
                         break;
                 }
             }
@@ -665,7 +729,7 @@ public class QueryEvaluator
         else
         {
             //nie tak to powinno wyglądać ale już tego nie poprawię
-            EvaluateRelationWithParameter<int>(relation, true, 1);
+            EvaluateRelationWithParameter<int>(relation, true, 1, arg1.NodeType, arg2.NodeType);
         }
         return result;
     }
@@ -687,7 +751,7 @@ public class QueryEvaluator
         }
     }
 
-    private HashSet<String> EvaluateRelationWithParameter<T>(String relation, bool isFirstArgParameter, T parameter)
+    private HashSet<String> EvaluateRelationWithParameter<T>(String relation, bool isFirstArgParameter, T parameter, string arg1Type, string arg2Type)
     {
         HashSet<String> result = [];
         if (parameter is int intParameter)
@@ -697,15 +761,14 @@ public class QueryEvaluator
                 case "Follows":
                     if (isFirstArgParameter)
                     {
-                        int? follower = pkb.GetFollows(intParameter);
+
+                        int? follower = EvaluateFollows(intParameter, isFirstArgParameter, following: arg2Type);
                         if (follower != null) result.Add(follower.ToString());
-                        Console.WriteLine($"invoked pkb.GetFollows({intParameter})");   
                     }
                     else
                     {
-                        int? followed = pkb.GetFollowedBy(intParameter);
+                        int? followed = EvaluateFollows(intParameter, isFirstArgParameter, followed: arg1Type);
                         if (followed != null) result.Add(followed.ToString());
-                        Console.WriteLine($"invoked pkb.GetFollowedBy({intParameter})"); 
                     }
                 break;
                 case "Follows*":
@@ -716,7 +779,7 @@ public class QueryEvaluator
                         {
                             result.Add(target.ToString());
                         }
-                        Console.WriteLine($"invoked pkb.GetAllFollowingStatements({intParameter})"); 
+                        //Console.WriteLine($"invoked pkb.GetAllFollowingStatements({intParameter})"); 
                     } 
                     else
                     {
@@ -725,7 +788,7 @@ public class QueryEvaluator
                         {
                             result.Add(precedent.ToString());
                         }
-                        Console.WriteLine($"invoked pkb.GetAllStatementsLeadingTo({intParameter})");   
+                        //Console.WriteLine($"invoked pkb.GetAllStatementsLeadingTo({intParameter})");   
                     }
                 break;
                 case "Uses":
@@ -736,7 +799,7 @@ public class QueryEvaluator
                         {
                             result.Add(variable.ToString());
                         }
-                        Console.WriteLine($"invoked pkb.GetUsedVariables({intParameter})"); 
+                        //Console.WriteLine($"invoked pkb.GetUsedVariables({intParameter})"); 
                     } 
                 break;
                 case "Modifies":
@@ -747,7 +810,7 @@ public class QueryEvaluator
                         {
                             result.Add(mod.ToString());
                         }
-                        Console.WriteLine($"invoked pkb.GetModifiedVariables({intParameter})"); 
+                        //Console.WriteLine($"invoked pkb.GetModifiedVariables({intParameter})"); 
                     }       
                 break;
                 case "Parent":
@@ -758,13 +821,13 @@ public class QueryEvaluator
                         {
                             result.Add(child.ToString());
                         }
-                        Console.WriteLine($"invoked pkb.GetChildren({intParameter})"); 
+                        //Console.WriteLine($"invoked pkb.GetChildren({intParameter})"); 
                     } 
                     else
                     {
                         int? parent = pkb.GetParent(intParameter);
                         if (parent != null) result.Add(parent.ToString());
-                        Console.WriteLine($"invoked pkb.GetParent({intParameter})");   
+                        //Console.WriteLine($"invoked pkb.GetParent({intParameter})");   
                     }      
                 break;
                 case "Parent*":
@@ -773,40 +836,36 @@ public class QueryEvaluator
                     {
                         result.Add(stmt.ToString());
                     }
-                    Console.WriteLine($"invoked pkb.GetAllParentStatements({intParameter})");  
+                    //Console.WriteLine($"invoked pkb.GetAllParentStatements({intParameter})");  
                 break;
             }
         }
         if (parameter is String stringParameter)
         {
+            IEnumerable<String> procedures = [];
             switch (relation)
             {
                 case "Modifies":
                     if (isFirstArgParameter)
                     {
-                        // TODO ext IEnumerable<string> variables = pkb.GetModifiedVariables(procName);
-                        // foreach (var variable in variables)
-                        // {
-                        //     result.Add(variable.ToString());
-                        // }
-                        // Console.WriteLine($"invoked pkb.GetModifiedVariables({stringParameter})"); 
-                    }
-                    else 
-                    {
-                        IEnumerable<string> procedures = pkb.GetProceduresModifying(stringParameter);
-                        foreach (var procedure in procedures)
+                        IEnumerable<string> variables = pkb.GetModifiedVariables(stringParameter);
+                        foreach (var variable in variables)
                         {
-                            result.Add(procedure.ToString());
+                            result.Add(variable.ToString());
                         }
-                        Console.WriteLine($"invoked pkb.GetProceduresModifying({stringParameter})");
-                    }     
-                break;
+                        //Console.WriteLine($"invoked pkb.GetModifiedVariables({stringParameter})");
+                    }
+                    else
+                    {
+                        procedures = pkb.GetProceduresModifying(stringParameter);
+                        //Console.WriteLine($"invoked pkb.GetProceduresModifying({stringParameter})");
+                    }
+                    break;
                 case "Uses":
                     if (isFirstArgParameter)
                     {
-                        // TODO ext IEnumerable<string> procedures = pkb.GetProceduresUsing(varName)
-                        // foreach()
-                        Console.WriteLine($"invoked pkb.pkb.GetProceduresUsing({stringParameter})"); 
+                        procedures = pkb.GetProceduresUsing(stringParameter);
+                        //Console.WriteLine($"invoked pkb.pkb.GetProceduresUsing({stringParameter})");
                     }
                     else
                     {
@@ -815,74 +874,178 @@ public class QueryEvaluator
                         // {
                         //     result.Add(variable.ToString());
                         // }
-                        Console.WriteLine($"invoked pkb.GetUsedVariablesByProcedure({stringParameter})"); 
+                        //Console.WriteLine($"invoked pkb.GetUsedVariablesByProcedure({stringParameter})");
                     }
-                break;
+                    break;
                 case "Calls":
                     if (isFirstArgParameter)
                     {
-                        IEnumerable<String> procedures = pkb.GetCallingProcedures(stringParameter);
-                        foreach (var procedure in procedures)
-                        {
-                            result.Add(procedure.ToString());
-                        }
-                        Console.WriteLine($"invoked pkb.GetCallingProcedures({stringParameter})"); 
+                        
+                        procedures = pkb.GetCalledProcedures(stringParameter);
+                        //Console.WriteLine($"invoked pkb.GetCalledProcedures({stringParameter})");
                     }
                     else
                     {
-                        IEnumerable<String> procedures = pkb.GetCalledProcedures(stringParameter);
-                        foreach (var procedure in procedures)
-                        {
-                            result.Add(procedure.ToString());
-                        }
-                        Console.WriteLine($"invoked pkb.GetCalledProcedures({stringParameter})"); 
+                        procedures = pkb.GetCallingProcedures(stringParameter);
+                        //Console.WriteLine($"invoked pkb.GetCallingProcedures({stringParameter})");
                     }
-                break;
+                    break;
                 case "Calls*":
                     if (isFirstArgParameter)
                     {
-                        // TODO ext IEnumerable<String> procedures = pkb.GetCallingProceduresT(called);
+                        procedures = pkb.GetCallingProceduresT(stringParameter);
                     }
-                    else 
+                    else
                     {
-                        // TODO ext IEnumerable<String> procedures = pkb.GetCalledProceduresT(calling);
+                        procedures = pkb.GetCalledProceduresT(stringParameter);
                     }
-
-
-                break;
+                    break;
+            }
+            foreach (var procedure in procedures)
+            {
+                result.Add(procedure.ToString());
             }
         }
         return result;
     }
 
-    int? GetFollowedBy(String followed, String following, int followingStmtNumber)
+    int? EvaluateFollows(int intParameter, bool isFirstArgParameter, String followed = "", String following ="", bool isTransitive = false)
     {
+        //Console.WriteLine(followed + " XXX " + following);
         int? result = null;
         switch (followed)
         {
-            case "If": // Jeszcze do dodania switch (following) ale poczekam na info z pkb
-                // TODO ext result = GetFollowedByIf(followingStmtNumber);
-                Console.WriteLine($"invoked pkb.GetFollowedByIf({followingStmtNumber})");
+            case "":
+                break;
+            case "If":
+                    result = pkb.GetFollowedByIf(intParameter);
+                    //Console.WriteLine($"invoked pkb.GetFollowedByIf({intParameter})");
                 break;
             case "While":
-                // TODO ext result = pkb.GetFollowedByWhile(followingStmtNumber)
-                Console.WriteLine($"invoked pkb.GetFollowedByWhile({followingStmtNumber})");
+                    result = pkb.GetFollowedByWhile(intParameter);
+                    //Console.WriteLine($"invoked pkb.GetFollowedByWhile({intParameter})");
                 break;
             case "Call":
-                // TODO ext result = pkb.GetFollowedByCall(followingStmtNumber);
-                Console.WriteLine($"invoked pkb.GetFollowedByCall({followingStmtNumber})");
+                    result = pkb.GetFollowedByCall(intParameter);
+                    //Console.WriteLine($"invoked pkb.GetFollowedByCall({intParameter})");
                 break;
             case "Assign":
-                // TODO ext result = pkb.GetFollowedByAssign("Assign", followingStmtNumber);
-                Console.WriteLine($"invoked pkb.GetFollowedByAssign({followingStmtNumber})");
+                    result = pkb.GetFollowedByAssign(intParameter);
+                    //Console.WriteLine($"invoked pkb.GetFollowedByAssign({intParameter})");
                 break;
             default:
-                result = pkb.GetFollowedBy(followingStmtNumber);
-                Console.WriteLine($"invoked pkb.GetFollowedBy({followingStmtNumber})");
+                result = pkb.GetFollowedBy(intParameter);
+                //Console.WriteLine($"invoked pkb.GetFollowedBy({intParameter})");
+                break;
+        }
+        switch (following)
+        {
+            case "":
+                break;
+            case "If":
+                    //TODO ext result = pkb.GetIfFollowing(intParameter);
+                    //Console.WriteLine($"invoked pkb.GetIfFollowing({intParameter})");  
+                break;
+            case "While":
+                    //TODO ext result = pkb.GetWhileFollowing(intParameter);
+                    //Console.WriteLine($"invoked pkb.GetWhileFollowing({intParameter})");
+                break;
+            case "Call":
+                    //TODO ext result = pkb.GetCallFollowing(intParameter);
+                    //Console.WriteLine($"invoked pkb.GetCallFollowing({intParameter})");
+                break;
+            case "Assign":
+                    //TODO ext result = pkb.GetAssignFollowing(intParameter);
+                    //Console.WriteLine($"invoked pkb.GetAssignFollowing({intParameter})");
+                break;
+            default:
+                result = pkb.GetFollowedBy(intParameter);
+                //Console.WriteLine($"invoked pkb.GetFollowedBy({intParameter})");
                 break;
         }
         return result;
     }
+
+    IEnumerable<int> EvaluateFollowsT(int intParameter, bool isFirstArgParameter,String followed, String following)
+    {
+        //Console.WriteLine(followed + " XXX " + following);
+        IEnumerable<int> result = [];
+
+        if (isFirstArgParameter)
+        {
+            switch (following)
+            {
+                case "":
+                    break;
+                case "If":
+                    switch (followed)
+                    {
+                        case "":
+                            break;
+                        case "If":
+                            
+                        case "While":
+                            
+                        case "Call":
+                            
+                        case "Assign":
+                            
+                        default:
+                            //TODO ext result = pkb.GetIfsFollowingT(intParameter);
+                            //Console.WriteLine($"invoked pkb.GetIfsFollowingT({intParameter})");
+                            break;
+                    }
+
+                    break;
+                case "While":
+                    //TODO ext result = pkb.GetWhilesFollowingT(intParameter);
+                    //Console.WriteLine($"invoked pkb.GetWhilesFollowingT({intParameter})");
+                    break;
+                case "Call":
+                    //TODO ext result = pkb.GetCallsFollowingT(intParameter);
+                    //Console.WriteLine($"invoked pkb.GetCallsFollowingT({intParameter})");
+                    break;
+                case "Assign":
+                    //TODO ext result = pkb.GetAssignsFollowingT(intParameter);
+                    //Console.WriteLine($"invoked pkb.GetAssignsFollowingT({intParameter})");
+                    break;
+                default:
+                    //TODO ext result = pkb.GetStmtsFollowingT(intParameter);
+                    //Console.WriteLine($"invoked pkb.GetStmtsFollowingT({intParameter})");
+                    break;
+            }
+        }
+        else
+        {
+            switch (followed)
+            {
+                case "":
+                    break;
+                case "If":
+                    //TODO ext result = pkb.GetFollowedByIfsT(intParameter);
+                    //Console.WriteLine($"invoked pkb.GetFollowedByIfsT({intParameter})");
+                    break;
+                case "While":
+                    //TODO ext result = pkb.GetFollowedByWhilesT(intParameter);
+                    //Console.WriteLine($"invoked pkb.GetFollowedByWhilesT({intParameter})");
+                    break;
+                case "Call":
+                    //TODO ext result = pkb.GetFollowedByCallsT(intParameter);
+                    //Console.WriteLine($"invoked pkb.GetFollowedByCallsT({intParameter})");
+                    break;
+                case "Assign":
+                    //TODO ext result = pkb.GetFollowedByAssignsT(intParameter);
+                    //Console.WriteLine($"invoked pkb.GetFollowedByAssignsT({intParameter})");
+                    break;
+                default:
+                    // TODO ext result = pkb.GetFollowedByStmtsT(intParameter);
+                    //Console.WriteLine($"invoked pkb.GetFollowedByStmtsT({intParameter})");
+                    break;
+            }
+        }
+        return result;
+    }
+    
 
     private String buildStringResponse(HashSet<String> outputSet)
     {
@@ -890,7 +1053,7 @@ public class QueryEvaluator
         String stringOutput = outputSet.First();
         foreach (var element in output.Skip(1))
         {
-            stringOutput += ", " + element;
+            stringOutput += "," + element;
         }
         return stringOutput;
     }

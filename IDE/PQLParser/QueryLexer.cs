@@ -94,7 +94,7 @@ public class QueryLexer
             }
         }
         queryTokens.Add(new QueryKeyword(QueryKeywordType.End, "EOF"));
-        //Console.WriteLine("Lexer: new eof: " + queryTokens.Last().Value);
+        // Console.WriteLine("Lexer: new eof: " + queryTokens.Last().Value);
         return queryTokens;
     }
 }

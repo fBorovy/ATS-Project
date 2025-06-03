@@ -1,6 +1,8 @@
 ﻿using IDE.Parser;
 using IDE.PQLParser;
 
+using Testing;
+
 namespace TestProject1;
 
 [TestClass]
@@ -50,8 +52,9 @@ public sealed class ComplexTests
     [DataRow("", "")]
     public void KamilTests(string query, string expectedResult)
     {
+        //var result = queryParser.ParseWithExceptions(query);
         var result = queryParser.ParseQuery(query);
-        Assert.AreEqual(expectedResult, result.Trim());
+        Assert.AreEqual(expectedResult.Normalize(), result.Normalize());
     }
 
 
@@ -89,8 +92,9 @@ public sealed class ComplexTests
 
     public void EwaTests(string query, string expectedResult)
     {
+        //var result = queryParser.ParseWithExceptions(query);
         var result = queryParser.ParseQuery(query);
-        Assert.AreEqual(expectedResult, result.Trim());
+        Assert.AreEqual(expectedResult.Normalize(), result.Normalize());
     }
 
 
@@ -127,8 +131,9 @@ public sealed class ComplexTests
     [DataRow("", "")]
     public void FilipTests(string query, string expectedResult)
     {
+        //var result = queryParser.ParseWithExceptions(query);
         var result = queryParser.ParseQuery(query);
-        Assert.AreEqual(expectedResult, result.Trim());
+        Assert.AreEqual(expectedResult.Normalize(), result.Normalize());
     }
 
 
@@ -165,8 +170,9 @@ public sealed class ComplexTests
     [DataRow("procedure p; Select p such that Uses(p, \"blue\") and Uses(p, \"green\")", "Show")]
     public void JanTests(string query, string expectedResult)
     {
+        //var result = queryParser.ParseWithExceptions(query);
         var result = queryParser.ParseQuery(query);
-        Assert.AreEqual(expectedResult, result.Trim());
+        Assert.AreEqual(expectedResult.Normalize(), result.Normalize());
     }
 
 
@@ -203,8 +209,9 @@ public sealed class ComplexTests
     [DataRow("", "")]
     public void KasiaTests(string query, string expectedResult)
     {
+        //var result = queryParser.ParseWithExceptions(query);
         var result = queryParser.ParseQuery(query);
-        Assert.AreEqual(expectedResult, result.Trim());
+        Assert.AreEqual(expectedResult.Normalize(), result.Normalize());
     }
 
 
@@ -241,7 +248,8 @@ public sealed class ComplexTests
     [DataRow("stmt s; Select s such that Uses(s, \"length\") and Uses(s, \"area\")", "112")]
     public void MaciekTests(string query, string expectedResult)
     {
+        //var result = queryParser.ParseWithExceptions(query);
         var result = queryParser.ParseQuery(query);
-        Assert.AreEqual(expectedResult, result.Trim());
+        Assert.AreEqual(expectedResult.Normalize(), result.Normalize());
     }
 }

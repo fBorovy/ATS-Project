@@ -19,6 +19,7 @@ public class QueryParser
         //_preprocessor.ValidateQuery(currentQuery);
         QueryTree tree = _preprocessor.BuildQueryTree(currentQuery);
         string result = _queryEvaluator.EvaluateQuery(tree);
+        if (result == "0") { return "none"; }
         return string.IsNullOrEmpty(result) ? "none" : result;
     }
 

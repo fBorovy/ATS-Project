@@ -20,10 +20,10 @@ public class Program
         // do tąd
 
         // zakomentowac do testowania tym śmiesznym narzędziem z ceza
-        /*
-        var basePath = $"{AppDomain.CurrentDomain.BaseDirectory}\\..\\..\\..\\";
-        var filePath = $"{basePath}SIMPLE.txt";
-        */
+        
+        // var basePath = $"{AppDomain.CurrentDomain.BaseDirectory}\\..\\..\\..\\";
+        // var filePath = $"{basePath}SIMPLE.txt";
+        
         // do tąd
 
         CodeParser parser = new CodeParser(filePath);
@@ -56,30 +56,30 @@ public class Program
         // do tąd
 
         // zakomentowac do testowania tym śmiesznym narzędziem z ceza
-        /*
-        var queryLines = File.ReadAllLines($"{basePath}current_test.txt");
+        
+        // var queryLines = File.ReadAllLines($"{basePath}test2_queries.txt");
 
-        for (int i = 0; i < queryLines.Length; i += 3)
-        {
-            if (i + 2 >= queryLines.Length)
-                break; // zapobiega wyjściu poza zakres przy niepełnej grupie
+        // for (int i = 0; i < queryLines.Length; i += 3)
+        // {
+        //     if (i + 2 >= queryLines.Length)
+        //         break; // zapobiega wyjściu poza zakres przy niepełnej grupie
 
-            string declarations = queryLines[i];
-            string query = queryLines[i + 1];
-            //string expected = queryLines[i + 2];                  Expected ale tylko dla pliku test2_simple.txt
-            //Console.WriteLine($"Expected: {expected}");
+        //     string declarations = queryLines[i];
+        //     string query = queryLines[i + 1];
+        //     //string expected = queryLines[i + 2];                  Expected ale tylko dla pliku test2_simple.txt
+        //     //Console.WriteLine($"Expected: {expected}");
   
-            // TODO: response jest do sprawdzenia czy nie robi jakiś dziwnych rzeczy
-            // zwracanie pustego stringa zamiast "none"
-            // zwracanie 0 zamiast "none" - 0 w ogóle nigdy nie powinno byś zwracane
-            // sprawdzenie żeby nie było jakiś przecinków na końcu itp.
-            // odpowiedź złożona powinna wyglądać na przykład "2,5,7,8"
-            string response = queryParser.ParseQuery(declarations + query);
-            // najlepiej żeby parser zwracał już odpowiednio przygotowany string do wypisania, żeby tutaj już go nie parsować
-            Console.WriteLine(response);
-            Console.WriteLine(new string('-', 40));
-        }
-        */
+        //     // TODO: response jest do sprawdzenia czy nie robi jakiś dziwnych rzeczy
+        //     // zwracanie pustego stringa zamiast "none"
+        //     // zwracanie 0 zamiast "none" - 0 w ogóle nigdy nie powinno byś zwracane
+        //     // sprawdzenie żeby nie było jakiś przecinków na końcu itp.
+        //     // odpowiedź złożona powinna wyglądać na przykład "2,5,7,8"
+        //     string response = queryParser.ParseQuery(declarations + query);
+        //     // najlepiej żeby parser zwracał już odpowiednio przygotowany string do wypisania, żeby tutaj już go nie parsować
+        //     Console.WriteLine(response);
+        //     Console.WriteLine(new string('-', 40));
+        // }
+        
         // do tąd
     }
 }

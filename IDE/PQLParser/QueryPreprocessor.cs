@@ -81,7 +81,7 @@ public class QueryPreprocessor
             if (SynonymTypeResolver.TryParse(CurrentQueryKeyword.Value, out var synonymType))
             {
                 Advance();
-                //Console.WriteLine($"synonym type: {synonymType}");
+                // Console.WriteLine($"synonym type: {synonymType}");
                 InsertSynonymsOfAType(synonymType);   
             }
             else throw new SynonymException($"Design entity expected, got {CurrentQueryKeyword.Value}");

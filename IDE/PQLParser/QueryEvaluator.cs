@@ -807,8 +807,20 @@ public class QueryEvaluator
                     }
                     else
                     {
-                        procedures = pkb.GetProceduresModifying(stringParameter);
-                        //Console.WriteLine($"invoked pkb.GetProceduresModifying({stringParameter})");
+                        if (arg2Type == "procedure")
+                        {
+                            procedures = pkb.GetProceduresModifying(stringParameter);
+                            // Console.WriteLine($"invoked pkb.GetProceduresModifying({stringParameter})");
+                        }
+                        else
+                        {
+                            IEnumerable<int> stmts = pkb.GetStatementsModifying(stringParameter);
+                            // Console.WriteLine($"invoked pkb.GetStatementsModifying({stringParameter})");
+                            foreach (var s in stmts)
+                            {
+                                result.Add(s.ToString());
+                            }
+                        }
                     }
                     break;
                 case "Uses":

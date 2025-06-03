@@ -1,0 +1,450 @@
+variable v;
+Select v such that Modifies(10, v) and Uses(12, v)
+y2
+stmt s;
+Select s such that Follows(2, s) and Modifies(s, "height")
+3
+while w;
+Select w such that Parent(w, 29) and Modifies(w, "tmp")
+16
+stmt s;
+Select s such that Parent(s, 186) and Follows*(s, 183)
+181
+while w;
+Select w such that Parent(w, 85) and Modifies(w, "x")
+83
+procedure p;
+Select p such that Uses(p, "x4") and Calls(p, "Main")
+none
+stmt s;
+Select s such that Follows(1, s) and Modifies(s, "width")
+2
+while w;
+Select w such that Parent(w, 50) and Modifies(w, "length")
+47
+stmt s;
+Select s such that Parent*(s, 14) and Next(s, 13)
+12, 6
+while w;
+Select w such that Follows(68, w) and Modifies(w, "I")
+69
+stmt s; if ifstmt;
+Select s such that Modifies(s, "o") and Follows*(ifstmt, s)
+none
+while w;
+Select w such that Parent(w, 91) and Follows(w, 88)
+89
+variable v;
+Select v such that Modifies(2, v) and Uses(11, v)
+width
+while w;
+Select w such that Parent(w, 31) and Modifies(w, "height")
+29
+procedure p; stmt s1, s2;
+Select p such that Modifies(p, "x3") and Next(s1, s2)
+Main, Shift
+stmt s;
+Select s such that Follows*(s, 133) and Uses(s, "value")
+none
+variable v;
+Select v such that Modifies(31, v) and Uses(32, v) and Next(31, 32)
+height
+stmt s;
+Select s such that Follows*(s, 85) and Parent*(79, s)
+84
+while w;
+Select w such that Parent(w, 257) and Follows(w, 256) and Next(256, 257)
+256
+stmt s;
+Select s such that Follows*(s, 36) and Parent*(34, s)
+35
+stmt s;
+Select s such that Follows(3, s) and Modifies(s, "x")
+4
+if ifstmt;
+Select ifstmt such that Parent(ifstmt, 87) and Follows*(ifstmt, 85)
+86
+stmt s;
+Select s such that Follows(130, s) and Next(130, s) and Modifies(s, "right")
+131
+if ifstmt;
+Select ifstmt such that Parent(ifstmt, 87) and Follows(ifstmt, 85)
+86
+stmt s;
+Select s such that Follows*(s, 253) and Parent*(251, s) and Next(s, 253)
+252
+while w;
+Select w such that Parent(w, 138) and Modifies(w, "x1") and Follows*(w, 139)
+136
+variable v;
+Select v such that Modifies(2, v) and Uses(9, v) and Next*(2, 9)
+width
+while w;
+Select w such that Parent(w, 137) and Follows(w, 135) and Next(135, w)
+136
+stmt s;
+Select s such that Follows(245, s) and Next(245, s) and Modifies(s, "x2")
+246
+if ifstmt;
+Select ifstmt such that Parent(ifstmt, 15) and Follows(13, ifstmt) and Next(13, ifstmt)
+14
+stmt s1, s2;
+Select s1 such that Follows(s2, s1) and Parent(s2, 8)
+5
+procedure p; variable v;
+Select p such that Modifies(p, "width") and Uses(p, "width")
+Main
+procedure p;
+Select p such that Calls(p, _) and Modifies(p, "dx")
+Draw
+stmt s;
+Select s such that Parent*(1, s) and Follows*(s, 5)
+none
+if i;
+Select i such that Uses(i, "pixel") and Modifies*(i, "total")
+216
+procedure p, q;
+Select p such that Calls*(p, q) and Modifies(q, "s")
+Draw,Shrink,Main
+stmt s1, s2; variable v;
+Select s1 such that Follows(s1, s2) and Parent(s2, 183) and Modifies(s1, v)
+none
+procedure p; variable v;
+Select p such that Uses(p, v) and Calls(p, "police") with v.varName = "phone"
+none
+while w; variable v;
+Select w such that Modifies(w, v) and Parent(w, 138)
+136
+stmt s;
+Select s such that Follows(s, 135) and Uses(s, "incre")
+134
+procedure p, q;
+Select p such that Calls(p, q) and Calls*("Main", p)
+Enlarge,Shrink,Draw,Translate,Rotate
+stmt s; variable v;
+Select s such that Parent*(263, s) and Modifies(s, v)
+none
+stmt s; variable v;
+Select s such that Follows(s, 303) and Uses(s, v) with v.varName = "cs5"
+302
+assign a; variable v;
+Select a such that Modifies(a, "cs6") and Uses(a, "cs9")
+306
+;
+Select BOOLEAN such that Calls("Main", "Shift") and Modifies(9, "y1")
+true
+stmt s;
+Select s such that Parent(_, s) and Follows*(s, 72)
+70,71
+stmt s; variable v;
+Select s such that Uses(s, v) and Modifies(s, v) with v.varName = "width"
+85
+stmt s; variable v1, v2;
+Select s such that Uses(s, v1) and Modifies(s, v2) with v.varName = "x1" and v2.varName = "width"
+30,49,82,85
+;
+Select BOOLEAN such that Follows(7, 8) and Parent(7, 8)
+false
+if i; variable v;
+Select i such that Parent(i, 25) and Modifies(i, v) with v.varName = "y1"
+23
+procedure p;
+Select p such that Calls(p, _) and Uses(p, _) with p.procName = "Fill"
+none
+stmt s1, s2; variable v;
+Select s1 such that Follows(s1, s2) and Parent(s2, 253) and Uses(s1, v)
+none
+procedure p; variable v1, v2;
+Select p such that Modifies(p, v1) and Uses(p, v2) with v1.varName = v2.varName
+Main,Transform,Shear,Move,Draw,Clear,Show,Enlarge,Fill,Shrink,Translate,Rotate,UU,XX,TT,SS,PP,RR
+procedure p; variable v;
+Select p such that Calls("Main", p) and Modifies(p, v) with v.varName = "width"
+Move
+while w; variable v;
+Select w such that Uses(w, v) and Modifies(w, "tmp")
+16
+stmt s; procedure p;
+Select s such that Follows(s, 2) and Parent(12, 13) and Calls("Main", p)
+1
+;
+Select BOOLEAN such that Follows(1, 2) and Parent(2, 3)
+true
+procedure p;
+Select p such that Calls(p, _) and Uses(p, "x1")
+Main,Draw,Shrink
+if i; variable v;
+Select i such that Uses(i, v) and Modifies(i, "base")
+266
+while w; variable v;
+Select w such that Modifies(w, v) and Parent(w, 253)
+251
+procedure p, q;
+Select <p, q> such that Calls(p, q) and Modifies(p, "tmp")
+Main Init Main Random Main Enlarge Main Shrink Main Transform Main Shear Main Move Main Shift Main Draw Main Translate Draw Clear Draw Show Draw Random Enlarge Fill Enlarge Show Rotate Random Rotate Show
+procedure p;
+Select p such that Modifies(p, "radius") and Uses(p, "difference")
+Main
+procedure p;
+Select p such that Uses(p, "radius") and Uses(p, "x1")
+Main
+procedure p;
+Select p such that Modifies(p, "volume") and Uses(p, "width")
+Main
+procedure p;
+Select p such that Uses(p, "volume") or Uses(p, "distance")
+Main
+procedure p;
+Select p such that Uses(p, "k") and Uses(p, "y2")
+Main
+procedure p;
+Select p such that Modifies(p, "length") and Uses(p, "tmp")
+Main
+procedure p;
+Select p such that Modifies(p, "x5") and Uses(p, "tmp")
+Main
+procedure p;
+Select p such that Uses(p, "x9") or Modifies(p, "x8")
+Main
+procedure p;
+Select p such that Uses(p, "dx") and Uses(p, "dy")
+Draw Rotate
+procedure p;
+Select p such that Uses(p, "range") and Uses(p, "marking")
+Draw
+procedure p;
+Select p such that Uses(p, "edge") or Uses(p, "depth")
+Enlarge Fill Rotate
+procedure p;
+Select p such that Modifies(p, "edge") and Modifies(p, "depth")
+Enlarge Fill
+procedure p;
+Select p such that Uses(p, "depth") and Uses(p, "triangle")
+Rotate
+procedure p;
+Select p such that Modifies(p, "factor") and Uses(p, "factor")
+Shear Shrink Translate Rotate
+procedure p;
+Select p such that Uses(p, "triangle") and Uses(p, "base")
+Rotate
+procedure p;
+Select p such that Uses(p, "height") and Modifies(p, "width")
+Main Transform
+procedure p;
+Select p such that Uses(p, "x4") and Uses(p, "x3")
+Main
+procedure p;
+Select p such that Modifies(p, "x3") or Modifies(p, "x4")
+Main
+procedure p;
+Select p such that Uses(p, "top") and Uses(p, "bottom")
+Main Init Random Transform Shift Enlarge Shrink
+procedure p;
+Select p such that Uses(p, "left") and Uses(p, "right")
+Init Random Transform Shift Shrink
+procedure p;
+Select p such that Modifies(p, "x5") and Uses(p, "x3")
+Main
+procedure p;
+Select p such that Modifies(p, "c") and Uses(p, "area")
+Main
+procedure p;
+Select p such that Uses(p, "width") and Modifies(p, "height")
+Main Transform
+procedure p;
+Select p such that Modifies(p, "volume") or Modifies(p, "length")
+Main
+procedure p;
+Select p such that Calls(p, "QQ") or Calls(p, "UU")
+PP TT
+procedure p;
+Select p such that Calls(p, "XX") and Modifies(p, "cs5")
+UU
+procedure p;
+Select p such that Calls(p, "Show") and Calls(p, "Clear")
+Draw
+procedure p;
+Select p such that Modifies(p, "dx") and Uses(p, "dy")
+Rotate
+procedure p;
+Select p such that Uses(p, "blue") and Uses(p, "green")
+Show
+stmt s;
+Select s such that Parent*(12, s) and Modifies(s, "tmp")
+17 48 50 57 60 81 90
+stmt s;
+Select s such that Follows*(s, 33) and Uses(s, "difference")
+30 31 32 33
+procedure p;
+Select p such that Calls(p, "Shrink") and Uses(p, "height")
+Main
+stmt s;
+Select s such that Modifies(s, "length") and Uses(s, "tmp")
+36 40 61
+stmt s;
+Select s such that Parent*(6, s) and Modifies(s, "volume")
+40 63 70
+stmt s;
+Select s such that Uses(s, "radius") and Follows(33, s)
+34 35
+stmt s;
+Select s such that Parent(15, s) and Uses(s, "top")
+16
+stmt s;
+Select s such that Follows(13, s) and Modifies(s, "x2")
+14
+procedure p;
+Select p such that Uses(p, "area") and Calls*(p, "Transform")
+Main
+stmt s;
+Select s such that Modifies(s, "x1") and Parent(27, s)
+28 33
+stmt s;
+Select s such that Uses(s, "incre") and Modifies(s, "incre")
+13 14 101
+stmt s;
+Select s such that Affects(28, s) and Uses(s, "area")
+30 32
+stmt s;
+Select s such that Modifies(s, "width") and Uses(s, "x1")
+49
+stmt s;
+Select s such that Modifies(s, "difference") and Follows(20, s)
+21
+stmt s;
+Select s such that Uses(s, "tmp") and Modifies(s, "x5")
+57 64
+stmt s;
+Select s such that Parent*(6, s) and Affects(s, 32)
+30
+stmt s;
+Select s such that Follows*(28, s) and Modifies(s, "radius")
+30 33 35
+stmt s;
+Select s such that Uses(s, "top") and Parent*(6, s)
+9 15 61
+stmt s;
+Select s such that Parent*(6, s) and Uses(s, "length") and Modifies(s, "length")
+36 40
+stmt s;
+Select s such that Uses(s, "I") and Modifies(s, "I") and Parent*(6, s)
+21 22 23 69
+stmt s;
+Select s such that Uses(s, "x1") and Parent*(12, s) and Modifies(s, "width")
+49
+stmt s;
+Select s such that Affects(28, s) and Uses(s, "difference") and Parent*(6, s)
+30
+procedure p;
+Select p such that Modifies(p, "x4") and Calls(p, "Shift")
+Main
+stmt s;
+Select s such that Parent*(12, s) and Uses(s, "y2") and Modifies(s, "height")
+61
+stmt s;
+Select s such that Uses(s, "decrement") and Modifies(s, "x6") and Parent*(6, s)
+68
+stmt s;
+Select s such that Follows(61, s) and Modifies(s, "volume")
+63
+stmt s;
+Select s such that Uses(s, "length") and Affects(s, 113) and Parent*(6, s)
+112
+stmt s;
+Select s such that Parent*(6, s) and Modifies(s, "area") and Uses(s, "height")
+11 32
+procedure p;
+Select p such that Uses(p, "difference") and Calls*(p, "Enlarge")
+Main
+stmt s;
+Select s such that Parent*(6, s) and Uses(s, "tmp") and Follows*(s, 47)
+48 50 57 60 61
+stmt s;
+Select s such that Parent*(12, s) and Uses(s, "area")
+17 30 32 40 50 53 61
+stmt s;
+Select s such that Follows(1, s) and Modifies(s, "width")
+2
+stmt s;
+Select s such that Parent*(6, s) and Uses(s, "width")
+7 8 9 10 11
+procedure p;
+Select p such that Calls(p, "Init") and Uses(p, "top")
+Main
+stmt s;
+Select s such that Affects(30, s) and Uses(s, "area")
+32
+stmt s;
+Select s such that Uses(s, "x1") and Modifies(s, "x5")
+64
+stmt s;
+Select s such that Modifies(s, "tmp") and Uses(s, "tmp")
+48 50 57
+stmt s;
+Select s such that Follows(46, s) and Modifies(s, "length")
+47
+procedure p;
+Select p such that Calls(p, "Draw") and Modifies(p, "distance")
+Main
+stmt s;
+Select s such that Uses(s, "incre") and Parent*(12, s)
+13 19 21 30 35 50 61
+stmt s;
+Select s such that Parent(14, s) and Modifies(s, "y1")
+24 27
+stmt s;
+Select s such that Modifies(s, "height") and Uses(s, "y1")
+31 61 88
+stmt s;
+Select s such that Modifies(s, "area") and Uses(s, "width")
+11 32
+procedure p;
+Select p such that Calls(p, "Enlarge") and Uses(p, "tmp")
+Main
+stmt s;
+Select s such that Modifies(s, "volume") and Uses(s, "height")
+40
+stmt s;
+Select s such that Uses(s, "difference") and Modifies(s, "difference")
+20 37
+stmt s;
+Select s such that Modifies(s, "x6") and Uses(s, "difference")
+68
+stmt s;
+Select s such that Uses(s, "top") and Uses(s, "bottom")
+9 67
+stmt s;
+Select s such that Parent*(16, s) and Modifies(s, "tmp")
+17 48 60 81 90
+stmt s;
+Select s such that Affects(s, 50) and Modifies(s, "tmp")
+48
+stmt s;
+Select s such that Parent*(12, s) and Uses(s, "k")
+21 61 91
+stmt s;
+Select s such that Uses(s, "radius") and Modifies(s, "radius")
+35
+stmt s;
+Select s such that Uses(s, "difference") and Follows(s, 20)
+21
+stmt s;
+Select s such that Modifies(s, "x1") and Uses(s, "x2")
+49
+stmt s;
+Select s such that Uses(s, "tmp") and Follows(47, s)
+48
+stmt s;
+Select s such that Modifies(s, "x2") and Uses(s, "width")
+31
+stmt s;
+Select s such that Uses(s, "height") and Affects(30, s)
+31
+stmt s;
+Select s such that Modifies(s, "y2") and Uses(s, "tmp")
+28
+stmt s;
+Select s such that Modifies(s, "x5") and Uses(s, "x4")
+56
+stmt s;
+Select s such that Uses(s, "length") and Uses(s, "area")
+112

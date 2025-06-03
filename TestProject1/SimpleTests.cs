@@ -13,7 +13,7 @@ public sealed class SimpleTests
     [ClassInitialize]
     public static void ClassSetup(TestContext ctx)
     {
-        CodeParser parser = new CodeParser($"{AppDomain.CurrentDomain.BaseDirectory}\\..\\..\\..\\..\\IDE\\SIMPLE.txt"); 
+        CodeParser parser = new CodeParser($"{AppDomain.CurrentDomain.BaseDirectory}\\..\\..\\..\\..\\IDE\\SIMPLE.txt");
         parser.ReadFile();
         parser.Parse();
         queryParser = new QueryParser();
@@ -100,7 +100,7 @@ public sealed class SimpleTests
 
 
     [DataTestMethod]
-    [DataRow("assign a; while w;Select a such that Follows (w, a)","11, 46, 68, 82, 102, 135, 183, 186, 255, 263, 380")]
+    [DataRow("assign a; while w;Select a such that Follows (w, a)", "11, 46, 68, 82, 102, 135, 183, 186, 255, 263, 380")]
     [DataRow("stmt s, s1;Select s such that Parent (s, s1) with s1.stmt# = 77", "76")]
     [DataRow("call c;Select c such that Follows (c, 85)", "84")]
     [DataRow("call c; stmt s;Select c such that Follows* (c, s) with s1.stmt# = 6", "5")]
@@ -139,36 +139,38 @@ public sealed class SimpleTests
 
 
     [DataTestMethod]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
-    [DataRow("", "")]
+    [DataRow("procedure p; Select p", "Main Init Random Transform Shift Shear Move Draw Clear Show Enlarge Fill Shrink Translate Rotate Scale PP QQ RR SS TT UU XX")]
+    [DataRow("stmt s; Select s", "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150")]
+    [DataRow("variable v; Select v", "x1 x2 y1 y2 left right top bottom incre decrement radius volume width height area difference tmp length distance x3 x4 x5 x6 x7 x8 x9 b c pink green blue pixel dot line edge semi depth notmove total triangle base dx dy factor cs1 cs2 cs3 cs4 cs5 cs6 cs8 cs9 mtoggle lengx cover marking median asterick range peak trim unknown correct wrong wcounter s p1 p2")]
+    [DataRow("procedure p; Select p such that Calls(p, \"Init\")", "Main")]
+    [DataRow("procedure p; Select p such that Calls(p, \"Draw\")", "Main")]
+    [DataRow("procedure p; Select p such that Calls(p, \"Clear\")", "Draw")]
+    [DataRow("procedure p; Select p such that Calls(p, \"Show\")", "Draw Enlarge Rotate")]
+    [DataRow("procedure p; Select p such that Calls(p, \"QQ\")", "PP TT")]
+    [DataRow("procedure p; Select p such that Calls(p, \"UU\")", "TT")]
+    [DataRow("procedure p; Select p such that Calls(p, \"XX\")", "SS TT UU")]
+    [DataRow("procedure p; Select p such that Calls(p, \"Translate\")", "Main")]
+    [DataRow("procedure p; Select p such that Calls(p, \"Rotate\")", "Translate")]
+    [DataRow("procedure p; Select p such that Calls(p, \"Shear\")", "Main")]
+    [DataRow("procedure p; Select p such that Modifies(p, \"x1\")", "Main Init Random Transform Shift Shear Move Draw Clear Show Enlarge Fill Shrink Translate Rotate")]
+    [DataRow("procedure p; Select p such that Modifies(p, \"width\")", "Main Transform")]
+    [DataRow("procedure p; Select p such that Modifies(p, \"height\")", "Main Transform")]
+    [DataRow("procedure p; Select p such that Modifies(p, \"tmp\")", "Main Transform Shift Shear Move Draw Enlarge Shrink Translate Rotate")]
+    [DataRow("procedure p; Select p such that Modifies(p, \"volume\")", "Main")]
+    [DataRow("procedure p; Select p such that Uses(p, \"top\")", "Main Init Random Transform Shift Enlarge Shrink")]
+    [DataRow("procedure p; Select p such that Uses(p, \"bottom\")", "Main Init Random Transform Shift Enlarge Shrink")]
+    [DataRow("procedure p; Select p such that Uses(p, \"left\")", "Main Init Random Transform Shift Shrink")]
+    [DataRow("procedure p; Select p such that Uses(p, \"right\")", "Main Init Random Transform Shift Shrink")]
+    [DataRow("procedure p; Select p such that Uses(p, \"k\")", "Main")]
+    [DataRow("procedure p; Select p such that Uses(p, \"incre\")", "Main Init Random Transform Shift Shear Move Draw Enlarge Shrink Translate Rotate")]
+    [DataRow("procedure p; Select p such that Modifies(p, \"radius\")", "Main")]
+    [DataRow("procedure p; Select p such that Uses(p, \"radius\")", "Main")]
+    [DataRow("procedure p; Select p such that Uses(p, \"x4\")", "Main")]
+    [DataRow("procedure p; Select p such that Modifies(p, \"c\")", "Main")]
+    [DataRow("procedure p; Select p such that Uses(p, \"tmp\")", "Main Transform Shift Shear Move Draw Enlarge Shrink Translate Rotate")]
+    [DataRow("procedure p; Select p such that Modifies(p, \"depth\")", "Enlarge Fill")]
+    [DataRow("procedure p; Select p such that Uses(p, \"depth\")", "Enlarge Fill Rotate")]
+
     public void JanTests(string query, string expectedResult)
     {
         //var result = queryParser.ParseWithExceptions(query);

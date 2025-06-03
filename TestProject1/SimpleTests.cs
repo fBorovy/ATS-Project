@@ -119,7 +119,7 @@ public sealed class SimpleTests
     [DataRow("procedure p; Select p such that Calls (p, \"Show\")", "Draw,Enlarge,Rotate")]
     [DataRow("stmt s;Select s such that Uses (s, \"wrong\")", "278")]
     [DataRow("stmt s;Select s such that Follows* (s, 287)", "283,284,285,268")]
-    [DataRow("stmt s;Sekect s such that Modifies (s, \"cs5\")", "290,298,302,311")]
+    [DataRow("stmt s;Select s such that Modifies (s, \"cs5\")", "290,298,302,311")]
     [DataRow("procedure p;Select p", "Main,Init,Random,Transform,Shift,Shear,Move,Draw,Clear,Show,Enlarge,Fill,Shrink,Translate,Rotate,Scale,PP,QQ,SS,TT,UU,XX")]
     [DataRow("while w; variable v;Select w such that Uses (w, \"top\")", "59,89")]
     [DataRow("assign a;Select a such that Modifies (a, \"top\")", "77,126,150")]

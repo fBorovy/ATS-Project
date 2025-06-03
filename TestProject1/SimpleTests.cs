@@ -127,9 +127,9 @@ public sealed class SimpleTests
     [DataRow("while w; stmt s;Select w such that Parent (w, s) with s.stmt# = 186", "181")]
     [DataRow("while w; stmt s;Select s such that Parent (w, s) with w.stmt# = 181", "182,183,184,186,187")]
     [DataRow("stmt s;Select s such that Parent (s, 100)", "97")]
-    [DataRow("Select BOOLEAN such that Uses (8, \"jaja\")", "FALSE")]
-    [DataRow("procedure p, q;Select BOOLEAN such that Calls(p,q)", "TRUE")]
-    [DataRow("Select BOOLEAN such that Modifies(999, \"x\")", "FALSE")]
+    [DataRow("Select BOOLEAN such that Uses (8, \"jaja\")", "false")]
+    [DataRow("procedure p, q;Select BOOLEAN such that Calls(p,q)", "true")]
+    [DataRow("Select BOOLEAN such that Modifies(999, \"x\")", "false")]
     public void FilipTests(string query, string expectedResult)
     {
         //var result = queryParser.ParseWithExceptions(query);
